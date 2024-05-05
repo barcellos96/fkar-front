@@ -3,8 +3,8 @@
 import { ExpenseContext } from "@/providers/expense";
 import { Pencil, Trash, Wallet } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import TableSkeleton from "../tableConfig/skeleton";
-import TableConfig from "../tableConfig/table";
+import TableSkeleton from "../tableMenuConfig/skeleton";
+import TableMenuConfig from "../tableMenuConfig/table";
 import { Modal } from "@/components/modals";
 
 interface Props {
@@ -83,7 +83,7 @@ export default function TableTypeExpense({ title }: Props) {
       {!expenseType ? (
         <TableSkeleton />
       ) : (
-        <TableConfig title={title}>
+        <TableMenuConfig title={title}>
           {expenseType?.map((item, index) => (
             <tr className="border-b" key={index}>
               <th className="font-normal py-5">{index + 1}</th>
@@ -168,7 +168,7 @@ export default function TableTypeExpense({ title }: Props) {
               </th>
             </tr>
           ))}
-        </TableConfig>
+        </TableMenuConfig>
       )}
     </div>
   );

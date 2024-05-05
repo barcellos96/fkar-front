@@ -7,6 +7,7 @@ import { useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import MyAccountSkeleton from "./skeleton";
+import HeaderComposition from "@/components/header/headerComposition";
 
 export default function MyAccount() {
   const { UpdateUser, user } = useContext(UserContext);
@@ -57,16 +58,14 @@ export default function MyAccount() {
         <MyAccountSkeleton />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="relative flex items-center justify-between mb-5">
-            <h1 className="font-semibold text-xl ">Minha Conta:</h1>
+          {/* header formulario */}
+          <HeaderComposition
+            typeSubmit="submit"
+            title="Minha conta:"
+            nameButton={loading ? <Loading /> : "Salvar"}
+          />
 
-            <button
-              type="submit"
-              className={` bg-green-700 hover:bg-opacity-80 text-white font-bold cursor-pointer py-1 px-4 rounded focus:outline-none `}
-            >
-              {loading ? <Loading /> : "Salvar"}
-            </button>
-          </div>
+          {/* formulario */}
           <div className="flex flex-row mb-4 gap-1 h-10">
             <div className="flex flex-col w-1/2">
               <span className="text-base font-semibold mb-1 ml-1 ">Nome:</span>
@@ -101,7 +100,6 @@ export default function MyAccount() {
               )}{" "}
             </div>
           </div>
-          {/* <div className="flex flex-col mb-4"></div> */}
           <div className="flex flex-col mb-4">
             <span className="text-base font-semibold mt-6 mb-1 ml-1">CPF:</span>
             <input
@@ -156,6 +154,7 @@ export default function MyAccount() {
               </span>
             )}{" "}
           </div>
+          {/* fim do formulario */}
         </form>
       )}
     </div>

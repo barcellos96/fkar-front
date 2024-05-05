@@ -1,4 +1,3 @@
-import { Plus } from "lucide-react";
 import IconConfig from "../../assets/config-add.png";
 import { ElementType } from "react";
 

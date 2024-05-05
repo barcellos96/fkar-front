@@ -9,6 +9,7 @@ import { z } from "zod";
 import { Plus } from "lucide-react";
 import { formatCEP } from "@/hooks/cep";
 import AddressSkeleton from "./skeleton";
+import HeaderComposition from "@/components/header/headerComposition";
 
 export default function Address() {
   const { CreateAddress, GetAddress, address, value, GetByZipcode, apiCep } =
@@ -105,16 +106,14 @@ export default function Address() {
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="relative flex items-center justify-between mb-5 truncate">
-            <h1 className="font-semibold text-xl ">Meu Endereço:</h1>
+          {/* header formulairo */}
+          <HeaderComposition
+            typeSubmit="submit"
+            title="Meu endereço:"
+            nameButton="Salvar"
+          />
 
-            <button
-              type="submit"
-              className={` bg-green-700 hover:bg-opacity-80 text-white font-bold cursor-pointer py-1 px-4 rounded focus:outline-none `}
-            >
-              {loading ? <Loading /> : "Salvar"}
-            </button>
-          </div>
+          {/* formulario */}
           <div className="flex flex-col mb-3">
             <span className="text-base font-semibold mb-1 ml-1 ">CEP:</span>
             <input
@@ -270,6 +269,8 @@ export default function Address() {
               </div>
             </div>
           </div>
+
+          {/* fim do formulario */}
         </form>
       )}
     </div>

@@ -7,7 +7,7 @@ import {
   RectangleHorizontal,
   Menu,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Sidebar from "../sidebar";
 
 export default function HeaderDashboardDefault() {

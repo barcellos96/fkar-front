@@ -8,13 +8,14 @@ import { VehicleContext } from "@/providers/vehicle";
 import { ExpenseContext } from "@/providers/expense";
 import { FuelContext } from "@/providers/fuel";
 import { NotDataTable } from "@/components/tablesNotData";
+import HeaderComposition from "@/components/header/headerComposition";
 
 interface TableProps {
   title: string;
   children: ReactNode[];
 }
 
-export default function TableConfig({ title, children }: TableProps) {
+export default function TableMenuConfig({ title, children }: TableProps) {
   const { CreateIncomingType } = useContext(IncomingContext);
   const { CreateVehicleType } = useContext(VehicleContext);
   const { CreateExpenseType } = useContext(ExpenseContext);
@@ -62,19 +63,14 @@ export default function TableConfig({ title, children }: TableProps) {
 
   return (
     <div>
-      <section className="flex items-center justify-between mb-5">
-        <h1 className="font-semibold text-xl ">{title}</h1>
-        <button
-          onClick={handleOpenModal}
-          className="bg-green-700 text-white px-3 py-2 rounded-lg hover:bg-opacity-60"
-        >
-          <span className="hidden sm:block">Novo {title}</span>
-          <span className="sm:hidden">+</span>
-        </button>
-      </section>
+      <HeaderComposition
+        handleSubmit={handleOpenModal}
+        title={title}
+        typeSubmit="button"
+        nameButton={`Novo ${title}`}
+      />
       {children.length === 0 ? (
         <div className="flex flex-col items-center justify-center pb-5">
-          {/* <NotDataTable actionButton={handleOpenModal} title={title} /> */}
           <NotDataTable.Root>
             <div className="flex items-center justify-between text-base uppercase font-bold bg-gray-50 w-full">
               <NotDataTable.Heade text="#" />

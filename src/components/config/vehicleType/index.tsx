@@ -2,8 +2,8 @@
 
 import { Car, Pencil, Trash } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import TableSkeleton from "../tableConfig/skeleton";
-import TableConfig from "../tableConfig/table";
+import TableSkeleton from "../tableMenuConfig/skeleton";
+import TableMenuConfig from "../tableMenuConfig/table";
 import { VehicleContext } from "@/providers/vehicle";
 import { Modal } from "@/components/modals";
 
@@ -80,7 +80,7 @@ export default function TableVehicleType({ title }: Props) {
       {!vehicleType ? (
         <TableSkeleton />
       ) : (
-        <TableConfig title={title}>
+        <TableMenuConfig title={title}>
           {vehicleType?.map((item, index) => (
             <tr className="border-b" key={index}>
               <th className="font-normal py-5">{index + 1}</th>
@@ -155,7 +155,7 @@ export default function TableVehicleType({ title }: Props) {
               </th>
             </tr>
           ))}
-        </TableConfig>
+        </TableMenuConfig>
       )}
     </div>
   );

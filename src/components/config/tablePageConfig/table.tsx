@@ -15,7 +15,7 @@ interface TableProps {
   children: ReactNode[];
 }
 
-export default function TableMenuConfig({ title, children }: TableProps) {
+export default function TablePageConfig({ title, children }: TableProps) {
   const { CreateIncomingType } = useContext(IncomingContext);
   const { CreateVehicleType } = useContext(VehicleContext);
   const { CreateExpenseType } = useContext(ExpenseContext);

@@ -3,7 +3,7 @@
 import { Crown, Fuel, CreditCard, Car } from "lucide-react";
 import { useEffect, useState } from "react";
 import TableTypeExpense from "./expenseType";
-import TableSkeleton from "./tableMenuConfig/skeleton";
+import TableSkeleton from "./tablePageConfig/skeleton";
 import TableIncomingType from "./incomingType";
 import TableVehicleType from "./vehicleType";
 import TableFuelType from "./fuelType";

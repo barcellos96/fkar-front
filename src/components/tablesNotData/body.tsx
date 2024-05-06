@@ -3,7 +3,7 @@ import { ElementType } from "react";
 
 interface Props {
   title: string;
-  actionButton: () => void;
+  actionButton?: () => void;
   icon: ElementType;
 }
 

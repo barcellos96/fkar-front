@@ -1,8 +1,8 @@
 "use client";
 
 import { Fuel, Pencil, Trash } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
-import TableSkeleton from "../tablePageConfig/skeleton";
+import { useContext, useEffect, useRef, useState } from "react";
+import TableSkeleton from "../../tablesNotData/skeleton";
 import TablePageConfig from "../tablePageConfig/table";
 import { FuelContext } from "@/providers/fuel";
 import { Modal } from "@/components/modals";
@@ -77,9 +77,9 @@ export default function TableFuelType({ title }: Props) {
         <TablePageConfig title={title}>
           {fuelType?.map((item, index) => (
             <tr className="border-b" key={index}>
-              <th className="font-normal py-5">{index + 1}</th>
-              <th className="font-normal">{item.fuel_name}</th>
-              <th className="flex justify-end py-5 gap-3">
+              <td className="font-normal py-5">{index + 1}</td>
+              <td className="font-normal">{item.fuel_name}</td>
+              <td className="flex justify-end py-5 gap-3">
                 <button
                   onClick={() => {
                     setOnModalUpdate(true);
@@ -96,55 +96,58 @@ export default function TableFuelType({ title }: Props) {
                   <Trash width={15} color="white" />
                 </button>
                 {onModal && selectedFuelType === item && (
-                  <div className="fixed z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-10 ">
-                    <Modal.Root>
-                      <Modal.Title
-                        title={typeModal + title}
-                        onClose={handleCloseModal}
-                      />
-                      {onModalUpdate ? (
-                        <div className="flex flex-col gap-2 font-normal my-3">
-                          <span className="text-lg font-semibold">
-                            {title}:
-                          </span>
-                          <Modal.Input
-                            icon={Fuel}
-                            type="text"
-                            id="fuel_name"
-                            value={modalData.name}
-                            onChange={(e) =>
-                              setModalData({
-                                name: e.target.value,
-                              })
-                            }
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                setLoading(true);
-                                handleSubmit();
+                  <div
+                    className="fixed z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-10 "
+                  >
+                  
+                    <Modal.Root onClose={handleCloseModal}>
+                        <Modal.Title
+                          title={typeModal + title}
+                          onClose={handleCloseModal}
+                        />
+                        {onModalUpdate ? (
+                          <div className="flex flex-col gap-2 font-normal my-3">
+                            <span className="text-lg font-semibold">
+                              {title}:
+                            </span>
+                            <Modal.Input
+                              icon={Fuel}
+                              type="text"
+                              id="fuel_name"
+                              value={modalData.name}
+                              onChange={(e) =>
+                                setModalData({
+                                  name: e.target.value,
+                                })
                               }
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <span className="my-5 font-light text-lg">
-                          {selectedFuelType.fuel_name}
-                        </span>
-                      )}
-                      <Modal.Actions
-                        onSubmitAction={() => {
-                          setLoading(true);
-                          handleSubmit();
-                        }}
-                        nameButtonSubmit={typeModal}
-                        bgColorSubmit={colorModal}
-                        loading={loading}
-                        onCancelAction={handleCloseModal}
-                      />
-                    </Modal.Root>
-                  </div>
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  setLoading(true);
+                                  handleSubmit();
+                                }
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <span className="my-5 font-light text-lg">
+                            {selectedFuelType.fuel_name}
+                          </span>
+                        )}
+                        <Modal.Actions
+                          onSubmitAction={() => {
+                            setLoading(true);
+                            handleSubmit();
+                          }}
+                          nameButtonSubmit={typeModal}
+                          bgColorSubmit={colorModal}
+                          loading={loading}
+                          onCancelAction={handleCloseModal}
+                        />
+                      </Modal.Root>
+                    </div>
                 )}
-              </th>
+              </td>
             </tr>
           ))}
         </TablePageConfig>

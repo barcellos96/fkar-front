@@ -6,6 +6,10 @@ import {
   BadgeHelp,
   Settings,
   Bell,
+  Fuel,
+  Wallet,
+  Wrench,
+  AlarmClock,
 } from "lucide-react";
 
 export const navigationMain = [
@@ -14,10 +18,7 @@ export const navigationMain = [
     icon: ListIcon,
     path: "/dashboard",
   },
-  {
-    name: "Adicionar",
-    icon: Plus,
-  },
+
   {
     name: "Meus Veiculos",
     icon: Car,
@@ -45,5 +46,33 @@ export const navigationSecond = [
     name: "Suporte",
     icon: BadgeHelp,
     path: "/suporte",
+  },
+];
+
+export const navigationPoppoverSideBar = [
+  {
+    name: "Abastecimento",
+    icon: Fuel,
+    path: "/dashboard/abastecimento",
+  },
+  {
+    name: "Despesas",
+    icon: Wallet,
+    path: "/dashboard/despesas",
+  },
+  {
+    name: "Manutenção",
+    icon: Wrench,
+    path: "/dashboard/manutencao",
+  },
+  {
+    name: "Receita",
+    icon: Wallet,
+    path: "/dashboard/receita",
+  },
+  {
+    name: "Lembretes",
+    icon: AlarmClock,
+    path: "/dashboard/lembretes",
   },
 ];

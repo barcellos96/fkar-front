@@ -79,7 +79,6 @@ export const AddressProvider = ({ children }: ICihldrenReact) => {
       headers: { Authorization: `bearer ${token}` },
     };
 
-    console.log("ok");
 
     const response = await api
       .post("/user/address", data, config)
@@ -106,7 +105,6 @@ export const AddressProvider = ({ children }: ICihldrenReact) => {
         setApiCep(res.data);
       })
       .catch((err) => {
-        console.log("err ", err.response.data.message);
         return err;
       });
 

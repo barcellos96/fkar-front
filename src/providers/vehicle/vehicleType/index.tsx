@@ -41,9 +41,11 @@ interface ICihldrenReact {
   children: ReactNode;
 }
 
-export const VehicleContext = createContext<IVehicleData>({} as IVehicleData);
+export const VehicleTypeContext = createContext<IVehicleData>(
+  {} as IVehicleData
+);
 
-export const VehicleProvider = ({ children }: ICihldrenReact) => {
+export const VehicleTypeProvider = ({ children }: ICihldrenReact) => {
   const [vehicleType, setVehicleType] = useState<VehicleTypeProps[] | null>(
     null
   );
@@ -104,7 +106,6 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
     const response = await api
       .delete(`/vehicle/type/${id}`, config)
       .then((res) => {
-        console.log("res ", res.data);
         setVehicleType(null);
         setValue(res.data.response);
         toast.success(res.data.response.message, {
@@ -144,7 +145,7 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
   };
 
   return (
-    <VehicleContext.Provider
+    <VehicleTypeContext.Provider
       value={{
         vehicleType,
         GetVehicleType,
@@ -155,6 +156,6 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
       }}
     >
       {children}
-    </VehicleContext.Provider>
+    </VehicleTypeContext.Provider>
   );
 };

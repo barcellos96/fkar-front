@@ -3,9 +3,8 @@
 import { api } from "@/service/api";
 import { useRouter } from "next/navigation";
 import { setCookie } from "nookies";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode } from "react";
 import { toast } from "sonner";
-import { UserContext } from "../user";
 
 type LoginProps = {
   email: string;

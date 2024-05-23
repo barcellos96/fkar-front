@@ -1,17 +1,17 @@
 import LayoutDashboard from "@/components/layout/layoutDashboard";
-import ReminderData from "@/components/reminder/reminderData";
+import ExpenseRefuelingCreate from "@/components/refueling/refuelingCreate";
 
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Lembretes - Fkar Plataforma",
+  title: "Criar Abastecimento - Fkar Plataforma",
   description: "Gestão de veículos",
 };
 
-export default function Reminder() {
+export default function RefuelingCreate() {
   return (
     <LayoutDashboard>
-      <ReminderData />
+      <ExpenseRefuelingCreate />
     </LayoutDashboard>
   );
 }

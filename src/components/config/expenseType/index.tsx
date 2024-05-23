@@ -1,9 +1,9 @@
 "use client";
 
-import { ExpenseContext } from "@/providers/expense";
+import { ExpenseTypeContext } from "@/providers/expense/expenseType";
 import { Pencil, Trash, Wallet } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
-import TableSkeleton from "../tablePageConfig/skeleton";
+import { useContext, useEffect, useRef, useState } from "react";
+import TableSkeleton from "../../tablesNotData/skeleton";
 import TablePageConfig from "../tablePageConfig/table";
 import { Modal } from "@/components/modals";
 
@@ -24,7 +24,7 @@ export default function TableTypeExpense({ title }: Props) {
     value,
     DeleteExpenseType,
     UpdateExpenseType,
-  } = useContext(ExpenseContext);
+  } = useContext(ExpenseTypeContext);
 
   const [onModal, setOnModal] = useState(false);
   const [onModalUpdate, setOnModalUpdate] = useState(false);
@@ -117,8 +117,8 @@ export default function TableTypeExpense({ title }: Props) {
                   <Trash width={15} color="white" />
                 </button>
                 {onModal && selectedExpenseType === item && (
-                  <div className="fixed z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-10 ">
-                    <Modal.Root>
+                  <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50">
+                    <Modal.Root onClose={handleCloseModal}>
                       <Modal.Title
                         title={typeModal + title}
                         onClose={handleCloseModal}

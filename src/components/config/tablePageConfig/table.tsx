@@ -1,14 +1,23 @@
 "use client";
 
-import { ElementType, FC, ReactNode, useContext, useState } from "react";
+import {
+  ElementType,
+  FC,
+  ReactNode,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import { Car, Fuel, Plus, Wallet } from "lucide-react";
 import { Modal } from "../../modals";
 import { IncomingContext } from "@/providers/incoming";
-import { VehicleContext } from "@/providers/vehicle";
-import { ExpenseContext } from "@/providers/expense";
+import { VehicleTypeContext } from "@/providers/vehicle/vehicleType";
+import { ExpenseTypeContext } from "@/providers/expense/expenseType";
 import { FuelContext } from "@/providers/fuel";
 import { NotDataTable } from "@/components/tablesNotData";
 import HeaderComposition from "@/components/header/headerComposition";
+
+import IconConfig from "../../../assets/config-add.png";
 
 interface TableProps {
   title: string;
@@ -17,8 +26,8 @@ interface TableProps {
 
 export default function TablePageConfig({ title, children }: TableProps) {
   const { CreateIncomingType } = useContext(IncomingContext);
-  const { CreateVehicleType } = useContext(VehicleContext);
-  const { CreateExpenseType } = useContext(ExpenseContext);
+  const { CreateVehicleType } = useContext(VehicleTypeContext);
+  const { CreateExpenseType } = useContext(ExpenseTypeContext);
   const { CreateFuelType } = useContext(FuelContext);
 
   const [onModal, setOnModal] = useState(false);
@@ -78,6 +87,7 @@ export default function TablePageConfig({ title, children }: TableProps) {
               <NotDataTable.Heade text="Ação" />
             </div>
             <NotDataTable.Body
+              img={IconConfig}
               actionButton={handleOpenModal}
               icon={Plus}
               title={title}
@@ -99,8 +109,8 @@ export default function TablePageConfig({ title, children }: TableProps) {
       )}
 
       {onModal && (
-        <div className="fixed z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50 ">
-          <Modal.Root>
+        <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50">
+          <Modal.Root onClose={handleCloseModal}>
             <Modal.Title title={title} onClose={handleCloseModal} />
             <Modal.Input
               icon={Icon}

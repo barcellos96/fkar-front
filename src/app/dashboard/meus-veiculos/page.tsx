@@ -1,5 +1,5 @@
 import LayoutDashboard from "@/components/layout/layoutDashboard";
-import ReminderData from "@/components/reminder/reminderData";
+import VehicleData from "@/components/vehicle/vehicleData";
 
 import { Metadata } from "next";
 
@@ -8,10 +8,10 @@ export const metadata: Metadata = {
   description: "Gestão de veículos",
 };
 
-export default function Reminder() {
+export default function Vehicle() {
   return (
     <LayoutDashboard>
-      <ReminderData />
+      <VehicleData />
     </LayoutDashboard>
   );
 }

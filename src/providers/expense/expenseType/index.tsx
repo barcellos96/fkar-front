@@ -44,9 +44,11 @@ interface ICihldrenReact {
   children: ReactNode;
 }
 
-export const ExpenseContext = createContext<IExpenseData>({} as IExpenseData);
+export const ExpenseTypeContext = createContext<IExpenseData>(
+  {} as IExpenseData
+);
 
-export const ExpenseProvider = ({ children }: ICihldrenReact) => {
+export const ExpenseTypeProvider = ({ children }: ICihldrenReact) => {
   const [expenseType, setExpenseType] = useState<ExpenseTypeProps[] | null>(
     null
   );
@@ -106,7 +108,6 @@ export const ExpenseProvider = ({ children }: ICihldrenReact) => {
     const response = await api
       .delete(`/expense/type/${id}`, config)
       .then((res) => {
-        console.log("res ", res.data.response);
         setExpenseType(null);
         setValue(res.data.response);
         toast.success(res.data.response.message, {
@@ -114,7 +115,6 @@ export const ExpenseProvider = ({ children }: ICihldrenReact) => {
         });
       })
       .catch((err) => {
-        console.log("err ", err);
         toast.error(err.response.data.message, {
           position: "top-right",
         });
@@ -140,7 +140,6 @@ export const ExpenseProvider = ({ children }: ICihldrenReact) => {
         toast.warning("Tipo de Despesa atualizada!", { position: "top-right" });
       })
       .catch((err) => {
-        console.log("err ", err);
         toast.error(err.response.data.message, {
           position: "top-right",
         });
@@ -151,7 +150,7 @@ export const ExpenseProvider = ({ children }: ICihldrenReact) => {
   };
 
   return (
-    <ExpenseContext.Provider
+    <ExpenseTypeContext.Provider
       value={{
         expenseType,
         GetExpenseType,
@@ -162,6 +161,6 @@ export const ExpenseProvider = ({ children }: ICihldrenReact) => {
       }}
     >
       {children}
-    </ExpenseContext.Provider>
+    </ExpenseTypeContext.Provider>
   );
 };

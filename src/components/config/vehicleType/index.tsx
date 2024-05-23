@@ -1,10 +1,10 @@
 "use client";
 
-import { Car, Pencil, Trash } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
-import TableSkeleton from "../tablePageConfig/skeleton";
+import { Car, DivideCircle, Pencil, Trash } from "lucide-react";
+import { useContext, useEffect, useRef, useState } from "react";
+import TableSkeleton from "../../tablesNotData/skeleton";
 import TablePageConfig from "../tablePageConfig/table";
-import { VehicleContext } from "@/providers/vehicle";
+import { VehicleTypeContext } from "@/providers/vehicle/vehicleType";
 import { Modal } from "@/components/modals";
 
 interface Props {
@@ -23,7 +23,7 @@ export default function TableVehicleType({ title }: Props) {
     value,
     DeleteVehicleType,
     UpdateVehicleType,
-  } = useContext(VehicleContext);
+  } = useContext(VehicleTypeContext);
   const [onModal, setOnModal] = useState(false);
   const [onModalUpdate, setOnModalUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -104,8 +104,8 @@ export default function TableVehicleType({ title }: Props) {
                   <Trash width={15} color="white" />
                 </button>
                 {onModal && selectedVehicleType === item && (
-                  <div className="fixed z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-10 ">
-                    <Modal.Root>
+                  <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50">
+                    <Modal.Root onClose={handleCloseModal}>
                       <Modal.Title
                         title={typeModal + title}
                         onClose={handleCloseModal}

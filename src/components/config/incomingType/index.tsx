@@ -1,8 +1,8 @@
 "use client";
 
 import { Pencil, Trash, Wallet } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
-import TableSkeleton from "../tablePageConfig/skeleton";
+import { useContext, useEffect, useRef, useState } from "react";
+import TableSkeleton from "../../tablesNotData/skeleton";
 import TablePageConfig from "../tablePageConfig/table";
 import { IncomingContext } from "@/providers/incoming";
 import { Modal } from "@/components/modals";
@@ -106,8 +106,8 @@ export default function TableIncomingType({ title }: Props) {
                   <Trash width={15} color="white" />
                 </button>
                 {onModal && selectedIncomingType === item && (
-                  <div className="fixed z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-10 ">
-                    <Modal.Root>
+                  <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50">
+                    <Modal.Root onClose={handleCloseModal}>
                       <Modal.Title
                         title={typeModal + title}
                         onClose={handleCloseModal}

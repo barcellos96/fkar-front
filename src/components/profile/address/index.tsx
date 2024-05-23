@@ -25,7 +25,6 @@ export default function Address() {
     setLoadingPage(true);
     const dataFetch = async () => {
       if (address === null) {
-        console.log("address ", address);
         await GetAddress().finally(() => {
           setLoadingPage(false);
         });

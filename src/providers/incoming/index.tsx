@@ -114,7 +114,6 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
     const response = await api
       .delete(`/incoming-type/${id}`, config)
       .then((res) => {
-        console.log("res ", res.data);
         setIncomingType(null);
         setValue(res.data);
         toast.success(res.data.response.message, { position: "top-right" });

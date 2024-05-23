@@ -18,7 +18,7 @@ export default function ModalActions({
   onCancelAction,
 }: ModalActionsProps) {
   return (
-    <div className="flex flex-row justify-start items-center text-center font-light gap-5">
+    <div className="flex flex-row justify-start items-center text-center font-light gap-5 mb-2">
       <div
         className={`${bgColorSubmit} flex flex-row gap-2 items-center rounded-lg px-2 py-1 `}
       >
@@ -26,13 +26,16 @@ export default function ModalActions({
         <button
           onClick={onSubmitAction}
           disabled={loading}
-          className={`uppercase ${bgColorSubmit} text-white`}
+          className={`uppercase ${bgColorSubmit} text-white text-base`}
         >
           {loading ? <Loading color="white" /> : nameButtonSubmit}
         </button>
       </div>
 
-      <button className="uppercase text-zinc-400" onClick={onCancelAction}>
+      <button
+        className="uppercase text-zinc-400 text-base"
+        onClick={onCancelAction}
+      >
         Cancel
       </button>
     </div>

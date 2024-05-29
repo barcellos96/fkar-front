@@ -38,7 +38,7 @@ export const navigationMain = [
 
 export const navigationSecond = [
   {
-    name: "configuração",
+    name: "Configurações",
     icon: Settings,
     path: "/dashboard/config",
   },
@@ -51,7 +51,7 @@ export const navigationSecond = [
 
 export const navigationPoppoverSideBar = [
   {
-    name: "Abastecimento",
+    name: "Abastecimentos",
     icon: Fuel,
     path: "/dashboard/abastecimento",
   },
@@ -61,14 +61,14 @@ export const navigationPoppoverSideBar = [
     path: "/dashboard/despesas",
   },
   {
-    name: "Manutenção",
+    name: "Manutenções",
     icon: Wrench,
-    path: "/dashboard/manutencao",
+    path: "/dashboard/manutencoes",
   },
   {
-    name: "Receita",
+    name: "Receitas",
     icon: Wallet,
-    path: "/dashboard/receita",
+    path: "/dashboard/receitas",
   },
   {
     name: "Lembretes",

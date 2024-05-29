@@ -1,5 +1,5 @@
 import LayoutDashboard from "@/components/layout/layoutDashboard";
-import RefuelingData from "@/components/refueling/refuelingData";
+import RefuelingData from "@/components/expenses/refueling/refuelingData";
 
 import { Metadata } from "next";
 

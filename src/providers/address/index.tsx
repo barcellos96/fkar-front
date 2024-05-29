@@ -101,7 +101,6 @@ export const AddressProvider = ({ children }: ICihldrenReact) => {
     const response = await api_cep
       .get(`/${cep}/json`)
       .then((res) => {
-        console.log(res.data);
         setApiCep(res.data);
       })
       .catch((err) => {

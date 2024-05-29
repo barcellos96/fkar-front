@@ -2,13 +2,14 @@
 
 import { api } from "@/service/api";
 import { parseCookies } from "nookies";
-import { createContext, ReactNode, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useState,
+} from "react";
 import { toast } from "sonner";
-
-interface VehicleTypeProps {
-  id: string;
-  name: string;
-}
 
 interface VehicleCreateProps {
   vehicle_type_id: string;
@@ -55,6 +56,9 @@ interface IVehicleData {
 
   vehicle?: PromiseVehicleProps[] | null;
   value?: PromiseVehicleProps;
+
+  setSelectedVehicleId: Dispatch<SetStateAction<string>>;
+  selectedVehicleId: string;
 }
 
 interface ICihldrenReact {
@@ -65,6 +69,7 @@ export const VehicleContext = createContext<IVehicleData>({} as IVehicleData);
 
 export const VehicleProvider = ({ children }: ICihldrenReact) => {
   const [vehicle, setVehicle] = useState<PromiseVehicleProps[] | null>(null);
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string>("");
   const [value, setValue] = useState();
 
   const CreateVehicle = async (
@@ -166,6 +171,8 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
         GetVehicle,
         DeleteVehicle,
         UpdateVehicle,
+        setSelectedVehicleId,
+        selectedVehicleId,
         value,
         vehicle,
       }}

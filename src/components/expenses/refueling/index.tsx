@@ -1,17 +1,18 @@
 "use client";
 
-import { Fuel, FuelIcon, Plus } from "lucide-react";
-import HeaderComposition from "../header/headerComposition";
+import { Fuel, Plus } from "lucide-react";
+import HeaderComposition from "../../header/headerComposition";
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { NotDataTable } from "../tablesNotData";
-import IconAlarm from "../../assets/icon-alarm-calendar.png";
+import { NotDataTable } from "../../tablesNotData";
+import IconAlarm from "../../../assets/icon-alarm-calendar.png";
 
 interface Props {
-  children: ReactNode[];
+  children?: ReactNode[];
+  pagination?: ReactNode;
 }
 
-export default function RefulingLayout({ children }: Props) {
+export default function RefulingLayout({ children, pagination }: Props) {
   const { push } = useRouter();
 
   const handleSubmit = () => {
@@ -26,12 +27,14 @@ export default function RefulingLayout({ children }: Props) {
         nameButton="Novo Abastecimento"
         typeSubmit="button"
         handleSubmit={handleSubmit}
+        borderColor="border-orange-500"
       />
-      {children.length === 0 ? (
+      {children?.length === 0 ? (
         <div className="flex flex-col items-center justify-center pb-5">
           <NotDataTable.Root>
             <div className="flex items-center justify-between text-base uppercase font-bold bg-gray-50 w-full">
               <NotDataTable.Heade text="#" />
+              <NotDataTable.Heade text="Descrição" />
               <NotDataTable.Heade text="Data" />
               <NotDataTable.Heade text="Combustível" />
               <NotDataTable.Heade text="Preço / L" />
@@ -49,24 +52,29 @@ export default function RefulingLayout({ children }: Props) {
           </NotDataTable.Root>
         </div>
       ) : (
-        <table className="table-auto w-full">
-          <thead>
-            <tr className="hidden slg:table-row text-left">
-              <th className="py-3">#</th>
-              <th className="py-3">Data</th>
-              <th className="py-3 ">Combustível</th>
-              <th className="py-3 ">Preço / L</th>
-              <th className="py-3 ">Litros</th>
-              <th className="py-3">Total</th>
-              <th className="py-3 hidden lg:table-cell">Hodometro</th>
+        <div>
+          <table className="table-auto w-full">
+            <thead>
+              <tr className="hidden slg:table-row text-left">
+                <th className="py-3">#</th>
+                <th className="py-3">Descrição</th>
+                <th className="py-3">Data</th>
+                <th className="py-3 ">Combustível</th>
+                <th className="py-3 ">Preço / L</th>
+                <th className="py-3 ">Litros</th>
+                <th className="py-3">Total</th>
+                <th className="py-3 hidden lg:table-cell">Hodometro</th>
 
-              {/* <th className="py-3">Descrição</th> */}
-              <th className="text-right py-3 pr-8">{/* Ação */}</th>
-            </tr>
-          </thead>
+                {/* <th className="py-3">Descrição</th> */}
+                <th className="text-right py-3 pr-8">{/* Ação */}</th>
+              </tr>
+            </thead>
 
-          <tbody className="font-light text-base">{children}</tbody>
-        </table>
+            <tbody className="font-light text-base">{children}</tbody>
+          </table>
+
+          {pagination}
+        </div>
       )}
     </div>
   );

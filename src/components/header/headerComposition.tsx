@@ -7,6 +7,7 @@ interface Props {
   buttonVisible?: boolean;
   nameButton?: string | JSX.Element;
   icon?: ElementType;
+  borderColor?: string;
 }
 
 export default function HeaderComposition({
@@ -16,13 +17,14 @@ export default function HeaderComposition({
   typeSubmit,
   icon: Icon,
   buttonVisible = true,
+  borderColor = "border-green-700",
 }: Props) {
   return (
     <section className="flex items-center justify-between mb-5">
       {Icon ? (
         <div className="flex gap-3">
           <Icon width={25} height={25} />
-          <span className="border-l-2 border-green-700 px-2 text-lg uppercase">
+          <span className={`border-l-2 ${borderColor} px-2 text-lg uppercase`}>
             {title}
           </span>
         </div>

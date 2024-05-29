@@ -1,17 +1,17 @@
+import ExpenseVehicleCreate from "@/components/expenses/expenseVehicle/expenseVehicleCreate";
 import LayoutDashboard from "@/components/layout/layoutDashboard";
-import ExpenseRefuelingCreate from "@/components/expenses/refueling/refuelingCreate";
 
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Criar Abastecimento - Fkar Plataforma",
+  title: "Criar Despesa - Fkar Plataforma",
   description: "Gestão de veículos",
 };
 
 export default function RefuelingCreate() {
   return (
     <LayoutDashboard>
-      <ExpenseRefuelingCreate />
+      <ExpenseVehicleCreate />
     </LayoutDashboard>
   );
 }

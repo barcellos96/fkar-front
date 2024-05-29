@@ -152,7 +152,7 @@ export default function MyAccount() {
               <span className="text-sm ml-1 mt-1.5 text-red-300">
                 {errors.email.message}
               </span>
-            )}{" "}
+            )}
           </div>
           {/* fim do formulario */}
         </form>

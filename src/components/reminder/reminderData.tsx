@@ -128,7 +128,6 @@ export default function ReminderData() {
       dataToSend = rest;
     }
 
-    console.log("dataToSend ", dataToSend);
 
     if (selectedReminder) {
       onModalUpdate
@@ -242,7 +241,7 @@ export default function ReminderData() {
                 </span>
                 {item.km_reminder}
               </td>
-              <td className="slg:hidden flex gap-2  font-light text-base slg:font-normal min-w-36 ">
+              <td className="slg:hidden flex gap-2 font-light text-base slg:font-normal min-w-36 ">
                 <span className="slg:hidden mt-1">
                   {item.description ? (
                     <MessageSquareText width={15} height={15} />
@@ -251,7 +250,7 @@ export default function ReminderData() {
 
                 {item.description}
               </td>
-              <td className="hidden slg:flex gap-2 py-4 px-2  justify-end">
+              <td className="hidden slg:flex gap-2 py-4 px-2 justify-end">
                 <button
                   onClick={() => {
                     setOnModalUpdate(true);

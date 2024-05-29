@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Modal } from "../modals";
 import { VehicleTypeContext } from "@/providers/vehicle/vehicleType";
+import { formatKm } from "@/hooks/km";
 
 interface VehicleProps {
   id: string;
@@ -75,7 +76,6 @@ export default function VehicleData() {
     setOnModal(true);
   };
 
-  
   const handleCloseModal = () => {
     setOnModalUpdate(false);
     setOnModalDelete(false);
@@ -173,6 +173,15 @@ export default function VehicleData() {
     }
   };
 
+  // Função para formatar o número com pontos como separadores de milhares
+  const formatNumber = (value: string) => {
+    // Remove qualquer coisa que não seja número
+    value = value.replace(/\D/g, "");
+    // Adiciona pontos como separadores de milhares
+    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return value;
+  };
+
   return (
     <>
       {!vehicle ? (
@@ -250,7 +259,9 @@ export default function VehicleData() {
               </td>
               <td className="flex gap-2 justify-start text-start slg:table-cell w-full slg:w-auto item-start slg:px-2">
                 <span>{item.year}</span>
-                <span className="slg:hidden">- {item.km}</span>
+                <span className="slg:hidden">
+                  - {formatKm(Number(item.km))}
+                </span>
               </td>
               <td className="hidden slg:flex gap-2 justify-end py-4">
                 <button
@@ -328,7 +339,9 @@ export default function VehicleData() {
                   </span>
                   <span className="flex items-center  gap-1 font-semibold">
                     km:
-                    <span className=" font-light">{selectedVehicle.km}</span>
+                    <span className=" font-light">
+                      {formatKm(selectedVehicle.km)}
+                    </span>
                   </span>
                 </section>
               ) : undefined}
@@ -475,13 +488,20 @@ export default function VehicleData() {
                   </span>
                   <Modal.Input
                     icon={Map}
-                    type="number"
+                    type="text"
                     id="km"
                     placeholder="75.500"
                     required
-                    value={modalData.km !== 0 ? modalData.km : ""}
+                    value={
+                      modalData.km === 0
+                        ? ""
+                        : formatNumber(modalData.km.toString())
+                    }
                     onChange={(e) =>
-                      setModalData({ ...modalData, km: Number(e.target.value) })
+                      setModalData({
+                        ...modalData,
+                        km: Number(e.target.value.replace(/\D/g, "")), // Armazenando apenas números no estado
+                      })
                     }
                   />
                 </section>

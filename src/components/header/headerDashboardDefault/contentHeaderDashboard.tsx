@@ -8,7 +8,8 @@ import HeaderContentSkeleton from "./skeleton";
 import { parseCookies, setCookie } from "nookies";
 
 export default function Content() {
-  const { GetVehicle, vehicle, value } = useContext(VehicleContext);
+  const { GetVehicle, vehicle, value, setSelectedVehicleId } =
+    useContext(VehicleContext);
 
   const [vehicleId, setVehicleId] = useState<string>("");
   const [plate, setPlate] = useState<string | null | undefined>("");
@@ -19,12 +20,13 @@ export default function Content() {
     if (vehicle === null) {
       GetVehicle();
     }
-  }, [value]);
+  }, [value, GetVehicle]);
 
   useEffect(() => {
     const cookies = parseCookies();
     const savedVehicleId = cookies["vehicle:selectedVehicleId"];
-    if (savedVehicleId) {
+    const selectedVehicle = vehicle?.find((item) => item.id === vehicleId);
+    if (savedVehicleId && selectedVehicle) {
       setVehicleId(savedVehicleId);
     } else {
       if (vehicle && vehicle.length > 0) {
@@ -39,18 +41,23 @@ export default function Content() {
         }, vehicle[0]);
 
         setVehicleId(oldestDate.id);
-        setCookie({}, "vehicle:selectedVehicleId", oldestDate.id);
+        setSelectedVehicleId(oldestDate.id);
+        setCookie({}, "vehicle:selectedVehicleId", oldestDate.id, {
+          path: "/",
+          maxAge: 30 * 24 * 60 * 60,
+        }); // Expira em 30 dias);
       }
     }
   }, [vehicle]);
 
-  // Atualizar o vehicleId nos cookies sempre que ele for alterado
+  // useEffect to update cookies whenever vehicleId changes
   useEffect(() => {
     if (vehicleId) {
       setCookie({}, "vehicle:selectedVehicleId", vehicleId, {
         path: "/",
         maxAge: 30 * 24 * 60 * 60,
-      }); // Expira em 30 dias
+      });
+      setSelectedVehicleId(vehicleId); //nao remover - caso remover nao irá alterar lista de dados do veiculo selecionado
     }
   }, [vehicleId]);
 
@@ -71,7 +78,7 @@ export default function Content() {
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = event.target.options[event.target.selectedIndex];
-    setVehicleId(selectedOption.id);
+    setVehicleId(selectedOption.value);
 
     setTimeout(() => {
       setMenuOpen(false);

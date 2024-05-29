@@ -1,12 +1,13 @@
 "use client";
 
-import { Crown, Fuel, CreditCard, Car } from "lucide-react";
+import { Crown, Fuel, CreditCard, Car, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import TableTypeExpense from "./expenseType";
 import TableSkeleton from "../tablesNotData/skeleton";
 import TableIncomingType from "./incomingType";
 import TableVehicleType from "./vehicleType";
 import TableFuelType from "./fuelType";
+import TableExpenseService from "./expenseService";
 
 const tabList = [
   {
@@ -21,17 +22,21 @@ const tabList = [
   },
   {
     id: 3,
+    name: "Tipo de Serviço",
+    Icon: Wrench,
+  },
+  {
+    id: 4,
     name: "Tipo de Receita",
     Icon: CreditCard,
   },
   {
-    id: 4,
+    id: 5,
     name: "Tipo de Combustível",
     Icon: Fuel,
   },
-
   {
-    id: 5,
+    id: 6,
     name: "Tipo de Veículo",
     Icon: Car,
   },
@@ -47,7 +52,7 @@ export default function ConfigLayout() {
   return (
     <div className="grid grid-cols-profileLayoutSm slg:grid-cols-profileLayout py-3 rounded-lg gap-4">
       {/* Left side */}
-      <div className="flex flex-col py-5 bg-white my-4 slg:my-0 rounded-xl shadow-lg max-h-64">
+      <div className="flex flex-col py-5 bg-white my-4 slg:my-0 rounded-xl shadow-lg max-h-72">
         {tabList.map(({ id, name, Icon }) => {
           return (
             <button
@@ -72,9 +77,10 @@ export default function ConfigLayout() {
         <div className="bg-white rounded-xl shadow-lg p-5">
           {active === tabList[0].name && <span>Planos FKar</span>}
           {active === tabList[1].name && <TableTypeExpense title={active} />}
-          {active === tabList[2].name && <TableIncomingType title={active} />}
-          {active === tabList[3].name && <TableFuelType title={active} />}
-          {active === tabList[4].name && <TableVehicleType title={active} />}
+          {active === tabList[2].name && <TableExpenseService title={active} />}
+          {active === tabList[3].name && <TableIncomingType title={active} />}
+          {active === tabList[4].name && <TableFuelType title={active} />}
+          {active === tabList[5].name && <TableVehicleType title={active} />}
         </div>
       )}
     </div>

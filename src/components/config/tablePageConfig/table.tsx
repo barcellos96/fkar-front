@@ -5,10 +5,10 @@ import {
   FC,
   ReactNode,
   useContext,
-  useRef,
+  useEffect,
   useState,
 } from "react";
-import { Car, Fuel, Plus, Wallet } from "lucide-react";
+import { Car, Fuel, Plus, Wallet, Wrench } from "lucide-react";
 import { Modal } from "../../modals";
 import { IncomingContext } from "@/providers/incoming";
 import { VehicleTypeContext } from "@/providers/vehicle/vehicleType";
@@ -18,6 +18,7 @@ import { NotDataTable } from "@/components/tablesNotData";
 import HeaderComposition from "@/components/header/headerComposition";
 
 import IconConfig from "../../../assets/config-add.png";
+import { ExpenseServiceContext } from "@/providers/expense/expenseService";
 
 interface TableProps {
   title: string;
@@ -26,12 +27,23 @@ interface TableProps {
 
 export default function TablePageConfig({ title, children }: TableProps) {
   const { CreateIncomingType } = useContext(IncomingContext);
-  const { CreateVehicleType } = useContext(VehicleTypeContext);
+  const { CreateVehicleType, GetVehicleType, vehicleType } =
+    useContext(VehicleTypeContext);
   const { CreateExpenseType } = useContext(ExpenseTypeContext);
   const { CreateFuelType } = useContext(FuelContext);
+  const { CreateExpenseService } = useContext(ExpenseServiceContext);
+  const [selectedVehicleTypes, setSelectedVehicleTypes] = useState<string[]>(
+    []
+  );
 
   const [onModal, setOnModal] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (vehicleType === null) {
+      GetVehicleType();
+    }
+  }, []);
 
   const handleCloseModal = () => setOnModal(false);
   const handleOpenModal = () => setOnModal(true);
@@ -53,6 +65,11 @@ export default function TablePageConfig({ title, children }: TableProps) {
     } else if (title === "Tipo de Veículo") {
       setLoading(true);
       await CreateVehicleType({ type: modalData.name });
+    } else if (title === "Tipo de Serviço") {
+      await CreateExpenseService({
+        name: modalData.name,
+        vehicleTypeIds: selectedVehicleTypes,
+      });
     }
   };
 
@@ -67,7 +84,17 @@ export default function TablePageConfig({ title, children }: TableProps) {
       return <Fuel className={style} />;
     } else if (title === "Tipo de Veículo") {
       return <Car className={style} />;
+    } else if (title === "Tipo de Serviço") {
+      return <Wrench className={style} />;
     }
+  };
+
+  const handleCheckboxChange = (type: string) => {
+    setSelectedVehicleTypes((prevSelected) =>
+      prevSelected.includes(type)
+        ? prevSelected.filter((item) => item !== type)
+        : [...prevSelected, type]
+    );
   };
 
   return (
@@ -100,6 +127,7 @@ export default function TablePageConfig({ title, children }: TableProps) {
             <tr>
               <th className="py-3">#</th>
               <th className="py-3">Nome</th>
+              {title === "Tipo de Serviço" && <th>Tipo de veículos</th>}
               <th className="text-right py-3">Ação</th>
             </tr>
           </thead>
@@ -112,13 +140,39 @@ export default function TablePageConfig({ title, children }: TableProps) {
         <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50">
           <Modal.Root onClose={handleCloseModal}>
             <Modal.Title title={title} onClose={handleCloseModal} />
+
+            <div>
+              {title === "Tipo de Serviço" && (
+                <div>
+                  <span className="flex font-semibold">
+                    A qual tipo de veiculo pertence?*
+                  </span>
+                  <span className="flex mb-2 font-extralight text-sm">
+                    *selecione ao menos 1 (ou cadastre mais em Tipo de Veiculos)
+                  </span>
+                </div>
+              )}
+
+              {title === "Tipo de Serviço" &&
+                vehicleType?.map((item, index) => (
+                  <section className="flex gap-1" key={index}>
+                    <input
+                      type="checkbox"
+                      value={item.id}
+                      onChange={() => handleCheckboxChange(item.id)}
+                    />
+                    <label>{item.type}</label>
+                  </section>
+                ))}
+            </div>
+
             <Modal.Input
               icon={Icon}
               type="text"
-              id="incoming_type_name"
               value={modalData.name}
               onChange={(e) => setModalData({ name: e.target.value })}
             />
+
             <Modal.Actions
               onSubmitAction={() => {
                 handleSubmit().finally(() => {

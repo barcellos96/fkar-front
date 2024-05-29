@@ -27,8 +27,9 @@ export default function VehicleLayout({ children }: Props) {
     title: "",
     brand: "",
     model: "",
+    plate: "",
     year: Number(""),
-    km: 0,
+    km: Number(""),
   });
 
   const [checkErrors, setCheckErrors] = useState(false); // Estado para controlar a verificação de erros
@@ -39,6 +40,7 @@ export default function VehicleLayout({ children }: Props) {
       !modalData.title ||
       !modalData.brand ||
       !modalData.model ||
+      !modalData.plate ||
       !modalData.year
     );
   };
@@ -64,6 +66,7 @@ export default function VehicleLayout({ children }: Props) {
           title: "",
           brand: "",
           model: "",
+          plate: "",
           year: Number(""),
           km: Number(""),
         });
@@ -80,6 +83,15 @@ export default function VehicleLayout({ children }: Props) {
   if (!children) {
     return <TableSkeleton />;
   }
+
+  // Função para formatar o número com pontos como separadores de milhares
+  const formatNumber = (value: string) => {
+    // Remove qualquer coisa que não seja número
+    value = value.replace(/\D/g, "");
+    // Adiciona pontos como separadores de milhares
+    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return value;
+  };
 
   return (
     <div className="w-full rounded-xl gap-4 px-6 py-5 mt-3 mb-5 shadow-lg bg-white">
@@ -106,7 +118,7 @@ export default function VehicleLayout({ children }: Props) {
             </div>
             <NotDataTable.Body
               img={AddCar}
-              // actionButton={handleOpenModal}
+              actionButton={handleOpenModal}
               icon={Plus}
               title="Veículo"
             />
@@ -201,6 +213,26 @@ export default function VehicleLayout({ children }: Props) {
 
               <section className="flex flex-col gap-1">
                 <span className="font-semibold text-sm uppercase ms-1">
+                  Placa: *
+                </span>
+                <Modal.Input
+                  icon={Text}
+                  id="plate"
+                  placeholder="Placa do Veículo"
+                  value={modalData.plate}
+                  onChange={(e) =>
+                    setModalData({ ...modalData, plate: e.target.value })
+                  }
+                  errorMessage={
+                    checkErrors && !modalData.plate
+                      ? "Obrigatório preencher: Placa"
+                      : undefined
+                  }
+                />
+              </section>
+
+              <section className="flex flex-col gap-1">
+                <span className="font-semibold text-sm uppercase ms-1">
                   Marca: *
                 </span>
                 <Modal.Input
@@ -271,13 +303,20 @@ export default function VehicleLayout({ children }: Props) {
                   </span>
                   <Modal.Input
                     icon={Map}
-                    type="number"
+                    type="text"
                     id="km"
                     placeholder="75.500"
                     required
-                    value={modalData.km !== 0 ? modalData.km : ""}
+                    value={
+                      modalData.km === 0
+                        ? ""
+                        : formatNumber(modalData.km.toString())
+                    } // Formatando o valor atual da quilometragem
                     onChange={(e) =>
-                      setModalData({ ...modalData, km: Number(e.target.value) })
+                      setModalData({
+                        ...modalData,
+                        km: Number(e.target.value.replace(/\D/g, "")), // Armazenando apenas números no estado
+                      })
                     }
                   />
                 </section>

@@ -16,6 +16,7 @@ interface SidebarProps {
 
 export default function Sidebar({ onClose }: SidebarProps) {
   const { UserLogged, user } = useContext(UserContext);
+  console.log("user ", user);
 
   useEffect(() => {
     if (user === null) {

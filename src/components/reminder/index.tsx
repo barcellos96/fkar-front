@@ -107,17 +107,10 @@ export default function ReminderPageLayout({ children }: Props) {
         icon={AlarmClock}
         handleSubmit={handleOpenModal}
       />
+
       {children.length === 0 ? (
         <div className="flex flex-col items-center justify-center pb-5">
           <NotDataTable.Root>
-            <div className="flex items-center justify-between text-base uppercase font-bold bg-gray-50 w-full">
-              <NotDataTable.Heade text="#" />
-              <NotDataTable.Heade text="Tipo" />
-              <NotDataTable.Heade text="Data" />
-              <NotDataTable.Heade text="Hodometro(km)" />
-              <NotDataTable.Heade text="Descrição" />
-              <NotDataTable.Heade text="Ação" />
-            </div>
             <NotDataTable.Body
               img={IconAlarm}
               actionButton={handleOpenModal}

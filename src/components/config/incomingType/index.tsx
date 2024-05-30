@@ -16,10 +16,6 @@ interface IncomingTypeProps {
   name: string;
 }
 
-interface UpdateProps {
-  incoming_type_name: string;
-}
-
 export default function TableIncomingType({ title }: Props) {
   const {
     GetIncomingType,

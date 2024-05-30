@@ -1,11 +1,8 @@
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
-  height: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  margintop: 10px;
-
   background-color: #ccc;
   border-radius: 100px;
 }

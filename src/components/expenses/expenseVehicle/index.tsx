@@ -1,10 +1,8 @@
 "use client";
 
-import { CornerDownRight, Fuel, Plus, TrendingDown } from "lucide-react";
+import { TrendingDown } from "lucide-react";
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import IconAlarm from "../../../assets/icon-alarm.jpg";
-import { NotDataTable } from "@/components/tablesNotData";
 import HeaderComposition from "@/components/header/headerComposition";
 
 interface Props {
@@ -29,48 +27,27 @@ export default function ExpenseVehicleLayout({ children, pagination }: Props) {
         handleSubmit={handleSubmit}
         borderColor="border-red-700"
       />
-      {children?.length === 0 ? (
-        <div className="flex flex-col items-center justify-center pb-5">
-          <NotDataTable.Root>
-            <div className="flex items-center justify-between text-base uppercase font-bold bg-gray-50 w-full">
-              <NotDataTable.Heade text="#" />
-              <NotDataTable.Heade text="Descrição" />
-              <NotDataTable.Heade text="Data" />
-              <NotDataTable.Heade text="Tipo de Despesa" />
-              <NotDataTable.Heade text="Hodometro(km)" />
-              <NotDataTable.Heade text="Total" />
-              <NotDataTable.Heade text="" />
-            </div>
-            <NotDataTable.Body
-              img={IconAlarm}
-              // actionButton={handleOpenModal}
-              icon={Plus}
-              title="Abastecimento"
-            />
-          </NotDataTable.Root>
-        </div>
-      ) : (
-        <div>
-          <table className="table-auto w-full">
-            <thead>
-              <tr className="hidden slg:table-row text-left">
-                <th className="py-3">#</th>
-                <th className="py-3">Descrição</th>
-                <th className="py-3">Data</th>
-                <th className="py-3">Tipo de Despesa</th>
-                <th className="py-3">Hodometro</th>
-                <th className="py-3">Total</th>
 
-                <th className="text-right py-3 pr-8">{/* Ação */}</th>
-              </tr>
-            </thead>
+      <div>
+        <table className="table-auto w-full">
+          <thead>
+            <tr className="hidden slg:table-row text-left">
+              <th className="py-3">#</th>
+              <th className="py-3">Descrição</th>
+              <th className="py-3">Data</th>
+              <th className="py-3">Tipo de Despesa</th>
+              <th className="py-3">Hodometro</th>
+              <th className="py-3">Total</th>
 
-            <tbody className="font-light text-base">{children}</tbody>
-          </table>
+              <th className="text-right py-3 pr-8">{/* Ação */}</th>
+            </tr>
+          </thead>
 
-          {pagination}
-        </div>
-      )}
+          <tbody className="font-light text-base">{children}</tbody>
+        </table>
+
+        {pagination}
+      </div>
     </div>
   );
 }

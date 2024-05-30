@@ -1,31 +1,34 @@
 "use client";
 
-import { Fuel } from "lucide-react";
-import HeaderComposition from "../../header/headerComposition";
+import { TrendingDown } from "lucide-react";
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import HeaderComposition from "@/components/header/headerComposition";
 
 interface Props {
   children?: ReactNode[];
   pagination?: ReactNode;
 }
 
-export default function RefulingLayout({ children, pagination }: Props) {
+export default function ExpenseMaintenanceLayout({
+  children,
+  pagination,
+}: Props) {
   const { push } = useRouter();
 
   const handleSubmit = () => {
-    push("/dashboard/abastecimento/criar");
+    push("/dashboard/manutencoes/criar");
   };
 
   return (
     <div className="w-full bg-white rounded-lg gap-4 px-6 py-5 mt-3 mb-5 shadow-lg ">
       <HeaderComposition
-        icon={Fuel}
-        title="abastecimento"
-        nameButton="Novo Abastecimento"
+        icon={TrendingDown}
+        title="Manutenções"
+        nameButton="Nova Manutenção"
         typeSubmit="button"
         handleSubmit={handleSubmit}
-        borderColor="border-orange-500"
+        borderColor="border-red-700"
       />
 
       <div>
@@ -34,14 +37,11 @@ export default function RefulingLayout({ children, pagination }: Props) {
             <tr className="hidden slg:table-row text-left">
               <th className="py-3">#</th>
               <th className="py-3">Descrição</th>
+              <th className="py-3">Serviços</th>
               <th className="py-3">Data</th>
-              <th className="py-3 ">Combustível</th>
-              <th className="py-3 ">Preço / L</th>
-              <th className="py-3 ">Litros</th>
+              <th className="py-3">Hodometro</th>
               <th className="py-3">Total</th>
-              <th className="py-3 hidden lg:table-cell">Hodometro</th>
 
-              {/* <th className="py-3">Descrição</th> */}
               <th className="text-right py-3 pr-8">{/* Ação */}</th>
             </tr>
           </thead>

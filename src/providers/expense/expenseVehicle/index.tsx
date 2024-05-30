@@ -21,11 +21,20 @@ interface ExpenseType {
   name: string;
 }
 
+interface ExpenseVehicleServicesProps {
+  id: string;
+  value: number;
+  expense_service: {
+    id: string;
+    name: string;
+  };
+}
+
 interface CreateExpenseVehicle {
   date: string;
   description: string;
   expense_type_id: string;
-  expense_vehicle_services?: object[]; // Adjust if you have a specific type for services
+  expense_vehicle_services?: ExpenseVehicleServicesProps[]; // Adjust if you have a specific type for services
   amount: number;
   fuel_type?: string | null;
   fuel_liters?: string | null;
@@ -55,7 +64,7 @@ interface ExpenseVehicle {
     user: User;
     vehicle: Vehicle;
     expense_type: ExpenseType;
-    expense_vehicle_services?: object[]; // Adjust if you have a specific type for services
+    expense_vehicle_services?: ExpenseVehicleServicesProps[]; // Adjust if you have a specific type for services
   }[];
   total: number;
   page: number;

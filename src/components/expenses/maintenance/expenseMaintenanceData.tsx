@@ -1,8 +1,10 @@
 "use client";
 
 import { ChangeEvent, useContext, useEffect, useState } from "react";
+import RefulingLayout from ".";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { ExpenseTypeContext } from "@/providers/expense/expenseType";
+import TableSkeleton from "../../tablesNotData/skeleton";
 import {
   BadgeDollarSign,
   CalendarDays,
@@ -11,34 +13,31 @@ import {
   Droplets,
   Equal,
   Fuel,
-  Map,
   Pencil,
   Plus,
   Text,
   Trash,
-  TrendingDown,
 } from "lucide-react";
 import { formatKm } from "@/hooks/km";
 import { format, parseISO } from "date-fns";
 import { parseCookies } from "nookies";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
-import TableSkeleton from "@/components/tablesNotData/skeleton";
-import { LoadingSpinner } from "@/components/loading";
-import ExpenseVehicleLayout from ".";
+import { LoadingSpinner } from "../../loading";
 import { NotDataTable } from "@/components/tablesNotData";
 
-import IconExpense from "../../../assets/expenses.png";
+import IconMaintenance from "../../../assets/maintenance.png";
 import { useRouter } from "next/navigation";
 
-export default function ExpenseVehicleData() {
+export default function ExpenseMaintenanceData() {
   const { push } = useRouter();
 
   const handleSubmit = () => {
-    push("/dashboard/despesas/criar");
+    push("/dashboard/manutencoes/criar");
   };
   const { GetExpenseVehicle, expenseVehicle, value } = useContext(
     ExpenseVehicleContext
   );
+  const { GetExpenseType, expenseType } = useContext(ExpenseTypeContext);
   const { selectedVehicleId } = useContext(VehicleContext);
 
   const [loading, setLoading] = useState(false); // Estado de loading para o useEffect
@@ -46,19 +45,34 @@ export default function ExpenseVehicleData() {
   const [limitPage, setLimitPage] = useState<number>(5);
 
   useEffect(() => {
+    if (expenseType === null) {
+      GetExpenseType();
+    }
+  }, [value]);
+
+  useEffect(() => {
     setLoading(true); // Inicia o estado de loading
 
-    const cookies = parseCookies();
-    const savedVehicleId = cookies["vehicle:selectedVehicleId"];
-    GetExpenseVehicle(
-      undefined,
-      savedVehicleId,
-      currentPage,
-      limitPage
-    ).finally(() => {
-      setLoading(false); // Finaliza o estado de loading
-    });
-  }, [value, selectedVehicleId, currentPage, limitPage]);
+    if (expenseType) {
+      expenseType?.map((item) => {
+        if (item.name.toLowerCase() === "manutenção") {
+          const cookies = parseCookies();
+          const savedVehicleId = cookies["vehicle:selectedVehicleId"];
+
+          GetExpenseVehicle(
+            item.id,
+            savedVehicleId,
+            currentPage,
+            limitPage
+          ).finally(() => {
+            setLoading(false); // Finaliza o estado de loading
+          });
+        } else {
+          setLoading(false); // Finaliza o estado de loading se não for necessário chamar GetExpenseVehicle
+        }
+      });
+    }
+  }, [expenseType, selectedVehicleId, currentPage, limitPage]);
 
   if (!expenseVehicle) {
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega
@@ -66,24 +80,18 @@ export default function ExpenseVehicleData() {
 
   if (expenseVehicle?.data.length === 0) {
     return (
-      <div className="flex flex-col mt-4 rounded-lg items-center justify-center pb-5 ">
+      <div className="flex flex-col items-center justify-center pb-5 ">
         <NotDataTable.Root>
-          
           <NotDataTable.Body
-            img={IconExpense}
+            img={IconMaintenance}
             actionButton={handleSubmit}
             icon={Plus}
-            title="Despesa"
+            title="Manutenção"
           />
         </NotDataTable.Root>
       </div>
     );
   }
-
-  const handleChangeLimitPage = (e: ChangeEvent<HTMLSelectElement>) => {
-    const newLimit = parseInt(e.target.value); // Converte o valor para número
-    setLimitPage(newLimit); // Atualiza o estado limitPage com o novo valor
-  };
 
   const handleNextPage = () => {
     if (currentPage < expenseVehicle.totalPages) {
@@ -96,8 +104,13 @@ export default function ExpenseVehicleData() {
     }
   };
 
+  const handleChangeLimitPage = (e: ChangeEvent<HTMLSelectElement>) => {
+    const newLimit = parseInt(e.target.value); // Converte o valor para número
+    setLimitPage(newLimit); // Atualiza o estado limitPage com o novo valor
+  };
+
   return (
-    <ExpenseVehicleLayout
+    <RefulingLayout
       pagination={
         <div className=" slg:flex items-center gap-4 w-full ps-1 mt-5 text-zinc-400 font-light text-base ">
           <div className="sm:flex items-center gap-4">
@@ -155,8 +168,8 @@ export default function ExpenseVehicleData() {
       )}
 
       {!loading &&
-        expenseVehicle.data.length > 0 &&
-        expenseVehicle.data.map((item, index) => (
+        expenseVehicle?.data.length > 0 &&
+        expenseVehicle?.data.map((item, index) => (
           <tr
             className="flex flex-col slg:table-row border-b px-2 py-4 slg:px-0 slg:py-0 gap-1 "
             key={index}
@@ -166,6 +179,19 @@ export default function ExpenseVehicleData() {
               <span className="flex gap-2 slg:table-cell">
                 <Text width={17} height={17} className="slg:hidden" />
                 {item.description}
+              </span>
+            </td>
+            <td className="slg:py-3">
+              <span className="flex gap-2 slg:table-cell">
+                <Text width={17} height={17} className="slg:hidden" />
+                {item.expense_vehicle_services &&
+                  item.expense_vehicle_services.length > 0 && (
+                    <span>
+                      {item.expense_vehicle_services[0].expense_service.name}
+                      {item.expense_vehicle_services.length > 1 &&
+                        ` (+${item.expense_vehicle_services.length - 1})`}
+                    </span>
+                  )}
               </span>
             </td>
             <td className="slg:py-3 ">
@@ -186,18 +212,8 @@ export default function ExpenseVehicleData() {
                 {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
               </span>
             </td>
-            <td className="slg:py-3">
-              <span className="flex gap-2 slg:table-cell">
-                <TrendingDown width={17} height={17} className="slg:hidden" />
-                {item.expense_type.name}
-              </span>
-            </td>
-            <td className="flex slg:py-3 slg:table-cell">
-              <span className="flex gap-2 slg:table-cell">
-                <Map width={17} height={17} className="slg:hidden" />
-
-                {formatKm(item.km)}
-              </span>
+            <td className="slg:py-3 hidden lg:table-cell">
+              {formatKm(item.km)}
             </td>
             <td className="slg:py-3 ">
               <span className="flex gap-2 slg:table-cell">
@@ -208,8 +224,7 @@ export default function ExpenseVehicleData() {
                 />
                 R$ {item.amount}
               </span>
-            </td>
-
+            </td>{" "}
             <td className="hidden  slg:flex gap-2 py-4 px-2  justify-end">
               <button
                 className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
@@ -224,6 +239,6 @@ export default function ExpenseVehicleData() {
             </td>
           </tr>
         ))}
-    </ExpenseVehicleLayout>
+    </RefulingLayout>
   );
 }

@@ -94,7 +94,9 @@ export default function VehicleLayout({ children }: Props) {
   };
 
   return (
-    <div className="w-full rounded-xl gap-4 px-6 py-5 mt-3 mb-5 shadow-lg bg-white">
+    <div
+      className={`w-full rounded-xl gap-4 px-6 py-5 mt-3 mb-5 shadow-lg bg-white`}
+    >
       <HeaderComposition
         nameButton="Novo Veículo"
         typeSubmit="button"
@@ -102,20 +104,10 @@ export default function VehicleLayout({ children }: Props) {
         icon={Car}
         handleSubmit={handleOpenModal}
       />
+
       {children.length === 0 ? (
         <div className="flex flex-col items-center justify-center pb-5">
           <NotDataTable.Root>
-            <div className="flex items-center justify-between text-base uppercase font-bold bg-gray-50 w-full">
-              <div className="px-3 flex gap-4">
-                <NotDataTable.Heade text="#" />
-                <NotDataTable.Heade text="Tipo" />
-              </div>
-              <NotDataTable.Heade text="Título" />
-              <NotDataTable.Heade text="Marca" />
-              <NotDataTable.Heade text="Modelo" />
-              <NotDataTable.Heade text="Ano" />
-              <NotDataTable.Heade text="" />
-            </div>
             <NotDataTable.Body
               img={AddCar}
               actionButton={handleOpenModal}

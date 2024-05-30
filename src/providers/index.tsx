@@ -18,10 +18,10 @@ interface IChildrenReact {
 export function Providers({ children }: IChildrenReact) {
   return (
     <AuthProvider>
-      <UserProvider>
-        <FuelProvider>
-          <VehicleTypeProvider>
-            <VehicleProvider>
+      <VehicleProvider>
+        <UserProvider>
+          <FuelProvider>
+            <VehicleTypeProvider>
               <IncomingProvider>
                 <ExpenseServiceProvider>
                   <ExpenseTypeProvider>
@@ -33,10 +33,10 @@ export function Providers({ children }: IChildrenReact) {
                   </ExpenseTypeProvider>
                 </ExpenseServiceProvider>
               </IncomingProvider>
-            </VehicleProvider>
-          </VehicleTypeProvider>
-        </FuelProvider>
-      </UserProvider>
+            </VehicleTypeProvider>
+          </FuelProvider>
+        </UserProvider>
+      </VehicleProvider>
     </AuthProvider>
   );
 }

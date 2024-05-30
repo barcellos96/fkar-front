@@ -23,8 +23,17 @@ import { format, parseISO } from "date-fns";
 import { parseCookies } from "nookies";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
 import { LoadingSpinner } from "../../loading";
+import { NotDataTable } from "@/components/tablesNotData";
+
+import IconRefueling from "../../../assets/refueling.png";
+import { useRouter } from "next/navigation";
 
 export default function RefuelingData() {
+  const { push } = useRouter();
+
+  const handleSubmit = () => {
+    push("/dashboard/abastecimento/criar");
+  };
   const { GetExpenseVehicle, expenseVehicle, value } = useContext(
     ExpenseVehicleContext
   );
@@ -67,6 +76,21 @@ export default function RefuelingData() {
 
   if (!expenseVehicle) {
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega
+  }
+
+  if (expenseVehicle?.data.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center pb-5 ">
+        <NotDataTable.Root>
+          <NotDataTable.Body
+            img={IconRefueling}
+            actionButton={handleSubmit}
+            icon={Plus}
+            title="Abastecimento"
+          />
+        </NotDataTable.Root>
+      </div>
+    );
   }
 
   const handleNextPage = () => {

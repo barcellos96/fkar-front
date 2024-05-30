@@ -55,6 +55,8 @@ interface IVehicleData {
   UpdateVehicle(data: VehicleUpdateProps): Promise<object>;
 
   vehicle?: PromiseVehicleProps[] | null;
+  setVehicle: Dispatch<SetStateAction<PromiseVehicleProps[] | null>>;
+
   value?: PromiseVehicleProps;
 
   setSelectedVehicleId: Dispatch<SetStateAction<string>>;
@@ -175,6 +177,7 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
         selectedVehicleId,
         value,
         vehicle,
+        setVehicle,
       }}
     >
       {children}

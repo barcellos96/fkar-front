@@ -108,11 +108,6 @@ export default function TablePageConfig({ title, children }: TableProps) {
       {children.length === 0 ? (
         <div className="flex flex-col items-center justify-center pb-5">
           <NotDataTable.Root>
-            <div className="flex items-center justify-between text-base uppercase font-bold bg-gray-50 w-full">
-              <NotDataTable.Heade text="#" />
-              <NotDataTable.Heade text="Nome" />
-              <NotDataTable.Heade text="Ação" />
-            </div>
             <NotDataTable.Body
               img={IconConfig}
               actionButton={handleOpenModal}

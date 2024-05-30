@@ -6,10 +6,16 @@ import { CarFront, Map } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import HeaderContentSkeleton from "./skeleton";
 import { parseCookies, setCookie } from "nookies";
+import { useRouter } from "next/navigation";
 
 export default function Content() {
+  const { push } = useRouter();
   const { GetVehicle, vehicle, value, setSelectedVehicleId } =
     useContext(VehicleContext);
+
+  const cookies = parseCookies();
+  const userToken = cookies["user:accessToken"];
+  console.log("userToken ", userToken);
 
   const [vehicleId, setVehicleId] = useState<string>("");
   const [plate, setPlate] = useState<string | null | undefined>("");
@@ -17,10 +23,12 @@ export default function Content() {
   const [isMenuOpen, setMenuOpen] = useState(false); // Estado para controlar se o menu está aberto
 
   useEffect(() => {
-    if (vehicle === null) {
-      GetVehicle();
+    if (userToken) {
+      if (vehicle === null) {
+        GetVehicle();
+      }
     }
-  }, [value, GetVehicle]);
+  }, [value, GetVehicle, userToken]);
 
   useEffect(() => {
     const cookies = parseCookies();
@@ -104,38 +112,55 @@ export default function Content() {
               <CarFront height={16} width={16} />
               <select
                 id="select-option"
-                className="outline-none"
+                className="outline-none cursor-pointer"
                 onChange={handleSelectChange}
                 value={vehicleId}
-                onClick={handleOpenMenu} // Abrir menu ao clicar no select
+                onClick={
+                  vehicle.length === 0
+                    ? () => push("/dashboard/meus-veiculos")
+                    : handleOpenMenu
+                } // Abrir menu ao clicar no select ou direcionar para criar um veiculo
               >
-                {vehicle?.map((item, index) => (
-                  <option
-                    key={index}
-                    value={item.id}
-                    id={item.id}
-                    title={item.title}
-                  >
-                    {item.title}
+                {vehicle.length === 0 ? (
+                  <option title={" Nenhum veiculo cadastrado"}>
+                    {/* push("/dashboard/meus-veiculos") */}
+                    Nenhum veiculo cadastrado
                   </option>
-                ))}
+                ) : (
+                  vehicle?.map((item, index) => (
+                    <option
+                      key={index}
+                      value={item.id}
+                      id={item.id}
+                      title={item.title}
+                    >
+                      {item.title}
+                    </option>
+                  ))
+                )}
               </select>
             </section>
 
-            <div className="h-4 w-px hidden s:flex bg-zinc-300" />
+            <div className={`${vehicle.length === 0 && "hidden sm:flex"}`}>
+              <div className="h-4 w-px hidden s:flex bg-zinc-300" />
 
-            <section className="hidden s:flex items-center gap-2 text-nowrap">
-              <span className=" text-sm border border-zinc-700  rounded-md px-2 py-1">
-                {plate}
-              </span>
-            </section>
+              <section className="hidden s:flex items-center gap-2 text-nowrap">
+                {plate ? (
+                  <span className=" text-sm border border-zinc-700 rounded-md px-2 py-1">
+                    plate
+                  </span>
+                ) : (
+                  <span className=" text-sm border w-4 border-zinc-700 rounded-md px-6 py-3"></span>
+                )}
+              </section>
 
-            <div className="h-4 w-px hidden s:flex bg-zinc-300 " />
+              <div className="h-4 w-px hidden s:flex bg-zinc-300 " />
 
-            <section className="flex items-center gap-1 border border-zinc-700  rounded-md px-2 py-1">
-              <Map size={15} />
-              <span className="text-sm ">{formatKm(km ? km : 0)}</span>
-            </section>
+              <section className="flex items-center gap-1 border border-zinc-700  rounded-md px-2 py-1">
+                <Map size={15} />
+                <span className="text-sm ">{formatKm(km ? km : 0)}</span>
+              </section>
+            </div>
           </div>
         </div>
       )}

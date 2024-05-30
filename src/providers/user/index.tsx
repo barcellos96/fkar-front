@@ -2,9 +2,10 @@
 
 import { api } from "@/service/api";
 import { useRouter } from "next/navigation";
-import { parseCookies } from "nookies";
-import { createContext, ReactNode, useState } from "react";
+import { destroyCookie, parseCookies } from "nookies";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { toast } from "sonner";
+import { VehicleContext } from "../vehicle/vehicle";
 
 interface UpdateUser {
   cpf?: string;
@@ -38,6 +39,7 @@ interface IUserData {
   user?: UserProps | null;
   CreateUser: (data: CreateUserProps) => Promise<UserProps>;
   UpdateUser: (data: UpdateUser) => Promise<object>;
+  Logout(): Promise<void>;
 }
 
 interface ICihldrenReact {
@@ -48,6 +50,7 @@ export const UserContext = createContext<IUserData>({} as IUserData);
 
 export const UserProvider = ({ children }: ICihldrenReact) => {
   const { push } = useRouter();
+  const { setVehicle } = useContext(VehicleContext);
   const [user, setUser] = useState<UserProps | null>(null);
 
   const UserLogged = async (): Promise<void> => {
@@ -62,6 +65,9 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
         setUser(res.data.response);
       })
       .catch((err) => {
+        if (err.response.data.message === "Token inválido") {
+          push("/login");
+        }
         return err;
       });
 
@@ -104,6 +110,22 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
+  const Logout = async () => {
+    destroyCookie(undefined, "user:accessToken", { path: "/" });
+    destroyCookie(undefined, "vehicle:selectedVehicleId");
+
+    //colocar user como null para em novo login nao vir com dados desatualizados
+    setUser(null);
+    setVehicle(null);
+
+    // Verificar se os cookies foram deletados
+    const cookies = parseCookies();
+    console.log("Cookies after deletion:", cookies);
+
+    // Redirecionar para a página de login
+    push("/login");
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -111,6 +133,7 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
         user,
         CreateUser,
         UpdateUser,
+        Logout,
       }}
     >
       {children}

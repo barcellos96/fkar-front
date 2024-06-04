@@ -1,3 +1,4 @@
+import ExpenseMaintenanceCreate from "@/components/expenses/maintenance/expenseMaintenanceCreate";
 import LayoutDashboard from "@/components/layout/layoutDashboard";
 
 import { Metadata } from "next";
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 export default function MaintenanceCreate() {
   return (
     <LayoutDashboard>
-      <h1>Criar manutenção</h1>
+      <ExpenseMaintenanceCreate />
     </LayoutDashboard>
   );
 }

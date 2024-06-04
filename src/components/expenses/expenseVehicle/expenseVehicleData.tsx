@@ -66,9 +66,8 @@ export default function ExpenseVehicleData() {
 
   if (expenseVehicle?.data.length === 0) {
     return (
-      <div className="flex flex-col mt-4 rounded-lg items-center justify-center pb-5 ">
+      <div className="flex flex-col mt-3 rounded-lg items-center justify-center pb-5 ">
         <NotDataTable.Root>
-          
           <NotDataTable.Body
             img={IconExpense}
             actionButton={handleSubmit}

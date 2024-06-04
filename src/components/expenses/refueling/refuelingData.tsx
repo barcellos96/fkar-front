@@ -27,6 +27,7 @@ import { NotDataTable } from "@/components/tablesNotData";
 
 import IconRefueling from "../../../assets/refueling.png";
 import { useRouter } from "next/navigation";
+import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 
 export default function RefuelingData() {
   const { push } = useRouter();
@@ -80,7 +81,7 @@ export default function RefuelingData() {
 
   if (expenseVehicle?.data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center pb-5 ">
+      <div className="flex flex-col items-center bg-white rounded-lg mt-3 shadow-lg justify-center pb-5 ">
         <NotDataTable.Root>
           <NotDataTable.Body
             img={IconRefueling}
@@ -232,7 +233,7 @@ export default function RefuelingData() {
               {item.fuel_liters}
             </td>
             <td className="slg:py-3 hidden slg:table-cell ">
-              R$ {item.amount}
+              R$ {formatNumberWithSpaces(item.amount)}
             </td>
             <td className="slg:py-3 hidden lg:table-cell">
               {formatKm(item.km)}

@@ -112,15 +112,15 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
 
   const Logout = async () => {
     destroyCookie(undefined, "user:accessToken", { path: "/" });
-    destroyCookie(undefined, "vehicle:selectedVehicleId");
+    destroyCookie(undefined, "vehicle:selectedVehicleId", { path: "/" });
 
-    //colocar user como null para em novo login nao vir com dados desatualizados
+    //colocar user & vehicle como null para em novo login nao vir com dados desatualizados
     setUser(null);
     setVehicle(null);
 
     // Verificar se os cookies foram deletados
     const cookies = parseCookies();
-    console.log("Cookies after deletion:", cookies);
+    console.log("Cookies after deletion:", cookies); //retorna um objeto vazio
 
     // Redirecionar para a página de login
     push("/login");

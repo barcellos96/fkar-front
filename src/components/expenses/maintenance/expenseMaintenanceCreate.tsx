@@ -1,39 +1,67 @@
 "use client";
 
+import Loading from "@/components/loading";
 import { ExpenseTypeContext } from "@/providers/expense/expenseType";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
-import { FuelContext } from "@/providers/fuel";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft, FuelIcon } from "lucide-react";
+import { ChevronLeft, Plus, PlusIcon, Search, Wrench } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MouseEvent, useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import Loading from "../../loading";
 import { addHours, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Locale } from "date-fns";
+import { ExpenseServiceContext } from "@/providers/expense/expenseService";
+import { Modal } from "@/components/modals";
+import "../../scrollbar/scrollbar.css";
+import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 
-export default function ExpenseRefuelingCreate() {
+interface SelectedService {
+  id: string;
+  value: string;
+  name: string;
+}
+
+export default function ExpenseMaintenanceCreate() {
   const { back, push } = useRouter();
 
   const [loading, setLoading] = useState(false);
   const [sectionPlus, setSectionPlus] = useState(false);
+  const [modalSerivces, setModalServices] = useState(false);
+  const [selectedServices, setSelectedServices] = useState<SelectedService[]>(
+    []
+  );
+  console.log("selectedServices ", selectedServices);
 
-  const { GetFuelType, fuelType } = useContext(FuelContext);
-  const { selectedVehicleId } = useContext(VehicleContext);
+  const { selectedVehicleId, vehicle } = useContext(VehicleContext);
   const { GetExpenseType, expenseType } = useContext(ExpenseTypeContext);
   const { CreateExpenseVehicle } = useContext(ExpenseVehicleContext);
+  const { GetExpenseService, expenseService } = useContext(
+    ExpenseServiceContext
+  );
+
+  const filterVehicleSelectedType = vehicle?.find(
+    (v) => v.id === selectedVehicleId
+  );
 
   useEffect(() => {
-    if (fuelType === null || expenseType === null) {
-      Promise.all([GetFuelType(), GetExpenseType()]);
+    if (expenseType === null || expenseService === null) {
+      Promise.all([GetExpenseType(), GetExpenseService()]);
     }
   }, []);
 
-  const expenseTypeId = expenseType?.find(
-    (item) => item.name.toLowerCase() === "abastecimento"
+  const expenseTypeMaintenanceId = expenseType?.find(
+    (et) => et.name.toLowerCase() === "manutenção"
+  );
+
+  const filteredServices = expenseService?.filter((service) =>
+    service.vehicle_types.some(
+      (vt) =>
+        vt.type.toLowerCase() ===
+          filterVehicleSelectedType?.vehicle_type.type.toLowerCase() && service
+    )
   );
 
   const date = new Date();
@@ -61,32 +89,32 @@ export default function ExpenseRefuelingCreate() {
   const defaultValues = {
     date: formattedDate,
     time: formattedTime,
-    description: "Abastecimento",
+    expense_service_data: [],
+    description: `Despesa - `,
     location: "",
-    expense_type_id: expenseTypeId?.id ?? "",
     km: "",
-    fuel_type: "",
-    fuel_liters: "",
-    price_liters: "",
     amount: "",
     method_payment: "",
     observation: "",
+    expense_type_id: expenseTypeMaintenanceId?.id
+      ? expenseTypeMaintenanceId?.id
+      : "",
     vehicleId: selectedVehicleId,
   };
 
   const schema = z.object({
     date: z.string().min(1, "data obrigatória"),
     time: z.string().min(1, "hora obrigatória"),
+    expense_service_data: z
+      .array(z.object({ id: z.string(), value: z.string() }))
+      .min(1),
     description: z.string().min(1, "descrição do gasto obrigatório"),
     location: z.string(),
-    expense_type_id: z.string().min(1, "Obrigatorio id do tipo de despesa"),
     km: z.string().min(1, "quilometragem atual obrigatória"),
-    fuel_type: z.string().min(1, "tipo de combustivel obrigatório"),
-    fuel_liters: z.string(),
-    price_liters: z.string().min(1, "preço do combustível obrigatório"),
     amount: z.string().min(1, "total gasto obrigatório"),
     method_payment: z.string().nullable(),
     observation: z.string(),
+    expense_type_id: z.string(),
     vehicleId: z.string(),
   });
 
@@ -103,28 +131,11 @@ export default function ExpenseRefuelingCreate() {
     resolver: zodResolver(schema),
   });
 
+  useEffect(() => {
+    setValue("expense_service_data", selectedServices);
+  }, [selectedServices]);
+
   const amount = watch("amount").replace(/[^0-9.-]+/g, ""); // Remove tudo que não é número, ponto ou hífen
-  const priceLiters = watch("price_liters").replace(/[^0-9.-]+/g, ""); // Aplica a mesma remoção para price_liters
-
-  const fuelLitersValue = `${
-    watch("amount") === "" ? 0 : Number(amount) / Number(priceLiters)
-  }`;
-
-  let roundedFuelLitersValue = Number(fuelLitersValue).toFixed(2);
-
-  // Verifica se termina em .00 e ajusta para mostrar sem decimais
-  if (roundedFuelLitersValue.endsWith(".00")) {
-    roundedFuelLitersValue = Number(roundedFuelLitersValue).toFixed(0);
-  }
-
-  //verifica se é um numero valido ou se existe
-  if (
-    !roundedFuelLitersValue ||
-    roundedFuelLitersValue === "NaN" ||
-    roundedFuelLitersValue === "infinity"
-  ) {
-    roundedFuelLitersValue = "";
-  }
 
   const onSubmit: SubmitHandler<RegisterProps> = async (value) => {
     // Combine date and time into a single Date object
@@ -137,7 +148,6 @@ export default function ExpenseRefuelingCreate() {
     const dateFormated = format(adjustedDateTime, "yyyy-MM-dd HH:mm:ss", {
       locale: ptBR as Locale,
     });
-
     const { time, ...rest } = value; // Desestruturando para remover a propriedade 'time'
 
     const formattedValue = { ...rest, date: dateFormated };
@@ -152,16 +162,17 @@ export default function ExpenseRefuelingCreate() {
       ...formattedValue,
       km: Number(formattedValue.km.split(".").join("")),
       amount: Number(amount),
-      price_liters: priceLiters,
+      expense_service_data: formattedValue.expense_service_data.map((item) => ({
+        id: item.id,
+        value: item.value ? Number(item.value.split(" ").join("")) : 0,
+      })),
     };
-
-    formattedValueWithNumbers.fuel_liters = roundedFuelLitersValue;
 
     setLoading(true);
     try {
       await CreateExpenseVehicle(formattedValueWithNumbers);
       setLoading(false);
-      push("/dashboard/abastecimento");
+      push("/dashboard/manutencoes");
     } catch (error) {
       setLoading(false);
     }
@@ -172,6 +183,10 @@ export default function ExpenseRefuelingCreate() {
     setSectionPlus(!sectionPlus);
   };
 
+  const handleOpenModal = () => {
+    setModalServices(true);
+  };
+
   // Função para formatar o número com pontos como separadores de milhares
   const formatNumber = (value: string) => {
     // Remove qualquer coisa que não seja número
@@ -180,6 +195,49 @@ export default function ExpenseRefuelingCreate() {
     value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     return value;
   };
+
+  const handleCheckboxChange = (service: { id: string; name: string }) => {
+    setSelectedServices((prevSelectedServices: SelectedService[]) => {
+      const isSelected = prevSelectedServices.some(
+        (selectedService) => selectedService.id === service.id
+      );
+
+      if (isSelected) {
+        return prevSelectedServices.filter(
+          (selectedService) => selectedService.id !== service.id
+        );
+      } else {
+        return [
+          ...prevSelectedServices,
+          { id: service.id, value: "", name: service.name },
+        ];
+      }
+    });
+  };
+
+  const handleServiceValueChange = (serviceId: string, value: string) => {
+    setSelectedServices((prevSelectedServices: SelectedService[]) =>
+      prevSelectedServices.map((selectedService) =>
+        selectedService.id === serviceId
+          ? {
+              ...selectedService,
+              value: value,
+            }
+          : selectedService
+      )
+    );
+  };
+
+  const totalValue = selectedServices.reduce((accumulator, service) => {
+    const value = parseFloat(service.value.split(" ").join(""));
+    return accumulator + (isNaN(value) ? 0 : value);
+  }, 0);
+
+  const formattedTotalValue = formatNumberWithSpaces(totalValue.toFixed(2));
+
+  useEffect(() => {
+    setValue("amount", formattedTotalValue);
+  }, [formattedTotalValue, totalValue, selectedServices]);
 
   return (
     <div className="w-full bg-white rounded-lg gap-4 px-6 py-5 mt-3 mb-5 shadow-lg">
@@ -195,12 +253,12 @@ export default function ExpenseRefuelingCreate() {
         </span>
 
         <h1 className="flex flex-row items-center gap-2 mt-4 mb-5 text-xl font-semibold">
-          <FuelIcon
-            className="bg-green-500 rounded-full p-2 text-white"
+          <Wrench
+            className="bg-amber-300 rounded-full p-2 text-white"
             width={40}
             height={40}
           />
-          Cadastrar Abastecimento
+          Cadastrar Manutenção
         </h1>
 
         {/* formulario */}
@@ -209,6 +267,182 @@ export default function ExpenseRefuelingCreate() {
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col max-w-[500px] "
         >
+          {/* tipo de serviço */}
+          <div className="flex flex-col mb-5">
+            {selectedServices.length === 0 ? (
+              <div className="flex flex-col">
+                <label
+                  htmlFor="expense_service_data"
+                  className="text-base font-semibold mb-2 ml-1"
+                >
+                  Tipo de Serviço:*
+                </label>
+                <button
+                  type="button"
+                  className=" h-12 border rounded-lg py-2 px-3 leading-tight bg-zinc-50 hover:bg-zinc-100 focus:outline-none"
+                  onClick={handleOpenModal}
+                >
+                  Selecione seus serviços
+                </button>
+                {errors.expense_service_data && (
+                  <span className="text-sm ml-2 mt-1.5 text-red-300">
+                    {errors.expense_service_data.message}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="max-w-[320px] slg:max-w-[400px] font-light text-base">
+                <ol>
+                  {selectedServices.map((services, index) => (
+                    <li key={index} className="flex justify-between mb-2">
+                      <span>{services.name}</span>
+                      <span>
+                        R${" "}
+                        {services.value
+                          ? formatNumberWithSpaces(
+                              parseFloat(
+                                services.value.split(" ").join("")
+                              ).toFixed(2)
+                            )
+                          : "0.00"}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+                <div className="border-b-2 py-1" />
+
+                <section className="font-semibold flex justify-between mt-2 mb-3">
+                  <span>TOTAL: </span>
+
+                  <section className="flex gap-1 w-24 flex-nowrap">
+                    <label>R$</label>
+                    <input
+                      id="amount"
+                      value={`${formattedTotalValue}`}
+                      {...register("amount")}
+                    />
+                  </section>
+                </section>
+
+                <section
+                  onClick={handleOpenModal}
+                  className="flex gap-1 items-center font-semibold text-sm text-green-700 cursor-pointer w-44 mb-8"
+                >
+                  <PlusIcon width={16} height={16} />
+                  <span> ADICIONAR MAIS SERVIÇO</span>
+                </section>
+              </div>
+            )}
+
+            {modalSerivces && (
+              <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-black bg-opacity-10">
+                <Modal.Root
+                  onClose={() => {
+                    setModalServices(false);
+                    setSelectedServices([]);
+                  }}
+                >
+                  <Modal.Title
+                    onClose={() => {
+                      setModalServices(false);
+                      setSelectedServices([]);
+                    }}
+                    title="Serviços"
+                  />
+
+                  <div className="flex items-center gap-2 -mb-5">
+                    <Modal.Input
+                      icon={Search}
+                      placeholder="pesquisar serviço..."
+                    />
+
+                    <section className="flex w-8 h-8 justify-center items-center bg-green-700 rounded-md cursor-pointer mb-2 ">
+                      <Plus width={24} height={24} className="text-white" />
+                    </section>
+                  </div>
+
+                  {filteredServices?.length === 0 ? (
+                    <section className="flex flex-col gap-1 font-normal text-base border rounded-lg px-1 py-6 items-center justify-center">
+                      <span>Nenhum serviço cadastrado</span>
+                      <span>ou</span>
+                      <span>Nenhum veículo selecionado</span>
+                    </section>
+                  ) : (
+                    <ol className="flex flex-col justify-center gap-3 border px-2 py-2 rounded-md overflow-auto custom-scrollbar">
+                      {filteredServices?.map((service, index) => {
+                        const selectedService = selectedServices.find(
+                          (selectedService) => selectedService.id === service.id
+                        );
+
+                        return (
+                          <li className="flex gap-1" key={index}>
+                            <input
+                              id={service.name}
+                              type="checkbox"
+                              checked={!!selectedService}
+                              onChange={() => handleCheckboxChange(service)}
+                              className="outline-none"
+                            />
+                            <section className="flex justify-between w-full">
+                              <label id={service.name}>{service.name}</label>
+
+                              {selectedService && (
+                                <section>
+                                  <label>R$ </label>
+                                  <input
+                                    id={service.name}
+                                    placeholder="Valor"
+                                    className="outline-none border-b w-28 pl-1"
+                                    value={selectedService.value}
+                                    onChange={(e) => {
+                                      let inputValue = e.target.value;
+                                      // Remover caracteres não numéricos, exceto vírgula e ponto
+                                      inputValue = inputValue.replace(
+                                        /[^0-9,.]/g,
+                                        ""
+                                      );
+                                      // Substituir vírgulas por pontos
+                                      inputValue = inputValue.replace(",", ".");
+                                      // Remover múltiplos pontos consecutivos
+                                      inputValue = inputValue.replace(
+                                        /(\..*)\./g,
+                                        "$1"
+                                      );
+                                      // Formatando com espaço a cada milhar
+                                      inputValue = inputValue.replace(
+                                        /\B(?=(\d{3})+(?!\d))/g,
+                                        " "
+                                      );
+
+                                      handleServiceValueChange(
+                                        service.id,
+                                        inputValue
+                                      );
+                                    }}
+                                  />
+                                </section>
+                              )}
+                            </section>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  )}
+
+                  <Modal.Actions
+                    type="button"
+                    nameButtonSubmit="Salvar"
+                    onSubmitAction={() => setModalServices(false)}
+                    onCancelAction={() => {
+                      setModalServices(false);
+                      setSelectedServices([]);
+                    }}
+                  />
+                </Modal.Root>
+              </div>
+            )}
+          </div>
+
           {/* descrição */}
           <div className="flex flex-col  mb-5">
             <label
@@ -228,7 +462,7 @@ export default function ExpenseRefuelingCreate() {
               <span className="text-sm ml-2 mt-1.5 text-red-300">
                 {errors.description.message}
               </span>
-            )}{" "}
+            )}
           </div>
 
           {/* data e hora */}
@@ -278,7 +512,7 @@ export default function ExpenseRefuelingCreate() {
           {/* km */}
           <div className="flex flex-col mb-5">
             <label htmlFor="km" className="text-base font-semibold mb-2 ml-1 ">
-              Hodometro no abastecimento:*
+              Hodometro atual:*
             </label>
             <input
               type="text"
@@ -294,128 +528,6 @@ export default function ExpenseRefuelingCreate() {
             {errors.km && (
               <span className="text-sm ml-2 mt-1.5 text-red-300">
                 {errors.km.message}
-              </span>
-            )}{" "}
-          </div>
-
-          {/* tipo de combustível */}
-          <div className="flex flex-col mb-5">
-            <label
-              htmlFor="fuel_type"
-              className="text-base font-semibold mb-2 ml-1"
-            >
-              Tipo de Combustível:*
-            </label>
-            <select
-              id="fuel_type"
-              className="h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
-              {...register("fuel_type")}
-            >
-              <option value="">Selecione tipo de combustível</option>
-              {fuelType?.map((item, index) => (
-                <option key={index} value={item.fuel_name}>
-                  {item.fuel_name}
-                </option>
-              ))}
-            </select>
-            {errors.fuel_type && (
-              <span className="text-sm ml-2 mt-1.5 text-red-300">
-                {errors.fuel_type.message}
-              </span>
-            )}
-          </div>
-
-          {/* preço e total */}
-          <div className="flex flex-row max-w-[300px] slg:max-w-[500px]  slg:flex-row gap-2">
-            <div className="flex flex-col w-1/2 mb-5 gap-5">
-              <label
-                htmlFor="price_liters"
-                className="flex flex-wrap text-base font-semibold mb-2 ml-1 "
-              >
-                Preço Combustível:*
-              </label>
-              <input
-                type="text"
-                id="price_liters"
-                className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
-                placeholder="Preço / L"
-                {...register("price_liters")}
-                onChange={(e) => {
-                  let inputValue = e.target.value;
-                  // Remover caracteres não numéricos, exceto vírgula e ponto
-                  inputValue = inputValue.replace(/[^0-9,.]/g, "");
-                  // Substituir vírgulas por pontos
-                  inputValue = inputValue.replace(",", ".");
-                  // Remover múltiplos pontos consecutivos
-                  inputValue = inputValue.replace(/(\..*)\./g, "$1");
-                  // Formatando com espaço a cada milhar
-                  inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-
-                  setValue("price_liters", `R$ ${inputValue}`);
-                }}
-              />
-              {errors.price_liters && (
-                <span className="text-sm ml-2 mt-1.5 text-red-300">
-                  {errors.price_liters.message}
-                </span>
-              )}{" "}
-            </div>
-            {/* total */}
-            <div className="flex flex-col w-1/2 mb-5 slg:gap-5">
-              <label
-                htmlFor="amount"
-                className="text-base font-semibold mb-2 ml-1 "
-              >
-                Valor Abastecimento:*
-              </label>
-              <input
-                type="text"
-                id="amount"
-                className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
-                placeholder="R$ Total"
-                {...register("amount")}
-                onChange={(e) => {
-                  let inputValue = e.target.value;
-                  // Remover caracteres não numéricos, exceto vírgula e ponto
-                  inputValue = inputValue.replace(/[^0-9,.]/g, "");
-                  // Substituir vírgulas por pontos
-                  inputValue = inputValue.replace(",", ".");
-                  // Remover múltiplos pontos consecutivos
-                  inputValue = inputValue.replace(/(\..*)\./g, "$1");
-                  // Formatando com espaço a cada milhar
-                  inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-
-                  setValue("amount", `R$ ${inputValue}`);
-                }}
-              />
-              {errors.amount && (
-                <span className="text-sm ml-2 mt-1.5 text-red-300">
-                  {errors.amount.message}
-                </span>
-              )}{" "}
-            </div>
-          </div>
-
-          {/* litros combustivel */}
-          <div className="flex flex-col w-1/2 mb-5">
-            <label
-              htmlFor="fuel_liters"
-              className="flex flex-wrap text-base font-semibold mb-2 ml-1 "
-            >
-              Litros Combustível:*
-            </label>
-            <input
-              type="text"
-              id="fuel_liters"
-              className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none cursor-not-allowed bg-zinc-100"
-              placeholder="Qtd Litros"
-              disabled
-              value={roundedFuelLitersValue}
-              {...register("fuel_liters")}
-            />
-            {errors.fuel_liters && (
-              <span className="text-sm ml-2 mt-1.5 text-red-300">
-                {errors.fuel_liters.message}
               </span>
             )}{" "}
           </div>

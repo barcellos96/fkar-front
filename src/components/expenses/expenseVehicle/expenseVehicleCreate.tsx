@@ -178,7 +178,7 @@ export default function ExpenseVehicleCreate() {
 
         <h1 className="flex flex-row items-center gap-2 mt-4 mb-5 text-xl font-semibold">
           <TrendingDown
-            className="bg-red-500 rounded-full p-2 text-white"
+            className="bg-red-300 rounded-full p-2 text-white"
             width={40}
             height={40}
           />
@@ -204,7 +204,7 @@ export default function ExpenseVehicleCreate() {
               className="h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
               {...register("expense_type_id")}
             >
-              <option value="">Selecione tipo de desepsa</option>
+              <option value="">Selecione tipo de despesa</option>
               {filteredExpenseType?.map((item, index) => (
                 <option key={index} value={item.id}>
                   {item.name}
@@ -323,15 +323,14 @@ export default function ExpenseVehicleCreate() {
               {...register("amount")}
               onChange={(e) => {
                 let inputValue = e.target.value;
-
                 // Remover caracteres não numéricos, exceto vírgula e ponto
                 inputValue = inputValue.replace(/[^0-9,.]/g, "");
-
                 // Substituir vírgulas por pontos
                 inputValue = inputValue.replace(",", ".");
-
                 // Remover múltiplos pontos consecutivos
                 inputValue = inputValue.replace(/(\..*)\./g, "$1");
+                // Formatando com espaço a cada milhar
+                inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
                 setValue("amount", `R$ ${inputValue}`);
               }}

@@ -27,6 +27,7 @@ import { NotDataTable } from "@/components/tablesNotData";
 
 import IconMaintenance from "../../../assets/maintenance.png";
 import { useRouter } from "next/navigation";
+import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 
 export default function ExpenseMaintenanceData() {
   const { push } = useRouter();
@@ -80,7 +81,7 @@ export default function ExpenseMaintenanceData() {
 
   if (expenseVehicle?.data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center pb-5 ">
+      <div className="flex flex-col items-center bg-white rounded-lg mt-3 shadow-lg justify-center pb-5 ">
         <NotDataTable.Root>
           <NotDataTable.Body
             img={IconMaintenance}
@@ -166,7 +167,6 @@ export default function ExpenseMaintenanceData() {
           </td>
         </tr>
       )}
-
       {!loading &&
         expenseVehicle?.data.length > 0 &&
         expenseVehicle?.data.map((item, index) => (
@@ -212,9 +212,7 @@ export default function ExpenseMaintenanceData() {
                 {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
               </span>
             </td>
-            <td className="slg:py-3 hidden lg:table-cell">
-              {formatKm(item.km)}
-            </td>
+            <td className="slg:py-3">{formatKm(item.km)}</td>
             <td className="slg:py-3 ">
               <span className="flex gap-2 slg:table-cell">
                 <BadgeDollarSign
@@ -222,9 +220,9 @@ export default function ExpenseMaintenanceData() {
                   height={17}
                   className="slg:hidden"
                 />
-                R$ {item.amount}
+                R$ {formatNumberWithSpaces(item.amount)}
               </span>
-            </td>{" "}
+            </td>
             <td className="hidden  slg:flex gap-2 py-4 px-2  justify-end">
               <button
                 className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}

@@ -15,7 +15,6 @@ export default function Content() {
 
   const cookies = parseCookies();
   const userToken = cookies["user:accessToken"];
-  console.log("userToken ", userToken);
 
   const [vehicleId, setVehicleId] = useState<string>("");
   const [plate, setPlate] = useState<string | null | undefined>("");
@@ -141,26 +140,34 @@ export default function Content() {
               </select>
             </section>
 
-            <div className={`${vehicle.length === 0 && "hidden sm:flex"}`}>
-              <div className="h-4 w-px hidden s:flex bg-zinc-300" />
+            {vehicle.length !== 0 && (
+              <div
+                className={`${
+                  vehicle.length === 0
+                    ? "hidden sm:flex "
+                    : "flex items-center justify-center gap-1"
+                }`}
+              >
+                <div className="h-4 w-px hidden s:flex bg-zinc-300" />
 
-              <section className="hidden s:flex items-center gap-2 text-nowrap">
-                {plate ? (
-                  <span className=" text-sm border border-zinc-700 rounded-md px-2 py-1">
-                    plate
-                  </span>
-                ) : (
-                  <span className=" text-sm border w-4 border-zinc-700 rounded-md px-6 py-3"></span>
-                )}
-              </section>
+                <section className="hidden s:flex items-center gap-2 text-nowrap">
+                  {plate ? (
+                    <span className=" text-sm border border-zinc-700 rounded-md px-2 py-1">
+                      {plate}
+                    </span>
+                  ) : (
+                    <span className=" text-sm border w-4 border-zinc-700 rounded-md px-6 py-3"></span>
+                  )}
+                </section>
 
-              <div className="h-4 w-px hidden s:flex bg-zinc-300 " />
+                <div className="h-4 w-px hidden s:flex bg-zinc-300 " />
 
-              <section className="flex items-center gap-1 border border-zinc-700  rounded-md px-2 py-1">
-                <Map size={15} />
-                <span className="text-sm ">{formatKm(km ? km : 0)}</span>
-              </section>
-            </div>
+                <section className="flex items-center gap-1 border border-zinc-700  rounded-md px-2 py-1">
+                  <Map size={15} />
+                  <span className="text-sm ">{formatKm(km ? km : 0)}</span>
+                </section>
+              </div>
+            )}
           </div>
         </div>
       )}

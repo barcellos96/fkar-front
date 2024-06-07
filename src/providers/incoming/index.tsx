@@ -35,9 +35,71 @@ interface DeleteIncomingProps {
   };
 }
 
+interface VehicleProps {
+  brand: string;
+  id: string;
+  isActive: boolean;
+  isPrivate: boolean;
+  km: number;
+  model: string;
+  plate: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  year: number;
+}
+
+export interface GetIncomingProps {
+  id: string;
+  date: string;
+  title: string;
+  amount_received: string;
+  km: number;
+  observation: string;
+  incoming_type: {
+    id: string;
+    name: string;
+  };
+  vehicle: VehicleProps;
+}
+
+interface IncomingCreateProps {
+  id?: string;
+  date: string;
+  title: string;
+  amount_received: number;
+  km: number;
+  observation?: string | null;
+  incomingTypeId: string;
+  vehicleId: string;
+}
+
+interface ResponseCreateProps {
+  response: {
+    date: string;
+    title: string;
+    amount_received: number;
+    km: number;
+    observation: string;
+    incoming_type: {
+      id: string;
+      name: string;
+    };
+    user: {
+      id: string;
+      isActive: boolean;
+    };
+    vehicle: {
+      id: string;
+      isActive: boolean;
+    };
+    id: string;
+  };
+}
+
 interface IIncomingData {
   incomingType?: GetIncomingTypeProps[] | null;
-  GetIncomingType: () => void;
+  GetIncomingType: () => Promise<void>;
   CreateIncomingType(data: IIncomingTypeProps): Promise<ValueProps>;
   value?: ValueProps;
   DeleteIncomingType(id: string): Promise<DeleteIncomingProps>;
@@ -45,6 +107,10 @@ interface IIncomingData {
     id: string,
     data: IIncomingTypeProps
   ): Promise<IncomingTypeProps>;
+
+  GetIncoming(incomingId?: string): Promise<GetIncomingProps[]>;
+  incomingData?: GetIncomingProps[] | null;
+  CreateIncoming(data: IncomingCreateProps): Promise<ResponseCreateProps>;
 }
 
 interface ICihldrenReact {
@@ -149,6 +215,53 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
+  const [incomingData, setIncomingData] = useState<GetIncomingProps[] | null>(
+    null
+  );
+
+  const GetIncoming = async (
+    incomingId?: string
+  ): Promise<GetIncomingProps[]> => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+    };
+
+    const response = await api
+      .get(`/incoming/${incomingId ? incomingId : ""}`, config)
+      .then((res) => {
+        setIncomingData(res.data.response);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message, { position: "top-right" });
+        return err;
+      });
+
+    return response;
+  };
+
+  const CreateIncoming = async (
+    data: IncomingCreateProps
+  ): Promise<ResponseCreateProps> => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+    };
+    const response = await api
+      .post("/incoming", data, config)
+      .then((res) => {
+        toast.success("Receita criada com sucesso!", { position: "top-right" });
+        setValue(res.data);
+        setIncomingData(null);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message, { position: "top-right" });
+        return err;
+      });
+
+    return response;
+  };
+
   return (
     <IncomingContext.Provider
       value={{
@@ -158,6 +271,9 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
         CreateIncomingType,
         UpdateIncomingType,
         value,
+        GetIncoming,
+        incomingData,
+        CreateIncoming,
       }}
     >
       {children}

@@ -5,7 +5,16 @@ import { ExpenseTypeContext } from "@/providers/expense/expenseType";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft, Plus, PlusIcon, Search, Wrench } from "lucide-react";
+import {
+  ChevronLeft,
+  LucideTrash,
+  LucideTrash2,
+  Plus,
+  PlusIcon,
+  Search,
+  Trash,
+  Wrench,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MouseEvent, useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -228,6 +237,13 @@ export default function ExpenseMaintenanceCreate() {
     );
   };
 
+  const handleRemoveService = (index: number) => {
+    console.log("index ", index);
+    setSelectedServices((prevServices) =>
+      prevServices.filter((_, i) => i !== index)
+    );
+  };
+
   const totalValue = selectedServices.reduce((accumulator, service) => {
     const value = parseFloat(service.value.split(" ").join(""));
     return accumulator + (isNaN(value) ? 0 : value);
@@ -296,33 +312,39 @@ export default function ExpenseMaintenanceCreate() {
                   {selectedServices.map((services, index) => (
                     <li key={index} className="flex justify-between mb-2">
                       <span>{services.name}</span>
-                      <span>
-                        R${" "}
-                        {services.value
-                          ? formatNumberWithSpaces(
-                              parseFloat(
-                                services.value.split(" ").join("")
-                              ).toFixed(2)
-                            )
-                          : "0.00"}
-                      </span>
+                      <section className="flex items-center gap-2">
+                        <span>
+                          R${" "}
+                          {services.value
+                            ? formatNumberWithSpaces(
+                                parseFloat(
+                                  services.value.split(" ").join("")
+                                ).toFixed(2)
+                              )
+                            : "0.00"}
+                        </span>
+                        <LucideTrash2
+                          className="text-green-700 cursor-pointer"
+                          onClick={() => handleRemoveService(index)}
+                          width={14}
+                          height={14}
+                        />
+                      </section>
                     </li>
                   ))}
                 </ol>
                 <div className="border-b-2 py-1" />
 
-                <section className="font-semibold flex justify-between mt-2 mb-3">
-                  <span>TOTAL: </span>
+                <div className="flex justify-between font-semibold mt-2 mb-3">
+                  <span className="flex flex-1 ">TOTAL: </span>
 
-                  <section className="flex gap-1 w-24 flex-nowrap">
-                    <label>R$</label>
-                    <input
-                      id="amount"
-                      value={`${formattedTotalValue}`}
-                      {...register("amount")}
-                    />
-                  </section>
-                </section>
+                  <input
+                    id="amount"
+                    value={`R$ ${formattedTotalValue}`}
+                    {...register("amount")}
+                    className="flex text-end"
+                  />
+                </div>
 
                 <section
                   onClick={handleOpenModal}
@@ -339,13 +361,11 @@ export default function ExpenseMaintenanceCreate() {
                 <Modal.Root
                   onClose={() => {
                     setModalServices(false);
-                    setSelectedServices([]);
                   }}
                 >
                   <Modal.Title
                     onClose={() => {
                       setModalServices(false);
-                      setSelectedServices([]);
                     }}
                     title="Serviços"
                   />
@@ -408,6 +428,13 @@ export default function ExpenseMaintenanceCreate() {
                                         /(\..*)\./g,
                                         "$1"
                                       );
+
+                                      // Limitar a apenas dois dígitos após o ponto
+                                      inputValue = inputValue.replace(
+                                        /(\.\d{2})\d+/g,
+                                        "$1"
+                                      );
+
                                       // Formatando com espaço a cada milhar
                                       inputValue = inputValue.replace(
                                         /\B(?=(\d{3})+(?!\d))/g,
@@ -433,10 +460,7 @@ export default function ExpenseMaintenanceCreate() {
                     type="button"
                     nameButtonSubmit="Salvar"
                     onSubmitAction={() => setModalServices(false)}
-                    onCancelAction={() => {
-                      setModalServices(false);
-                      setSelectedServices([]);
-                    }}
+                    onCancelAction={() => setModalServices(false)}
                   />
                 </Modal.Root>
               </div>

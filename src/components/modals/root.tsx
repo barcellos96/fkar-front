@@ -3,9 +3,26 @@ import { ReactNode } from "react";
 interface ModalRootProps {
   children: ReactNode;
   onClose?: () => void;
+  justify?: string;
+  items?: string;
+  width?: string;
+  maxheigth?: string;
+  rounded?: string;
+  px?: string;
+  py?: string;
 }
 
-export default function ModalRoot({ children, onClose }: ModalRootProps) {
+export default function ModalRoot({
+  children,
+  onClose,
+  justify = "justify-center",
+  items = "items-center",
+  width = "w-[320px]",
+  maxheigth = "max-h-[540px]",
+  rounded = "rounded-lg",
+  px = "px-4",
+  py = "py-5",
+}: ModalRootProps) {
   function handleClickOutside(
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) {
@@ -15,12 +32,16 @@ export default function ModalRoot({ children, onClose }: ModalRootProps) {
     }
   }
 
+  //  className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-10 "
+
   return (
     <div
-      className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-10 "
+      className={`fixed top-0 left-0 w-full h-full flex ${justify} ${items} bg-black bg-opacity-10`}
       onClick={handleClickOutside}
     >
-      <div className="flex flex-col gap-6 bg-zinc-50 rounded-lg px-4 py-5 w-[320px] max-h-[540px] overflow-aut  overflow-auto lg:w-1/3 modal-content custom-scrollbar">
+      <div
+        className={`flex flex-col gap-6 bg-zinc-50 ${rounded} ${px} ${py} ${width} ${maxheigth} overflow-aut  overflow-auto lg:w-1/3 modal-content custom-scrollbar`}
+      >
         {children}
       </div>
     </div>

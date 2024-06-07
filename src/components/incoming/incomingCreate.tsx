@@ -5,7 +5,7 @@ import { ExpenseTypeContext } from "@/providers/expense/expenseType";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft, TrendingDown } from "lucide-react";
+import { ChevronLeft, TrendingDown, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MouseEvent, useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -13,28 +13,25 @@ import { z } from "zod";
 import { addHours, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Locale } from "date-fns";
+import { IncomingContext } from "@/providers/incoming";
 
-export default function ExpenseVehicleCreate() {
+export default function IncomingCreate() {
   const { back, push } = useRouter();
 
   const [loading, setLoading] = useState(false);
   const [sectionPlus, setSectionPlus] = useState(false);
 
   const { selectedVehicleId } = useContext(VehicleContext);
-  const { GetExpenseType, expenseType } = useContext(ExpenseTypeContext);
-  const { CreateExpenseVehicle } = useContext(ExpenseVehicleContext);
+  const { GetIncoming, GetIncomingType, value, incomingType, CreateIncoming } =
+    useContext(IncomingContext);
 
   useEffect(() => {
-    if (expenseType === null) {
-      Promise.all([GetExpenseType()]);
-    }
-  }, []);
+    setLoading(true); // Inicia o estado de loading
 
-  const filteredExpenseType = expenseType?.filter(
-    (item) =>
-      item.name.toLowerCase() !== "abastecimento" &&
-      item.name.toLowerCase() !== "manutenção"
-  );
+    Promise.all([GetIncoming(), GetIncomingType()]).finally(() => {
+      setLoading(false); // Finaliza o estado de loading
+    });
+  }, [value, selectedVehicleId]);
 
   const date = new Date();
   const time = new Date();
@@ -61,12 +58,10 @@ export default function ExpenseVehicleCreate() {
   const defaultValues = {
     date: formattedDate,
     time: formattedTime,
-    description: `Despesa - `,
-    location: "",
-    expense_type_id: "",
+    title: `Receita - `,
+    incomingTypeId: "",
     km: "",
-    amount: "",
-    method_payment: "",
+    amount_received: "",
     observation: "",
     vehicleId: selectedVehicleId,
   };
@@ -74,12 +69,10 @@ export default function ExpenseVehicleCreate() {
   const schema = z.object({
     date: z.string().min(1, "data obrigatória"),
     time: z.string().min(1, "hora obrigatória"),
-    description: z.string().min(1, "descrição do gasto obrigatório"),
-    location: z.string(),
-    expense_type_id: z.string().min(1, "Obrigatorio id do tipo de despesa"),
+    title: z.string().min(1, "titulo do gasto obrigatório"),
+    incomingTypeId: z.string().min(1, "obrigatorio id do tipo de despesa"),
     km: z.string().min(1, "quilometragem atual obrigatória"),
-    amount: z.string().min(1, "total gasto obrigatório"),
-    method_payment: z.string().nullable(),
+    amount_received: z.string().min(1, "total gasto obrigatório"),
     observation: z.string(),
     vehicleId: z.string(),
   });
@@ -97,20 +90,20 @@ export default function ExpenseVehicleCreate() {
     resolver: zodResolver(schema),
   });
 
-  const getValueExpenseType = watch("expense_type_id");
+  const getValueIncomingType = watch("incomingTypeId");
 
   useEffect(() => {
-    const getNameExpenseType = expenseType?.find(
-      (item) => item.id === getValueExpenseType
+    const getNameIncomingType = incomingType?.find(
+      (item) => item.id === getValueIncomingType
     );
 
     setValue(
-      "description",
-      `Despesa - ${getNameExpenseType?.name ? getNameExpenseType?.name : ""}`
+      "title",
+      `Receita - ${getNameIncomingType?.name ? getNameIncomingType?.name : ""}`
     );
-  }, [getValueExpenseType]);
+  }, [getValueIncomingType]);
 
-  const amount = watch("amount").replace(/[^0-9.-]+/g, ""); // Remove tudo que não é número, ponto ou hífen
+  const amount_received = watch("amount_received").replace(/[^0-9.-]+/g, ""); // Remove tudo que não é número, ponto ou hífen
 
   const onSubmit: SubmitHandler<RegisterProps> = async (value) => {
     // Combine date and time into a single Date object
@@ -127,23 +120,19 @@ export default function ExpenseVehicleCreate() {
 
     const formattedValue = { ...rest, date: dateFormated };
 
-    // Incluir method_payment apenas se methodPaymentValue não for vazio
-    if (formattedValue.method_payment == "") {
-      formattedValue.method_payment = null;
-    }
-
     // Convertendo os campos necessários de string para number
     const formattedValueWithNumbers = {
       ...formattedValue,
       km: Number(formattedValue.km.split(".").join("")),
-      amount: Number(amount),
+      amount_received: Number(amount_received),
     };
 
     setLoading(true);
     try {
-      await CreateExpenseVehicle(formattedValueWithNumbers);
+      console.log("formattedValueWithNumbers ", formattedValueWithNumbers);
+      await CreateIncoming(formattedValueWithNumbers);
       setLoading(false);
-      push("/dashboard/despesas");
+      push("/dashboard/receitas");
     } catch (error) {
       setLoading(false);
     }
@@ -177,12 +166,12 @@ export default function ExpenseVehicleCreate() {
         </span>
 
         <h1 className="flex flex-row items-center gap-2 mt-4 mb-5 text-xl font-semibold">
-          <TrendingDown
-            className="bg-red-300 rounded-full p-2 text-white"
+          <TrendingUp
+            className="bg-green-300 rounded-full p-2 text-white"
             width={40}
             height={40}
           />
-          Cadastrar Despesa
+          Cadastrar Receita
         </h1>
 
         {/* formulario */}
@@ -194,26 +183,26 @@ export default function ExpenseVehicleCreate() {
           {/* tipo de Despesa */}
           <div className="flex flex-col mb-5">
             <label
-              htmlFor="expense_type_id"
+              htmlFor="incomingTypeId"
               className="text-base font-semibold mb-2 ml-1"
             >
-              Tipo de Despesa:*
+              Tipo de Receita:*
             </label>
             <select
-              id="expense_type_id"
+              id="incomingTypeId"
               className="h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
-              {...register("expense_type_id")}
+              {...register("incomingTypeId")}
             >
-              <option value="">Selecione tipo de despesa</option>
-              {filteredExpenseType?.map((item, index) => (
+              <option value="">Selecione tipo de receita</option>
+              {incomingType?.map((item, index) => (
                 <option key={index} value={item.id}>
                   {item.name}
                 </option>
               ))}
             </select>
-            {errors.expense_type_id && (
+            {errors.incomingTypeId && (
               <span className="text-sm ml-2 mt-1.5 text-red-300">
-                {errors.expense_type_id.message}
+                {errors.incomingTypeId.message}
               </span>
             )}
           </div>
@@ -221,21 +210,21 @@ export default function ExpenseVehicleCreate() {
           {/* descrição */}
           <div className="flex flex-col  mb-5">
             <label
-              htmlFor="description"
+              htmlFor="title"
               className="text-base font-semibold mb-2 ml-1 "
             >
               Descrição:*
             </label>
             <input
               type="text"
-              id="description"
+              id="title"
               className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
               placeholder="Descrição"
-              {...register("description")}
+              {...register("title")}
             />
-            {errors.description && (
+            {errors.title && (
               <span className="text-sm ml-2 mt-1.5 text-red-300">
-                {errors.description.message}
+                {errors.title.message}
               </span>
             )}{" "}
           </div>
@@ -320,7 +309,7 @@ export default function ExpenseVehicleCreate() {
               id="amount"
               className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
               placeholder="R$ Total"
-              {...register("amount")}
+              {...register("amount_received")}
               onChange={(e) => {
                 let inputValue = e.target.value;
                 // Remover caracteres não numéricos, exceto vírgula e ponto
@@ -336,12 +325,12 @@ export default function ExpenseVehicleCreate() {
                 // Formatando com espaço a cada milhar
                 inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
-                setValue("amount", `R$ ${inputValue}`);
+                setValue("amount_received", `R$ ${inputValue}`);
               }}
             />
-            {errors.amount && (
+            {errors.amount_received && (
               <span className="text-sm ml-2 mt-1.5 text-red-300">
-                {errors.amount.message}
+                {errors.amount_received.message}
               </span>
             )}{" "}
           </div>
@@ -354,56 +343,6 @@ export default function ExpenseVehicleCreate() {
           </span>
           {sectionPlus ? (
             <section className="flex flex-col mt-4">
-              {/* local do abastecimento */}
-              <div className="flex flex-col max-w-[300px] slg:max-w-[450px] mb-5">
-                <label
-                  htmlFor="date"
-                  className="text-base font-semibold mb-2 ml-1 "
-                >
-                  Localização:
-                </label>
-                <input
-                  type="text"
-                  id="location"
-                  className=" h-12 border rounded-lg py-2  px-3 leading-tight focus:outline-none"
-                  placeholder="Posto de Gasolina do João "
-                  {...register("location")}
-                />
-                {errors.location && (
-                  <span className="text-sm ml-2 mt-1.5 text-red-300">
-                    {errors.location.message}
-                  </span>
-                )}{" "}
-              </div>
-
-              {/* metodo de pagamento */}
-              <div className="flex flex-col max-w-[300px] slg:max-w-[450px] mb-5">
-                <label
-                  htmlFor="method_payment"
-                  className="text-base font-semibold mb-2 ml-1"
-                >
-                  Metodo de Pagamento:
-                </label>
-                <select
-                  id="method_payment"
-                  className="h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
-                  {...register("method_payment")}
-                >
-                  <option value="">Selecione um método de pagamento</option>
-                  <option value="crédito">Cartão de Crédito</option>
-                  <option value="débito">Cartão de Débito</option>
-                  <option value="dinheiro">Dinheiro</option>
-                  <option value="pix">PIX</option>
-                  <option value="cheque">Cheque</option>
-                  <option value="transferência">Transferência Bancária</option>
-                </select>
-                {errors.method_payment && (
-                  <span className="text-sm ml-2 mt-1.5 text-red-300">
-                    {errors.method_payment.message}
-                  </span>
-                )}
-              </div>
-
               <div className="flex flex-col max-w-[300px] slg:max-w-[450px] mb-5">
                 <label
                   htmlFor="date"

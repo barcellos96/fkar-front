@@ -382,6 +382,10 @@ export default function ExpenseRefuelingCreate() {
                   inputValue = inputValue.replace(",", ".");
                   // Remover múltiplos pontos consecutivos
                   inputValue = inputValue.replace(/(\..*)\./g, "$1");
+
+                  // Limitar a apenas dois dígitos após o ponto
+                  inputValue = inputValue.replace(/(\.\d{2})\d+/g, "$1");
+
                   // Formatando com espaço a cada milhar
                   inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 

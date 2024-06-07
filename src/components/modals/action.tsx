@@ -36,7 +36,7 @@ export default function ModalActions({
         className="uppercase text-zinc-400 text-base"
         onClick={onCancelAction}
       >
-        Cancel
+        Cancelar
       </button>
     </div>
   );

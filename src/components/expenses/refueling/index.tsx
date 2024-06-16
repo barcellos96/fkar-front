@@ -33,7 +33,6 @@ export default function RefulingLayout({ children, pagination }: Props) {
           <thead>
             <tr className="hidden slg:table-row text-left">
               <th className="py-3">#</th>
-              <th className="py-3">Descrição</th>
               <th className="py-3">Data</th>
               <th className="py-3 ">Combustível</th>
               <th className="py-3 ">Preço / L</th>

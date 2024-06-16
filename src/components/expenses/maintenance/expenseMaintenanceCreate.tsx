@@ -42,11 +42,14 @@ export default function ExpenseMaintenanceCreate() {
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>(
     []
   );
-  console.log("selectedServices ", selectedServices);
+  const [invalidInputs, setInvalidInputs] = useState<string[]>([]);
+  console.log("invalidInputs ", invalidInputs);
 
   const { selectedVehicleId, vehicle } = useContext(VehicleContext);
   const { GetExpenseType, expenseType } = useContext(ExpenseTypeContext);
-  const { CreateExpenseVehicle } = useContext(ExpenseVehicleContext);
+  const { CreateExpenseVehicle, setTabRouteConfig } = useContext(
+    ExpenseVehicleContext
+  );
   const { GetExpenseService, expenseService } = useContext(
     ExpenseServiceContext
   );
@@ -192,10 +195,6 @@ export default function ExpenseMaintenanceCreate() {
     setSectionPlus(!sectionPlus);
   };
 
-  const handleOpenModal = () => {
-    setModalServices(true);
-  };
-
   // Função para formatar o número com pontos como separadores de milhares
   const formatNumber = (value: string) => {
     // Remove qualquer coisa que não seja número
@@ -235,13 +234,34 @@ export default function ExpenseMaintenanceCreate() {
           : selectedService
       )
     );
+
+    if (value) {
+      setInvalidInputs(invalidInputs.filter((id) => id !== serviceId));
+    } else if (!invalidInputs.includes(serviceId)) {
+      setInvalidInputs([...invalidInputs, serviceId]);
+    }
   };
 
   const handleRemoveService = (index: number) => {
-    console.log("index ", index);
     setSelectedServices((prevServices) =>
       prevServices.filter((_, i) => i !== index)
     );
+  };
+
+  const validateInputs = () => {
+    const invalidInputs = selectedServices.filter((service) => !service.value);
+    setInvalidInputs(invalidInputs.map((service) => service.id));
+    return invalidInputs.length === 0;
+  };
+
+  const handleOpenModal = () => {
+    setModalServices(true);
+  };
+
+  const handleCloseModal = () => {
+    if (validateInputs()) {
+      setModalServices(false);
+    }
   };
 
   const totalValue = selectedServices.reduce((accumulator, service) => {
@@ -254,6 +274,11 @@ export default function ExpenseMaintenanceCreate() {
   useEffect(() => {
     setValue("amount", formattedTotalValue);
   }, [formattedTotalValue, totalValue, selectedServices]);
+
+  const handleRouteConfig = () => {
+    setTabRouteConfig("Tipo de Serviço");
+    push("/dashboard/config");
+  };
 
   return (
     <div className="w-full bg-white rounded-lg gap-4 px-6 py-5 mt-3 mb-5 shadow-lg">
@@ -358,17 +383,8 @@ export default function ExpenseMaintenanceCreate() {
 
             {modalSerivces && (
               <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-black bg-opacity-10">
-                <Modal.Root
-                  onClose={() => {
-                    setModalServices(false);
-                  }}
-                >
-                  <Modal.Title
-                    onClose={() => {
-                      setModalServices(false);
-                    }}
-                    title="Serviços"
-                  />
+                <Modal.Root onClose={handleCloseModal}>
+                  <Modal.Title onClose={handleCloseModal} title="Serviços" />
 
                   <div className="flex items-center gap-2 -mb-5">
                     <Modal.Input
@@ -376,7 +392,10 @@ export default function ExpenseMaintenanceCreate() {
                       placeholder="pesquisar serviço..."
                     />
 
-                    <section className="flex w-8 h-8 justify-center items-center bg-green-700 rounded-md cursor-pointer mb-2 ">
+                    <section
+                      onClick={handleRouteConfig}
+                      className="flex w-8 h-8 justify-center items-center bg-green-700 rounded-md cursor-pointer mb-2 "
+                    >
                       <Plus width={24} height={24} className="text-white" />
                     </section>
                   </div>
@@ -395,7 +414,7 @@ export default function ExpenseMaintenanceCreate() {
                         );
 
                         return (
-                          <li className="flex gap-1" key={index}>
+                          <li className="flex gap-1 items-center" key={index}>
                             <input
                               id={service.name}
                               type="checkbox"
@@ -403,50 +422,64 @@ export default function ExpenseMaintenanceCreate() {
                               onChange={() => handleCheckboxChange(service)}
                               className="outline-none"
                             />
-                            <section className="flex justify-between w-full">
+                            <section className="flex items-center justify-between w-full">
                               <label id={service.name}>{service.name}</label>
 
                               {selectedService && (
-                                <section>
+                                <section className="flex gap-1">
                                   <label>R$ </label>
-                                  <input
-                                    id={service.name}
-                                    placeholder="Valor"
-                                    className="outline-none border-b w-28 pl-1"
-                                    value={selectedService.value}
-                                    onChange={(e) => {
-                                      let inputValue = e.target.value;
-                                      // Remover caracteres não numéricos, exceto vírgula e ponto
-                                      inputValue = inputValue.replace(
-                                        /[^0-9,.]/g,
-                                        ""
-                                      );
-                                      // Substituir vírgulas por pontos
-                                      inputValue = inputValue.replace(",", ".");
-                                      // Remover múltiplos pontos consecutivos
-                                      inputValue = inputValue.replace(
-                                        /(\..*)\./g,
-                                        "$1"
-                                      );
+                                  <div className="flex flex-col">
+                                    <input
+                                      id={service.name}
+                                      placeholder="Valor"
+                                      className={`outline-none border-b w-28 pl-1 ${
+                                        invalidInputs.includes(service.id)
+                                          ? "border-red-500"
+                                          : ""
+                                      }`}
+                                      value={selectedService.value}
+                                      onChange={(e) => {
+                                        let inputValue = e.target.value;
+                                        // Remover caracteres não numéricos, exceto vírgula e ponto
+                                        inputValue = inputValue.replace(
+                                          /[^0-9,.]/g,
+                                          ""
+                                        );
+                                        // Substituir vírgulas por pontos
+                                        inputValue = inputValue.replace(
+                                          ",",
+                                          "."
+                                        );
+                                        // Remover múltiplos pontos consecutivos
+                                        inputValue = inputValue.replace(
+                                          /(\..*)\./g,
+                                          "$1"
+                                        );
 
-                                      // Limitar a apenas dois dígitos após o ponto
-                                      inputValue = inputValue.replace(
-                                        /(\.\d{2})\d+/g,
-                                        "$1"
-                                      );
+                                        // Limitar a apenas dois dígitos após o ponto
+                                        inputValue = inputValue.replace(
+                                          /(\.\d{2})\d+/g,
+                                          "$1"
+                                        );
 
-                                      // Formatando com espaço a cada milhar
-                                      inputValue = inputValue.replace(
-                                        /\B(?=(\d{3})+(?!\d))/g,
-                                        " "
-                                      );
+                                        // Formatando com espaço a cada milhar
+                                        inputValue = inputValue.replace(
+                                          /\B(?=(\d{3})+(?!\d))/g,
+                                          " "
+                                        );
 
-                                      handleServiceValueChange(
-                                        service.id,
-                                        inputValue
-                                      );
-                                    }}
-                                  />
+                                        handleServiceValueChange(
+                                          service.id,
+                                          inputValue
+                                        );
+                                      }}
+                                    />{" "}
+                                    {invalidInputs.includes(service.id) && (
+                                      <span className="text-red-500 text-sm">
+                                        Valor obrigatório
+                                      </span>
+                                    )}
+                                  </div>
                                 </section>
                               )}
                             </section>
@@ -459,8 +492,8 @@ export default function ExpenseMaintenanceCreate() {
                   <Modal.Actions
                     type="button"
                     nameButtonSubmit="Salvar"
-                    onSubmitAction={() => setModalServices(false)}
-                    onCancelAction={() => setModalServices(false)}
+                    onSubmitAction={handleCloseModal}
+                    onCancelAction={handleCloseModal}
                   />
                 </Modal.Root>
               </div>

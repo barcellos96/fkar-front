@@ -109,7 +109,7 @@ export default function ReminderData() {
   const typeModal = onModalUpdate ? "Atualizar " : "Deletar ";
   const colorSubmit = onModalUpdate ? "bg-yellow-600" : "bg-red-700";
 
-  const handleSubmit = () => {
+  const handleSubmitModal = () => {
     let dataToSend: {
       title: string;
       date_reminder?: string;
@@ -127,7 +127,6 @@ export default function ReminderData() {
       const { date_reminder, ...rest } = dataToSend;
       dataToSend = rest;
     }
-
 
     if (selectedReminder) {
       onModalUpdate
@@ -429,7 +428,7 @@ export default function ReminderData() {
             <Modal.Actions
               onSubmitAction={() => {
                 setLoading(true);
-                handleSubmit();
+                handleSubmitModal();
               }}
               loading={loading}
               onCancelAction={handleCloseModal}

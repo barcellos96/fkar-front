@@ -15,8 +15,9 @@ export default function Content() {
 
   const cookies = parseCookies();
   const userToken = cookies["user:accessToken"];
+  const vehicleIdCookies = cookies["vehicle:selectedVehicleId"];
 
-  const [vehicleId, setVehicleId] = useState<string>("");
+  const [vehicleId, setVehicleId] = useState<string>(vehicleIdCookies);
   const [plate, setPlate] = useState<string | null | undefined>("");
   const [km, setKm] = useState<number | null | undefined>(0);
   const [isMenuOpen, setMenuOpen] = useState(false); // Estado para controlar se o menu está aberto

@@ -7,7 +7,6 @@ import {
   BookType,
   CalendarCheck,
   CalendarDays,
-  DollarSign,
   Eye,
   Map,
   Pencil,
@@ -29,7 +28,6 @@ import { useRouter } from "next/navigation";
 import IncomingLayout from ".";
 import { GetIncomingProps, IncomingContext } from "@/providers/incoming";
 import { Modal } from "../modals";
-import { formatDate } from "@/hooks/date";
 
 export default function IncomingData() {
   const { push } = useRouter();
@@ -41,6 +39,7 @@ export default function IncomingData() {
     useContext(IncomingContext);
   const { selectedVehicleId } = useContext(VehicleContext);
 
+  const [onModal, setOnModal] = useState(false);
   const [loading, setLoading] = useState(false); // Estado de loading para o useEffect
   const [eyeOn, setEyeOn] = useState(false);
   const [selectedIncoming, setSelectedIncoming] =
@@ -98,27 +97,82 @@ export default function IncomingData() {
     return `${day}/${month}/${year} - ${hours}:${minutes}`;
   }
 
+  const handleOpenModal = (item: GetIncomingProps) => {
+    console.log("item ", item);
+    setOnModal(true);
+    setSelectedIncoming(item);
+  };
+
   return (
-    <IncomingLayout>
-      {loading && (
-        <tr>
-          <td>
-            <LoadingSpinner />
-          </td>
-        </tr>
-      )}
+    <>
+      <IncomingLayout>
+        {loading && (
+          <tr>
+            <td>
+              <LoadingSpinner />
+            </td>
+          </tr>
+        )}
 
-      {!loading &&
-        filteredIncomingByVehicle.length > 0 &&
-        filteredIncomingByVehicle.map((item, index) => (
-          <tr
-            className="flex flex-col slg:table-row border-b px-2 py-4 slg:px-0 slg:py-0 gap-1 "
-            key={index}
-          >
-            <td className="py-3 hidden slg:table-cell">{index + 1}</td>
+        {!loading &&
+          filteredIncomingByVehicle.length > 0 &&
+          filteredIncomingByVehicle.map((item, index) => (
+            <tr
+              className="flex flex-col slg:table-row border-b px-2 py-4 slg:px-0 slg:py-0 gap-1 "
+              key={index}
+            >
+              <td className="py-3 hidden slg:table-cell">{index + 1}</td>
 
-            <td className="slg:py-3 ">
-              <section className="slg:hidden absolute flex gap-2  justify-end w-4/5">
+              <td className="slg:py-3 ">
+                <section className="slg:hidden absolute flex gap-2  justify-end w-4/5">
+                  <button
+                    className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                    onClick={() => openEyeOn(item)}
+                  >
+                    <Eye width={15} color="white" />
+                  </button>
+                  <button
+                    className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                    onClick={() => handleOpenModal(item)}
+                  >
+                    <Pencil width={15} color="white" />
+                  </button>
+                  <button
+                    className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                  >
+                    <Trash width={15} color="white" />
+                  </button>
+                </section>
+                <span className="flex gap-2 slg:table-cell">
+                  <CalendarDays width={17} height={17} className="slg:hidden" />
+                  {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
+                </span>
+              </td>
+              <td className="slg:py-3">
+                <span className="flex gap-2 slg:table-cell">
+                  <TrendingDown width={17} height={17} className="slg:hidden" />
+                  {item.incoming_type.name}
+                </span>
+              </td>
+              <td className="slg:py-3 ">
+                <span className="flex gap-2 slg:table-cell">
+                  <BadgeDollarSign
+                    width={17}
+                    height={17}
+                    className="slg:hidden"
+                  />
+                  R$ {item.amount_received}
+                </span>
+              </td>
+              <td className="flex slg:py-3 slg:table-cell">
+                <span className="flex gap-2 slg:table-cell">
+                  <Map width={17} height={17} className="slg:hidden" />
+
+                  {formatKm(item.km)}
+                </span>
+              </td>
+
+              <td className="hidden  slg:flex gap-2 py-4 px-1  justify-end">
                 <button
                   className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
                   onClick={() => openEyeOn(item)}
@@ -127,6 +181,7 @@ export default function IncomingData() {
                 </button>
                 <button
                   className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                  onClick={() => handleOpenModal(item)}
                 >
                   <Pencil width={15} color="white" />
                 </button>
@@ -135,156 +190,116 @@ export default function IncomingData() {
                 >
                   <Trash width={15} color="white" />
                 </button>
-              </section>
-              <span className="flex gap-2 slg:table-cell">
-                <CalendarDays width={17} height={17} className="slg:hidden" />
-                {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
-              </span>
-            </td>
-            <td className="slg:py-3">
-              <span className="flex gap-2 slg:table-cell">
-                <TrendingDown width={17} height={17} className="slg:hidden" />
-                {item.incoming_type.name}
-              </span>
-            </td>
-            <td className="slg:py-3 ">
-              <span className="flex gap-2 slg:table-cell">
-                <BadgeDollarSign
-                  width={17}
-                  height={17}
-                  className="slg:hidden"
-                />
-                R$ {item.amount_received}
-              </span>
-            </td>
-            <td className="flex slg:py-3 slg:table-cell">
-              <span className="flex gap-2 slg:table-cell">
-                <Map width={17} height={17} className="slg:hidden" />
+              </td>
 
-                {formatKm(item.km)}
-              </span>
-            </td>
-
-            <td className="hidden  slg:flex gap-2 py-4 px-1  justify-end">
-              <button
-                className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
-                onClick={() => openEyeOn(item)}
-              >
-                <Eye width={15} color="white" />
-              </button>
-              <button
-                className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
-              >
-                <Pencil width={15} color="white" />
-              </button>
-              <button
-                className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
-              >
-                <Trash width={15} color="white" />
-              </button>
-            </td>
-
-            {eyeOn && (
-              <td>
-                {eyeOn && (
-                  <Modal.Root
-                    onClose={handleCloseEyeOn}
-                    justify="justify-end"
-                    items=""
-                    rounded=""
-                    width="w-full slg:max-w-[520px]"
-                    maxheigth="h-full"
-                    px=""
-                    py=""
-                  >
-                    <div className="px-4 py-5 flex-grow ">
-                      <Modal.Title
-                        icon={TrendingUp}
-                        title={selectedIncoming?.title ?? ""}
-                        onClose={handleCloseEyeOn}
-                      />
-                      <div className="pr-7">
-                        <div className="flex flex-col xlg:flex-row gap-10 xlg:justify-between justify-start border-b py-12">
-                          <section className="flex items-center gap-2">
-                            <CalendarCheck width={30} height={30} />
-                            <section className="flex flex-col">
-                              <span className="font-bold text-lg">Data:</span>
-                              <span className="text-lg font-normal">
-                                {formatDateTime(
-                                  selectedIncoming?.date
-                                    ? selectedIncoming?.date
-                                    : ""
-                                )}
-                              </span>
+              {eyeOn && (
+                <td>
+                  {eyeOn && (
+                    <Modal.Root
+                      onClose={handleCloseEyeOn}
+                      justify="justify-end"
+                      items=""
+                      rounded=""
+                      width="w-full slg:max-w-[430px]"
+                      maxheigth="h-full"
+                      px=""
+                      py=""
+                    >
+                      <div className="px-4 py-5 flex-grow ">
+                        <Modal.Title
+                          icon={TrendingUp}
+                          title={selectedIncoming?.title ?? ""}
+                          onClose={handleCloseEyeOn}
+                        />
+                        <div className="pr-7">
+                          <div className="flex flex-col xlg:flex-row gap-10 xlg:justify-between justify-start border-b py-12">
+                            <section className="flex items-center gap-2">
+                              <CalendarCheck width={26} height={26} />
+                              <section className="flex flex-col">
+                                <span className="font-semibold text-lg">
+                                  Data:
+                                </span>
+                                <span className="text-lg font-light">
+                                  {formatDateTime(
+                                    selectedIncoming?.date
+                                      ? selectedIncoming?.date
+                                      : ""
+                                  )}
+                                </span>
+                              </section>
                             </section>
-                          </section>
 
-                          <section className="flex items-center gap-2">
-                            <Map width={30} height={30} />
-                            <section className="flex flex-col">
-                              <span className="font-bold text-lg">
-                                Hodometro(km):
-                              </span>
-                              <span className="text-lg font-normal">
-                                {formatKm(
-                                  selectedIncoming?.km
-                                    ? selectedIncoming?.km
-                                    : Number("")
-                                )}
-                              </span>
+                            <section className="flex items-center gap-2">
+                              <Map width={26} height={26} />
+                              <section className="flex flex-col">
+                                <span className="font-semibold text-lg">
+                                  Hodometro(km):
+                                </span>
+                                <span className="text-lg font-light">
+                                  {formatKm(
+                                    selectedIncoming?.km
+                                      ? selectedIncoming?.km
+                                      : Number("")
+                                  )}
+                                </span>
+                              </section>
                             </section>
-                          </section>
-                        </div>
+                          </div>
 
-                        <div className="flex flex-col xlg:flex-row gap-10 xlg:justify-between justify-start border-b py-12">
-                          <section className="flex items-center gap-2">
-                            <BookType width={30} height={30} />
-                            <section className="flex flex-col">
-                              <span className="font-bold text-lg">
-                                Tipo de Receita:
-                              </span>
-                              <span className="text-lg font-normal">
-                                {selectedIncoming?.incoming_type.name}
-                              </span>
+                          <div className="flex flex-col xlg:flex-row gap-10 xlg:justify-between justify-start border-b py-12">
+                            <section className="flex items-center gap-2">
+                              <BookType width={26} height={26} />
+                              <section className="flex flex-col">
+                                <span className="font-semibold text-lg">
+                                  Tipo de Receita:
+                                </span>
+                                <span className="text-lg font-light">
+                                  {selectedIncoming?.incoming_type.name}
+                                </span>
+                              </section>
                             </section>
-                          </section>
 
-                          <section className="flex items-center gap-2">
-                            <Text width={30} height={30} />
-                            <section className="flex flex-col">
-                              <span className="font-bold text-lg">
-                                Observação:
-                              </span>
-                              <span className="text-lg font-normal">
-                                {selectedIncoming?.observation}
-                              </span>
+                            <section className="flex items-center gap-2">
+                              <Text width={26} height={26} />
+                              <section className="flex flex-col">
+                                <span className="font-semibold text-lg">
+                                  Observação:
+                                </span>
+                                <span className="text-lg font-light">
+                                  {selectedIncoming?.observation}
+                                </span>
+                              </section>
                             </section>
-                          </section>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* final */}
-                    <div className=" bg-green-700 gap-4 flex items-center w-full min-h-[120px] py-4 px-3  rounded-t-lg ">
-                      <Banknote width={40} height={40} className="text-white" />
-                      <section className="flex flex-col">
-                        <span className="font-light text-md text-white">
-                          Total
-                        </span>
-                        <span className="text-xl font-bold text-white">
-                          R$ {selectedIncoming?.amount_received}
-                        </span>
-                      </section>
-                    </div>
+                      {/* final */}
+                      <div className=" bg-green-700 gap-4 flex items-center w-full py-4 px-3  rounded-t-lg ">
+                        <Banknote
+                          width={40}
+                          height={40}
+                          className="text-white"
+                        />
+                        <section className="flex flex-col">
+                          <span className="font-light text-md text-white">
+                            Total
+                          </span>
+                          <span className="text-xl font-bold text-white">
+                            R$ {selectedIncoming?.amount_received}
+                          </span>
+                        </section>
+                      </div>
 
-                    {/* <div className="bg-blue-300 flex flex-1 w-full"></div>
+                      {/* <div className="bg-blue-300 flex flex-1 w-full"></div>
                     <div className="bg-red-300 flex flex-1 w-full"></div> */}
-                  </Modal.Root>
-                )}
-              </td>
-            )}
-          </tr>
-        ))}
-    </IncomingLayout>
+                    </Modal.Root>
+                  )}
+                </td>
+              )}
+            </tr>
+          ))}
+      </IncomingLayout>
+    </>
   );
 }

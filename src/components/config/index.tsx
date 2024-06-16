@@ -1,13 +1,15 @@
 "use client";
 
 import { Crown, Fuel, CreditCard, Car, Wrench } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TableTypeExpense from "./expenseType";
 import TableSkeleton from "../tablesNotData/skeleton";
 import TableIncomingType from "./incomingType";
 import TableVehicleType from "./vehicleType";
 import TableFuelType from "./fuelType";
 import TableExpenseService from "./expenseService";
+
+import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 
 const tabList = [
   {
@@ -43,11 +45,19 @@ const tabList = [
 ];
 
 export default function ConfigLayout() {
-  const [active, setActive] = useState("");
+  const { setTabRouteConfig, tabRouteConfig } = useContext(
+    ExpenseVehicleContext
+  );
+  const [active, setActive] = useState(tabRouteConfig);
 
   useEffect(() => {
-    setActive("Tipo de Despesa");
-  }, []);
+    setActive(tabRouteConfig);
+  }, [tabRouteConfig]);
+
+  const handleTabClick = (name: string) => {
+    setTabRouteConfig(name);
+    setActive(name);
+  };
 
   return (
     <div className="grid grid-cols-profileLayoutSm slg:grid-cols-profileLayout py-3 rounded-lg gap-4">
@@ -60,7 +70,7 @@ export default function ConfigLayout() {
               className={`flex items-center px-5  font-light text-base hover:border-l-green-700 hover:border-l-2 hover:bg-green-100 p-3 ${
                 active === name && `border-l-green-700 border-l-2 bg-green-100`
               }`}
-              onClick={() => setActive(name)}
+              onClick={() => handleTabClick(name)}
             >
               <Icon size={14} className="mr-2" /> {name}
             </button>

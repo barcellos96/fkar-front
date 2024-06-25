@@ -35,7 +35,7 @@ interface DeleteIncomingProps {
   };
 }
 
-interface VehicleProps {
+export interface VehicleProps {
   brand: string;
   id: string;
   isActive: boolean;
@@ -50,17 +50,22 @@ interface VehicleProps {
 }
 
 export interface GetIncomingProps {
-  id: string;
-  date: string;
-  title: string;
-  amount_received: string;
-  km: number;
-  observation: string;
-  incoming_type: {
+  incoming_list: {
     id: string;
-    name: string;
-  };
-  vehicle: VehicleProps;
+    date: string;
+    title: string;
+    amount_received: string;
+    km: number;
+    observation: string;
+    incoming_type: {
+      id: string;
+      name: string;
+    };
+    vehicle: VehicleProps;
+  }[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 interface IncomingCreateProps {
@@ -72,6 +77,28 @@ interface IncomingCreateProps {
   observation?: string | null;
   incomingTypeId: string;
   vehicleId: string;
+}
+
+interface IncomingUpdateProps {
+  id?: string;
+  date?: string;
+  title?: string;
+  amount_received?: number;
+  km?: number;
+  observation?: string | null;
+  incomingTypeId?: string;
+  vehicleId?: string;
+}
+
+interface IncomingDeleteProps {
+  message: string;
+  incoming_delete: {
+    id: string;
+    date: string;
+    amount_received: string;
+    km: number;
+    observation: string;
+  };
 }
 
 interface ResponseCreateProps {
@@ -108,9 +135,19 @@ interface IIncomingData {
     data: IIncomingTypeProps
   ): Promise<IncomingTypeProps>;
 
-  GetIncoming(incomingId?: string): Promise<GetIncomingProps[]>;
-  incomingData?: GetIncomingProps[] | null;
+  GetIncoming(
+    vehicleId: string,
+    page?: string,
+    limit?: string,
+    incomingId?: string
+  ): Promise<GetIncomingProps>;
+  incomingData?: GetIncomingProps | null;
   CreateIncoming(data: IncomingCreateProps): Promise<ResponseCreateProps>;
+  DeleteIncoming(incomingId: string): Promise<IncomingDeleteProps>;
+  UpdateIncoming(
+    incomingId: string,
+    data: IncomingUpdateProps
+  ): Promise<object>;
 }
 
 interface ICihldrenReact {
@@ -215,16 +252,20 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
-  const [incomingData, setIncomingData] = useState<GetIncomingProps[] | null>(
+  const [incomingData, setIncomingData] = useState<GetIncomingProps | null>(
     null
   );
 
   const GetIncoming = async (
+    vehicleId: string,
+    page: string,
+    limit: string, // Defina um limite padrão para o número de resultados por página
     incomingId?: string
-  ): Promise<GetIncomingProps[]> => {
+  ): Promise<GetIncomingProps> => {
     const { "user:accessToken": token } = parseCookies();
     const config = {
       headers: { Authorization: `bearer ${token}` },
+      params: { page, limit, vehicleId }, // Adicione os parâmetros de consulta aqui
     };
 
     const response = await api
@@ -262,6 +303,50 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
+  const DeleteIncoming = async (incomingId: string) => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+    };
+    const response = await api
+      .delete(`/incoming/${incomingId}`, config)
+      .then((res) => {
+        toast.success(res.data.response.message, { position: "top-right" });
+        setValue(res.data);
+        setIncomingData(null);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message, { position: "top-right" });
+        return err;
+      });
+
+    return response;
+  };
+
+  const UpdateIncoming = async (
+    incomingId: string,
+    data: IncomingUpdateProps
+  ) => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+    };
+
+    const response = await api
+      .patch(`/incoming/${incomingId}`, data, config)
+      .then((res) => {
+        toast.success(res.data.response.message, { position: "top-right" });
+        setValue(res.data);
+        setIncomingData(null);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message, { position: "top-right" });
+        return err;
+      });
+
+    return response;
+  };
+
   return (
     <IncomingContext.Provider
       value={{
@@ -274,6 +359,8 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
         GetIncoming,
         incomingData,
         CreateIncoming,
+        DeleteIncoming,
+        UpdateIncoming,
       }}
     >
       {children}

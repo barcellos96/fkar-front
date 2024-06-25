@@ -120,7 +120,7 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
 
     // Verificar se os cookies foram deletados
     const cookies = parseCookies();
-    console.log("Cookies after deletion:", cookies); //retorna um objeto vazio
+    console.log("cookies ", cookies);
 
     // Redirecionar para a página de login
     push("/login");

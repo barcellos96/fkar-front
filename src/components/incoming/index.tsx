@@ -33,6 +33,7 @@ export default function IncomingLayout({ children, pagination }: Props) {
             <tr className="hidden slg:table-row text-left">
               <th className="py-3">#</th>
               <th className="py-3">Data</th>
+              <th className="py-3">Descrição</th>
               <th className="py-3">Tipo de Receita</th>
               <th className="py-3">Valor</th>
               <th className="py-3">Hodometro</th>

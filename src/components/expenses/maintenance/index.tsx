@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingDown } from "lucide-react";
+import { TrendingDown, Wrench } from "lucide-react";
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import HeaderComposition from "@/components/header/headerComposition";
@@ -23,7 +23,7 @@ export default function ExpenseMaintenanceLayout({
   return (
     <div className="w-full bg-white rounded-lg gap-4 px-6 py-5 mt-3 mb-5 shadow-lg ">
       <HeaderComposition
-        icon={TrendingDown}
+        icon={Wrench}
         title="Manutenções"
         nameButton="Nova Manutenção"
         typeSubmit="button"
@@ -37,7 +37,6 @@ export default function ExpenseMaintenanceLayout({
             <tr className="hidden slg:table-row text-left">
               <th className="py-3">#</th>
               <th className="py-3">Descrição</th>
-              <th className="py-3">Serviços</th>
               <th className="py-3">Data</th>
               <th className="py-3">Hodometro</th>
               <th className="py-3">Total</th>

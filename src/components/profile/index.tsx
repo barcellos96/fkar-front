@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import MyAccount from "./myAccount";
 import MyAccountSkeleton from "./myAccount/skeleton";
 import Address from "./address";
+import ChangePassword from "./password";
 
 const tabList = [
   {
@@ -65,7 +66,7 @@ export default function ProfileLayout() {
           {active === tabList[0].name && <span>Planos FKar</span>}
           {active === tabList[1].name && <MyAccount />}
           {active === tabList[2].name && <Address />}
-          {active === tabList[3].name && <span>Senha</span>}
+          {active === tabList[3].name && <ChangePassword />}
         </div>
       )}
     </div>

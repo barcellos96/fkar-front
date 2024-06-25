@@ -2,17 +2,22 @@
 
 import { api } from "@/service/api";
 import { useRouter } from "next/navigation";
-import { setCookie } from "nookies";
+import { parseCookies, setCookie } from "nookies";
 import { createContext, ReactNode } from "react";
 import { toast } from "sonner";
 
-type LoginProps = {
+interface LoginProps {
   email: string;
   password: string;
-};
+}
+
+interface ChangePasswordProps {
+  password: string;
+}
 
 interface IAuthData {
   Login(data: LoginProps): Promise<object>;
+  ChangePasswordUserLogged(data: ChangePasswordProps): Promise<object>;
 }
 
 interface ICihldrenReact {
@@ -42,10 +47,29 @@ export const AuthProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
+  const ChangePasswordUserLogged = async (data: ChangePasswordProps) => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+    };
+    const response = await api
+      .patch("/change-password", data, config)
+      .then((res) => {
+        toast.success("Senha atualizada!", { position: "top-right" });
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+        return err;
+      });
+
+    return response;
+  };
+
   return (
     <AuthContext.Provider
       value={{
         Login,
+        ChangePasswordUserLogged,
       }}
     >
       {children}

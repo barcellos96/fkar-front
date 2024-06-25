@@ -32,7 +32,7 @@ const config: Config = {
         profileLayout: "minmax(9.5rem, 20rem) minmax(18rem, 1fr)",
         profileLayoutSm: "minmax(9.5rem, 1fr)",
         profileSideBar: "max-content 1fr max-content",
-        dashUpLg: "minmax(25rem,100rem) minmax(14rem, 40rem)",
+        dashUpLg: "minmax(25rem,1fr) minmax(14rem, 1fr)",
       },
     },
   },

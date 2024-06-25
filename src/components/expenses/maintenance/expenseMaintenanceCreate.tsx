@@ -43,7 +43,6 @@ export default function ExpenseMaintenanceCreate() {
     []
   );
   const [invalidInputs, setInvalidInputs] = useState<string[]>([]);
-  console.log("invalidInputs ", invalidInputs);
 
   const { selectedVehicleId, vehicle } = useContext(VehicleContext);
   const { GetExpenseType, expenseType } = useContext(ExpenseTypeContext);
@@ -145,6 +144,18 @@ export default function ExpenseMaintenanceCreate() {
 
   useEffect(() => {
     setValue("expense_service_data", selectedServices);
+  }, [selectedServices]);
+
+  useEffect(() => {
+    if (selectedServices && selectedServices.length > 0) {
+      const firstServiceName = selectedServices[0].name;
+      const additionalServicesCount = selectedServices.length - 1;
+      const description = `Serviço - ${firstServiceName} (+${additionalServicesCount})`;
+
+      setValue("description", description);
+    } else {
+      setValue("description", "");
+    }
   }, [selectedServices]);
 
   const amount = watch("amount").replace(/[^0-9.-]+/g, ""); // Remove tudo que não é número, ponto ou hífen

@@ -1,24 +1,118 @@
-import React from "react";
+"use client";
+
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import "../scrollbar/scrollbar.css"; // Importa o arquivo CSS personalizado
 import {
-  Calendar,
   Droplet,
   Map,
-  Wallet,
   Fuel,
   Wrench,
   Banknote,
-  Menu,
-  EllipsisVertical,
   CalendarDays,
+  Wallet,
 } from "lucide-react";
-
-// tenho uma LI correta para quando for consumir os dados. Está conforme preciso para que nao quebre o histórico
+import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
+import { parseCookies } from "nookies";
+import { format, parseISO } from "date-fns";
+import { formatKm } from "@/hooks/km";
+import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
+import { VehicleContext } from "@/providers/vehicle/vehicle";
 
 const HistoryTimeline = () => {
+  const { ListAll, listAll } = useContext(ExpenseVehicleContext);
+  const { vehicle } = useContext(VehicleContext);
+
+  const observer = useRef<IntersectionObserver | null>(null);
+  const [limit, setLimit] = useState(10);
+  const [loading, setLoading] = useState(false);
+
+  const cookies = parseCookies();
+  const savedVehicleId = cookies["vehicle:selectedVehicleId"];
+
+  useEffect(() => {
+    if (savedVehicleId && listAll === null && vehicle?.length !== 0) {
+      ListAll({
+        vehicleId: savedVehicleId,
+        page: "1",
+        limit: limit.toString(),
+      });
+    }
+  }, [savedVehicleId]);
+
+  const loadMoreItems = useCallback(async () => {
+    const cookies = parseCookies();
+    const savedVehicleId = cookies["vehicle:selectedVehicleId"];
+
+    setLoading(true);
+    try {
+      await ListAll({
+        vehicleId: savedVehicleId,
+        page: "1",
+        limit: limit.toString(),
+      });
+
+      setLimit(limit + 10);
+    } catch (error) {
+      console.error("Erro ao carregar mais itens:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [limit, savedVehicleId]);
+
+  useEffect(() => {
+    if (observer.current) observer.current.disconnect();
+    const callback = (entries: IntersectionObserverEntry[]) => {
+      if (
+        entries[0].isIntersecting &&
+        !loading &&
+        !(listAll?.list.length && listAll.list.length === listAll.total)
+      ) {
+        loadMoreItems();
+      }
+    };
+    observer.current = new IntersectionObserver(callback);
+    if (observer.current && listAll?.list.length) {
+      const lastItem = document.querySelector(".last-item");
+      if (lastItem) observer.current.observe(lastItem);
+    }
+    return () => observer.current?.disconnect();
+  }, [listAll, loadMoreItems, loading, limit, savedVehicleId]);
+
+  const getExpenseIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case "manutenção":
+        return <Wrench size={18} color="white" />;
+      case "abastecimento":
+        return <Fuel size={18} color="white" />;
+      case "incoming":
+        return <Wallet size={18} color="white" />;
+      default:
+        return <Wallet size={18} color="white" />;
+    }
+  };
+
+  const getExpenseBgColor = (type: string) => {
+    switch (type.toLowerCase()) {
+      case "manutenção":
+        return "bg-amber-300";
+      case "abastecimento":
+        return "bg-orange-300";
+      case "incoming":
+        return "bg-green-300";
+      default:
+        return "bg-red-300";
+    }
+  };
+
   return (
-    <div className="ms-2 mt-5 mb-4 h-screen rounded-xl shadow-lg pt-5 bg-white sm:max-w-[100%]">
+    <div className="ms-2 mt-5 mb-4 max-h-screen  rounded-xl shadow-lg pt-5 bg-white">
       <h2 className="ml-10 font-semibold mb-3">HISTÓRICO</h2>
       <div className="h-px bg-zinc-300 ml-10 mr-10" />
       <div
@@ -26,253 +120,88 @@ const HistoryTimeline = () => {
         style={{ maxHeight: "90vh" }}
       >
         <ol className="relative border-s border-zinc-300 text-sm ">
-          {/* 1 */}
-          <li className="mb-7 ms-8">
-            <span className="absolute flex items-center justify-center w-8 h-8 bg-orange-300 rounded-full -start-3 ring-8 ring-white ">
-              <Fuel size={18} color="white" />
-            </span>
+          {listAll &&
+            listAll.list.map((item, index) => (
+              <li
+                key={index}
+                className={`mb-7 ms-8 ${
+                  index === listAll.list.length - 1 ? "last-item" : ""
+                } cursor-pointer`}
+              >
+                {
+                  <span
+                    className={`absolute flex items-center justify-center w-8 h-8 ${getExpenseBgColor(
+                      item.type === "incoming"
+                        ? item.type
+                        : item.expense_type.name
+                    )} rounded-full -start-3 ring-8 ring-white`}
+                  >
+                    {getExpenseIcon(
+                      item.type === "incoming"
+                        ? item.type
+                        : item.expense_type.name
+                    )}
+                  </span>
+                }
 
-            <div className="flex flex-wrap  items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-              <h3 className="flex flex-wrap">Manutenção dos Freios</h3>
-              <EllipsisVertical className="hover:text-cyan-700 cursor-pointer text-gray-400" />
-            </div>
+                {item.type === "expense" ? (
+                  <div className="flex flex-wrap  items-center justify-between mb-1 text-lg font-semibold text-gray-900">
+                    <h3 className="flex flex-wrap">{item.description}</h3>
+                    {/* <EllipsisVertical className="hover:text-cyan-700 cursor-pointer text-gray-400" /> */}
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap  items-center justify-between mb-1 text-lg font-semibold text-gray-900">
+                    <h3 className="flex flex-wrap">{item.title}</h3>
+                    {/* <EllipsisVertical className="hover:text-cyan-700 cursor-pointer text-gray-400" /> */}
+                  </div>
+                )}
 
-            <span className="flex mt-4 items-center mb-2 text-base font-normal leading-none text-gray-400 ">
-              <CalendarDays size={14} className="mr-1 " />
-              13 jan 2024
-            </span>
-
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Map size={16} className="mr-1" />
-              KM: 79.000
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Droplet size={16} className="mr-1" />
-              Gasolina Comum
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-red-400 ">
-              <Banknote size={16} className="mr-1" color="red" />
-              R$ 170.00
-            </span>
-          </li>
-
-          <li className="mb-7 ms-8 ">
-            <span className="absolute flex items-center justify-center w-8 h-8 bg-amber-300 rounded-full -start-3 ring-8 ring-white ">
-              <Wrench size={18} color="white" />
-            </span>
-
-            <div className="flex flex-wrap  items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-              <h3 className="flex flex-wrap">Manutenção dos Freios</h3>
-              <EllipsisVertical className="hover:text-cyan-700 cursor-pointer text-gray-400" />
-            </div>
-
-            <span className="flex mt-4 items-center mb-2 text-base font-normal leading-none text-gray-400 ">
-              <CalendarDays size={14} className="mr-1 " />
-              13 jan 2024
-            </span>
-            <span className="flex items-center mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Map size={14} className="mr-1" />
-              79.000
-            </span>
-            <span className="flex items-center mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Droplet size={14} className="mr-1" />
-              Gasolina Comum
-            </span>
-            <span className="flex items-center mb-2 text-base font-normal leading-none text-red-400 ">
-              <Banknote size={14} className="mr-1" color="red" />
-              R$ 170.00
-            </span>
-          </li>
-
-          {/* 3
-          <li className="mb-7 ms-8">
-            <span className="absolute flex items-center justify-center w-8 h-8 bg-green-300 rounded-full -start-3 ring-8 ring-white ">
-              <Wallet size={18} color="white" />
-            </span>
-            <div className="flex items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-              <h3 className="truncate" title="SERVIÇO - Manutenção dos Freios">
-                Carona
-              </h3>
-              <div className="flex items-center text-center text-base font-normal leading-none text-gray-400">
-                <Calendar size={16} className="mr-1 " />
-                <span className="gap-3 flex ml-auto items-center text-center text-base font-normal leading-none text-gray-400 ">
-                  13 jan 2024
-                  <EllipsisVertical className="hover:text-cyan-700 cursor-pointer" />
+                <span className="flex mt-4 items-center mb-2 text-base font-normal leading-none text-gray-400 ">
+                  <CalendarDays size={14} className="mr-1 " />
+                  {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
                 </span>
-              </div>
-            </div>
 
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Map size={16} className="mr-1" />
-              KM: 79.000
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Droplet size={16} className="mr-1" />
-              Gasolina Comum
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-green-400 ">
-              <Banknote size={16} className="mr-1" color="green" />
-              R$ 170.00
-            </span>
-          </li> */}
-          {/* 3
-          <li className="mb-7 ms-8">
-            <span className="absolute flex items-center justify-center w-8 h-8 bg-red-300 rounded-full -start-3 ring-8 ring-white ">
-              <Wallet size={18} color="white" />
-            </span>
-            <div className="flex items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-              <h3 className="truncate" title="SERVIÇO - Manutenção dos Freios">
-               IPVA(licenciamento){" "}
-              </h3>
-              <div className="flex items-center text-center text-base font-normal leading-none text-gray-400">
-                <Calendar size={16} className="mr-1 " />
-                <span className="gap-3 flex ml-auto items-center text-center text-base font-normal leading-none text-gray-400 ">
-                  13 jan 2024
-                  <EllipsisVertical className="hover:text-cyan-700 cursor-pointer" />
+                {item.km && (
+                  <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
+                    <Map size={16} className="mr-1" />
+                    KM: {formatKm(item.km)}
+                  </span>
+                )}
+
+                {item.fuel_type && (
+                  <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
+                    <Droplet size={16} className="mr-1" />
+                    {item.fuel_type}
+                  </span>
+                )}
+
+                <span
+                  className={`flex mb-2 text-lg items-center font-normal leading-none ${
+                    item.type === "incoming" ? "text-green-600" : "text-red-400"
+                  }`}
+                >
+                  <Banknote
+                    size={16}
+                    className={`mr-1 ${
+                      item.type === "incoming"
+                        ? "text-green-600"
+                        : "text-red-400"
+                    }`}
+                  />
+                  R${" "}
+                  {formatNumberWithSpaces(item.amount || item.amount_received)}
                 </span>
-              </div>
-            </div>
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Map size={16} className="mr-1" />
-              KM: 79.000
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Droplet size={16} className="mr-1" />
-              Gasolina Comum
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-red-400 ">
-              <Banknote size={16} className="mr-1" color="red" />
-              R$ 170.00
-            </span>
-          </li> */}
-          {/* 4 
-          <li className="mb-7 ms-8">
-            <span className="absolute flex items-center justify-center w-8 h-8 bg-amber-300 rounded-full -start-3 ring-8 ring-white ">
-              <Wrench size={18} color="white" />
-            </span>
+              </li>
+            ))}
 
-            <div className="flex items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-              <h3 className="truncate" title="SERVIÇO - Manutenção dos Freios">
-                Troca de oleo
-              </h3>
-              <div className="flex items-center text-center text-base font-normal leading-none text-gray-400">
-                <Calendar size={16} className="mr-1 " />
-                <span className="gap-3 flex ml-auto items-center text-center text-base font-normal leading-none text-gray-400 ">
-                  13 jan 2024
-                  <EllipsisVertical className="hover:text-cyan-700 cursor-pointer" />
-                </span>
-              </div>
-            </div>
-
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Map size={16} className="mr-1" />
-              KM: 79.000
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Droplet size={16} className="mr-1" />
-              Gasolina Comum
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-red-400 ">
-              <Banknote size={16} className="mr-1" color="red" />
-              R$ 170.00
-            </span>
-          </li>*/}
-          {/* 5 
-          <li className="mb-7 ms-8">
-            <span className="absolute flex items-center justify-center w-8 h-8 bg-green-300 rounded-full -start-3 ring-8 ring-white ">
-              <Wallet size={18} color="white" />
-            </span>
-
-            <div className="flex items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-              <h3 className="truncate" title="SERVIÇO - Manutenção dos Freios">
-               Carona
-              </h3>
-              <div className="flex items-center text-center text-base font-normal leading-none text-gray-400">
-                <Calendar size={16} className="mr-1 " />
-                <span className="gap-3 flex ml-auto items-center text-center text-base font-normal leading-none text-gray-400 ">
-                  13 jan 2024
-                  <EllipsisVertical className="hover:text-cyan-700 cursor-pointer" />
-                </span>
-              </div>
-            </div>
-
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Map size={16} className="mr-1" />
-              KM: 79.000
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Droplet size={16} className="mr-1" />
-              Gasolina Comum
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-green-400 ">
-              <Banknote size={16} className="mr-1" color="green" />
-              R$ 170.00
-            </span>
-          </li>*/}
-          {/* 6 
-          <li className="mb-7 ms-8">
-            <span className="absolute flex items-center justify-center w-8 h-8 bg-amber-300 rounded-full -start-3 ring-8 ring-white ">
-              <Wrench size={18} color="white" />
-            </span>
-
-            <div className="flex items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-              <h3 className="truncate" title="SERVIÇO - Manutenção dos Freios">
-                Lataria
-              </h3>
-              <div className="flex items-center text-center text-base font-normal leading-none text-gray-400">
-                <Calendar size={16} className="mr-1 " />
-                <span className="gap-3 flex ml-auto items-center text-center text-base font-normal leading-none text-gray-400 ">
-                  13 jan 2024
-                  <EllipsisVertical className="hover:text-cyan-700 cursor-pointer" />
-                </span>
-              </div>
-            </div>
-
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Map size={16} className="mr-1" />
-              KM: 79.000
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Droplet size={16} className="mr-1" />
-              Gasolina Comum
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-red-400 ">
-              <Banknote size={16} className="mr-1" color="red" />
-              R$ 170.00
-            </span>
-          </li>*/}
-          {/* 7 
-          <li className="mb-7 ms-8">
-            <span className="absolute flex items-center justify-center w-8 h-8 bg-red-300 rounded-full -start-3 ring-8 ring-white ">
-              <Wallet size={18} color="white" />
-            </span>
-
-            <div className="flex items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-              <h3 className="truncate" title="SERVIÇO - Manutenção dos Freios">
-               Seguro do Carro
-              </h3>
-              <div className="flex items-center text-center text-base font-normal leading-none text-gray-400">
-                <Calendar size={16} className="mr-1 " />
-                <span className="gap-3 flex ml-auto items-center text-center text-base font-normal leading-none text-gray-400 ">
-                  13 jan 2024
-                  <EllipsisVertical className="hover:text-cyan-700 cursor-pointer" />
-                </span>
-              </div>
-            </div>
-
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Map size={16} className="mr-1" />
-              KM: 79.000
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-              <Droplet size={16} className="mr-1" />
-              Gasolina Comum
-            </span>
-            <span className="flex mb-2 text-base font-normal leading-none text-red-400 ">
-              <Banknote size={16} className="mr-1" color="red" />
-              R$ 170.00
-            </span>
-          </li>*/}
+          {loading && <p>Loading...</p>}
+          {!loading &&
+            listAll?.list.length &&
+            listAll.list.length === listAll?.total && (
+              <p className="text-center font-semibold text-zinc-600 -mt-3 py-2">
+                Sem mais para carregar
+              </p>
+            )}
         </ol>
       </div>
     </div>

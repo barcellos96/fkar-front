@@ -21,6 +21,7 @@ import {
 import { Modal } from "../modals";
 import { VehicleTypeContext } from "@/providers/vehicle/vehicleType";
 import { formatKm } from "@/hooks/km";
+import formatPlate from "@/utils/formatPlate";
 
 interface VehicleProps {
   id: string;
@@ -35,9 +36,18 @@ interface VehicleProps {
 }
 
 export default function VehicleData() {
-  const { GetVehicle, vehicle, value, UpdateVehicle, DeleteVehicle } =
-    useContext(VehicleContext);
+  const {
+    GetVehicle,
+    vehicle,
+    value,
+    modalCreateVehicle,
+    setModalCreateVehicle,
+    UpdateVehicle,
+    DeleteVehicle,
+  } = useContext(VehicleContext);
   const { GetVehicleType, vehicleType } = useContext(VehicleTypeContext);
+
+  console.log("modalCreateVehicle ", modalCreateVehicle);
 
   const [onModal, setOnModal] = useState(false);
   const [onModalUpdate, setOnModalUpdate] = useState(false);
@@ -79,6 +89,7 @@ export default function VehicleData() {
   const handleCloseModal = () => {
     setOnModalUpdate(false);
     setOnModalDelete(false);
+    setModalCreateVehicle(false);
     setOnModal(false);
   };
 
@@ -138,7 +149,7 @@ export default function VehicleData() {
   };
 
   const colorSubmit = onModalUpdate ? "bg-yellow-600" : "bg-red-700";
-  const typeModal = onModalUpdate ? "Atualizar " : "Deletar ";
+  const typeModal = onModalUpdate ? "Atualizar " : "Excluir ";
 
   const handleSubmit = () => {
     setLoading(true);
@@ -349,7 +360,9 @@ export default function VehicleData() {
               {selectedVehicle.plate ? (
                 <span className="flex items-center  gap-1 font-semibold">
                   placa:
-                  <span className=" font-light">{selectedVehicle.plate}</span>
+                  <span className=" font-light">
+                    {formatPlate(selectedVehicle.plate)}
+                  </span>
                 </span>
               ) : undefined}
             </div>

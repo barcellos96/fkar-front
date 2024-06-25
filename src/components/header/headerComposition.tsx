@@ -8,6 +8,7 @@ interface Props {
   nameButton?: string | JSX.Element;
   icon?: ElementType;
   borderColor?: string;
+  nameButtonMini?: string | JSX.Element;
 }
 
 export default function HeaderComposition({
@@ -18,6 +19,7 @@ export default function HeaderComposition({
   icon: Icon,
   buttonVisible = true,
   borderColor = "border-green-700",
+  nameButtonMini = "+",
 }: Props) {
   return (
     <section className="flex items-center justify-between mb-5">
@@ -45,7 +47,7 @@ export default function HeaderComposition({
           {nameButton === "Salvar" ? (
             <span className="sm:hidden">{nameButton}</span>
           ) : (
-            <span className="sm:hidden">+</span>
+            <span className="sm:hidden">{nameButtonMini}</span>
           )}
         </button>
       )}

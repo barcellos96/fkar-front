@@ -28,9 +28,11 @@ export default function IncomingCreate() {
   useEffect(() => {
     setLoading(true); // Inicia o estado de loading
 
-    Promise.all([GetIncoming(), GetIncomingType()]).finally(() => {
-      setLoading(false); // Finaliza o estado de loading
-    });
+    Promise.all([GetIncoming(selectedVehicleId), GetIncomingType()]).finally(
+      () => {
+        setLoading(false); // Finaliza o estado de loading
+      }
+    );
   }, [value, selectedVehicleId]);
 
   const date = new Date();
@@ -129,7 +131,6 @@ export default function IncomingCreate() {
 
     setLoading(true);
     try {
-      console.log("formattedValueWithNumbers ", formattedValueWithNumbers);
       await CreateIncoming(formattedValueWithNumbers);
       setLoading(false);
       push("/dashboard/receitas");

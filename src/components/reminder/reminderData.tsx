@@ -106,7 +106,7 @@ export default function ReminderData() {
     setSelectedInput(input);
   };
 
-  const typeModal = onModalUpdate ? "Atualizar " : "Deletar ";
+  const typeModal = onModalUpdate ? "Atualizar " : "Excluir ";
   const colorSubmit = onModalUpdate ? "bg-yellow-600" : "bg-red-700";
 
   const handleSubmitModal = () => {

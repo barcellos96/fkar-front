@@ -94,7 +94,50 @@ export interface ExpenseVehicle {
   totalPages: number;
 }
 
-interface DeleteExpenseVehicle {
+///////////////////////////
+
+interface ListItemProps {
+  id: string;
+  date: string;
+  km: number;
+  type: string;
+  description: string;
+  title: string;
+  amount: string;
+  amount_received: string;
+  fuel_type: string | null;
+  fuel_liters: string | null;
+  price_liters: string | null;
+  location: string | null;
+  method_payment: string | null;
+  status_payment: boolean;
+  observation: string | null;
+  incoming_type: IncomingType;
+  expense_type: ExpenseType;
+  expense_vehicle_services: ExpenseVehicleServicesProps[];
+  user: User;
+  vehicle: Vehicle;
+}
+
+interface IncomingType {
+  id: string;
+  name: string;
+}
+
+interface FilteredListAllResponseProps {
+  filteredData: ListItemProps[];
+  total: number;
+}
+
+export interface ListAllExpenseProps {
+  list: ListItemProps[];
+  total: number;
+
+  page: number;
+  limit: number;
+}
+
+export interface DeleteExpenseVehicle {
   message: "Despesa deletada com sucesso!";
   expense_vehicle: {
     id: string;
@@ -113,6 +156,18 @@ interface DeleteExpenseVehicle {
     vehicle: Vehicle;
     expense_type: ExpenseType;
   };
+}
+
+interface ListAllProps {
+  vehicleId: string;
+  page?: string;
+  limit?: string;
+}
+
+interface FiltredListAllProps {
+  vehicleId: string;
+  start_date?: string;
+  end_date?: string;
 }
 
 interface IExpenseData {
@@ -136,6 +191,21 @@ interface IExpenseData {
 
   setTabRouteConfig: Dispatch<SetStateAction<string>>;
   tabRouteConfig: string;
+
+  ListAll: ({
+    vehicleId,
+    page,
+    limit,
+  }: ListAllProps) => Promise<ListAllExpenseProps>;
+
+  listAll?: ListAllExpenseProps | null;
+
+  FilteredListAll: ({
+    vehicleId,
+    start_date,
+    end_date,
+  }: FiltredListAllProps) => Promise<FilteredListAllResponseProps>;
+  filteredListAll: FilteredListAllResponseProps | null;
 }
 
 interface ICihldrenReact {
@@ -241,13 +311,63 @@ export const ExpenseVehicleProvider = ({ children }: ICihldrenReact) => {
     const response = await api
       .delete(`/expense/vehicle/${expenseVehicleId}`, config)
       .then((res) => {
-        7;
-        //res.data.response.[qualquer coisa]
-        toast.success("Abastecimento deletado com sucesso!", {
+        toast.success("Deletado com sucesso!", {
           position: "top-right",
         });
         setValue(res.data);
         setExpenseVehicle(null);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message, { position: "top-right" });
+        return err;
+      });
+
+    return response;
+  };
+
+  const [listAll, setListAll] = useState<ListAllExpenseProps | null>(null);
+
+  const ListAll = async ({
+    vehicleId,
+    page,
+    limit,
+  }: ListAllProps): Promise<ListAllExpenseProps> => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+      params: { page, limit }, // Adicione os parâmetros de consulta aqui
+    };
+    const response = await api
+      .get(`/expense-incoming/list_all/${vehicleId}`, config)
+      .then((res) => {
+        setListAll(res.data.response);
+      })
+      .catch((err) => {
+        console.log("err ", err);
+        toast.error(err.response.data.message, { position: "top-right" });
+        return err;
+      });
+
+    return response;
+  };
+
+  const [filteredListAll, setFiltredListAll] =
+    useState<FilteredListAllResponseProps | null>(null);
+
+  const FilteredListAll = async ({
+    vehicleId,
+    start_date,
+    end_date,
+  }: FiltredListAllProps): Promise<FilteredListAllResponseProps> => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+      params: { start_date, end_date }, // Adicione os parâmetros de consulta aqui
+    };
+    const response = await api
+      .get(`/expense-incoming/list_all/${vehicleId}`, config)
+      .then((res) => {
+        setFiltredListAll(res.data.response);
       })
       .catch((err) => {
         toast.error(err.response.data.message, { position: "top-right" });
@@ -268,6 +388,10 @@ export const ExpenseVehicleProvider = ({ children }: ICihldrenReact) => {
         setTabRouteConfig,
         tabRouteConfig,
         value,
+        ListAll,
+        listAll,
+        FilteredListAll,
+        filteredListAll,
       }}
     >
       {children}

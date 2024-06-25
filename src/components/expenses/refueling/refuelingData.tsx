@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Droplets,
   Equal,
+  Eye,
   Fuel,
   FuelIcon,
   Map,
@@ -40,6 +41,7 @@ import { useRouter } from "next/navigation";
 import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 import { Modal } from "@/components/modals";
 import RefuelingUpdate from "./refuelingUpdate";
+import RefuelingSelf from "./refuelingSelf";
 
 interface ExpenseVehicleProps {
   id?: string;
@@ -75,6 +77,7 @@ export default function RefuelingData() {
     useState<ExpenseVehicleProps | null>(null);
   const [modal, setModal] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalEye, setModalEye] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [limitPage, setLimitPage] = useState<number>(5);
@@ -110,7 +113,6 @@ export default function RefuelingData() {
   }, [expenseType, selectedVehicleId, currentPage, limitPage, value]);
 
   if (!expenseVehicle) {
-    console.log("expenseVehicle ", expenseVehicle);
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega
   }
 
@@ -149,6 +151,11 @@ export default function RefuelingData() {
     setModal(true);
   };
 
+  const handleOpenModalEye = (item: ExpenseVehicleProps) => {
+    setSelectedRefueling(item);
+    setModalEye(true);
+  };
+
   const handleOpenModalUpdate = (item: ExpenseVehicleProps) => {
     setSelectedRefueling(item);
     setModalUpdate(true);
@@ -157,6 +164,7 @@ export default function RefuelingData() {
   const handleCloseModal = () => {
     setModal(false);
     setModalUpdate(false);
+    setModalEye(false);
   };
 
   const handleSubmitModal = () => {
@@ -168,7 +176,7 @@ export default function RefuelingData() {
     }
   };
 
-  const typeModal = modalUpdate ? "Atualizar " : "Deletar ";
+  const typeModal = modalUpdate ? "Atualizar " : "Excluir ";
   const colorSubmit = modalUpdate ? "bg-yellow-600" : "bg-red-700";
   const borderColor = modalUpdate ? "border-yellow-600" : "border-red-700";
 
@@ -249,6 +257,12 @@ export default function RefuelingData() {
                 <section className="slg:hidden absolute flex gap-2  justify-end w-4/5">
                   <button
                     className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                    onClick={() => handleOpenModalEye(item)}
+                  >
+                    <Eye width={15} color="white" />
+                  </button>
+                  <button
+                    className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
                   >
                     <Pencil width={15} color="white" />
                   </button>
@@ -289,7 +303,7 @@ export default function RefuelingData() {
                   <Equal width={17} height={17} className="slg:hidden" />
                   <span className="flex gap-2 slg:hidden">
                     <BadgeDollarSign width={17} height={17} />
-                    R$ {item.amount}
+                    R$ {formatNumberWithSpaces(item.amount)}
                   </span>
                 </section>
               </td>
@@ -303,6 +317,12 @@ export default function RefuelingData() {
                 {formatKm(item.km)}
               </td>
               <td className="hidden  slg:flex gap-2 py-4 px-2  justify-end">
+                <button
+                  className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                  onClick={() => handleOpenModalEye(item)}
+                >
+                  <Eye width={15} color="white" />
+                </button>
                 <button
                   className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
                   onClick={() => handleOpenModalUpdate(item)}
@@ -324,6 +344,19 @@ export default function RefuelingData() {
         <RefuelingUpdate
           handleClose={handleCloseModal}
           expenseVehicleId={selectedRefueling.id ?? ""}
+          item={{
+            ...selectedRefueling,
+            amount: selectedRefueling.amount.toString(),
+            fuel_liters: selectedRefueling.fuel_liters?.toString() ?? null,
+            price_liters: selectedRefueling.price_liters?.toString() ?? null,
+            km: selectedRefueling.km.toString(), // Converter km para string
+          }}
+        />
+      )}
+
+      {modalEye && selectedRefueling && (
+        <RefuelingSelf
+          handleClose={handleCloseModal}
           item={{
             ...selectedRefueling,
             amount: selectedRefueling.amount.toString(),

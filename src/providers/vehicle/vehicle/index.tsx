@@ -61,6 +61,9 @@ interface IVehicleData {
 
   setSelectedVehicleId: Dispatch<SetStateAction<string>>;
   selectedVehicleId: string;
+
+  setModalCreateVehicle: Dispatch<SetStateAction<boolean>>;
+  modalCreateVehicle: boolean;
 }
 
 interface ICihldrenReact {
@@ -73,6 +76,7 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
   const [vehicle, setVehicle] = useState<PromiseVehicleProps[] | null>(null);
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>("");
   const [value, setValue] = useState();
+  const [modalCreateVehicle, setModalCreateVehicle] = useState(false);
 
   const CreateVehicle = async (
     data: VehicleCreateProps
@@ -173,11 +177,13 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
         GetVehicle,
         DeleteVehicle,
         UpdateVehicle,
-        setSelectedVehicleId,
         selectedVehicleId,
+        setSelectedVehicleId,
         value,
         vehicle,
         setVehicle,
+        setModalCreateVehicle,
+        modalCreateVehicle,
       }}
     >
       {children}

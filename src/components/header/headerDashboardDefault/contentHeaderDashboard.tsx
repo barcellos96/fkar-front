@@ -7,11 +7,22 @@ import { useContext, useEffect, useState } from "react";
 import HeaderContentSkeleton from "./skeleton";
 import { parseCookies, setCookie } from "nookies";
 import { useRouter } from "next/navigation";
+import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
+import { UserContext } from "@/providers/user";
+import { Modal } from "@/components/modals";
+import ModalTitle from "@/components/modals/title";
 
 export default function Content() {
   const { push } = useRouter();
-  const { GetVehicle, vehicle, value, setSelectedVehicleId } =
-    useContext(VehicleContext);
+  const {
+    GetVehicle,
+    vehicle,
+    setModalCreateVehicle,
+    value,
+    setSelectedVehicleId,
+  } = useContext(VehicleContext);
+  const { ListAll } = useContext(ExpenseVehicleContext);
+  const { Logout } = useContext(UserContext);
 
   const cookies = parseCookies();
   const userToken = cookies["user:accessToken"];
@@ -21,6 +32,13 @@ export default function Content() {
   const [plate, setPlate] = useState<string | null | undefined>("");
   const [km, setKm] = useState<number | null | undefined>(0);
   const [isMenuOpen, setMenuOpen] = useState(false); // Estado para controlar se o menu está aberto
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (vehicleId && vehicle?.length !== 0) {
+      ListAll({ vehicleId: vehicleId });
+    }
+  }, [vehicleId]);
 
   useEffect(() => {
     if (userToken) {
@@ -29,6 +47,23 @@ export default function Content() {
       }
     }
   }, [value, GetVehicle, userToken]);
+
+  const handleCloseModal = () => setModalOpen(false);
+  const handleOpenModal = () => setModalOpen(true);
+
+  useEffect(() => {
+    if (vehicle && vehicle.length === 0) {
+      handleOpenModal();
+    } else {
+      handleCloseModal();
+    }
+  }, [vehicle, value]);
+
+  useEffect(() => {
+    if (!userToken) {
+      Logout();
+    }
+  }, [userToken]);
 
   useEffect(() => {
     const cookies = parseCookies();
@@ -171,6 +206,27 @@ export default function Content() {
             )}
           </div>
         </div>
+      )}
+
+      {isModalOpen && (
+        <Modal.Root>
+          <ModalTitle title="Cadastrar Veículo" />
+          <div className="px-4">
+            <p className="pb-3">
+              Você ainda não possui nenhum veículo cadastrado. Por favor,
+              cadastre seu primeiro veículo para continuar.
+            </p>
+            <button
+              className="bg-green-700 mt-4 px-4 py-2 text-white rounded my-3"
+              onClick={() => {
+                push("/dashboard/meus-veiculos");
+                setModalCreateVehicle(true);
+              }}
+            >
+              Cadastrar Veículo
+            </button>
+          </div>
+        </Modal.Root>
       )}
     </>
   );

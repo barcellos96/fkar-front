@@ -73,7 +73,7 @@ export default function TableExpenseService({ title }: Props) {
     }
   }, [value]);
 
-  const typeModal = onModalUpdate ? "Atualizar " : "Deletar ";
+  const typeModal = onModalUpdate ? "Atualizar " : "Excluir ";
   const colorModal = onModalUpdate ? "bg-yellow-600" : "bg-red-700";
 
   const handleSubmit = () => {

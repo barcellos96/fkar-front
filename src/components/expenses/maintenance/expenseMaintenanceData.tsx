@@ -2,7 +2,11 @@
 
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import RefulingLayout from ".";
-import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
+import {
+  ExpenseVehicleContext,
+  ExpenseVehicleServicesProps,
+  Vehicle,
+} from "@/providers/expense/expenseVehicle";
 import { ExpenseTypeContext } from "@/providers/expense/expenseType";
 import TableSkeleton from "../../tablesNotData/skeleton";
 import {
@@ -10,6 +14,8 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  Map,
   Pencil,
   Plus,
   Text,
@@ -25,6 +31,24 @@ import { NotDataTable } from "@/components/tablesNotData";
 import IconMaintenance from "../../../assets/maintenance.png";
 import { useRouter } from "next/navigation";
 import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
+import ExpenseMaintenanceSelf from "./expenseMaintenanceSelf";
+import ExpenseMaintenanceUpdate from "./expenseMaintenanceUpdate";
+import ExpenseMaintenanceDelete from "./expenseMaintenanceDelete";
+
+interface ExpenseVehicleProps {
+  id?: string;
+  date: string;
+  description: string;
+  amount: number;
+
+  km: number;
+  location: string;
+  method_payment?: string | null;
+  status_payment?: boolean;
+  observation?: string | null;
+  vehicle: Vehicle;
+  expense_vehicle_services?: ExpenseVehicleServicesProps[];
+}
 
 export default function ExpenseMaintenanceData() {
   const { push } = useRouter();
@@ -37,6 +61,12 @@ export default function ExpenseMaintenanceData() {
   );
   const { GetExpenseType, expenseType } = useContext(ExpenseTypeContext);
   const { selectedVehicleId } = useContext(VehicleContext);
+
+  const [modalEye, setModalEye] = useState(false);
+  const [modalUpdate, setModalUpdate] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [selectedMaintenance, setSelectedMaintenance] =
+    useState<ExpenseVehicleProps | null>(null);
 
   const [loading, setLoading] = useState(false); // Estado de loading para o useEffect
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -70,7 +100,7 @@ export default function ExpenseMaintenanceData() {
         }
       });
     }
-  }, [expenseType, selectedVehicleId, currentPage, limitPage]);
+  }, [expenseType, selectedVehicleId, currentPage, limitPage, value]);
 
   if (!expenseVehicle) {
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega
@@ -105,6 +135,28 @@ export default function ExpenseMaintenanceData() {
   const handleChangeLimitPage = (e: ChangeEvent<HTMLSelectElement>) => {
     const newLimit = parseInt(e.target.value); // Converte o valor para número
     setLimitPage(newLimit); // Atualiza o estado limitPage com o novo valor
+  };
+
+  const handleCloseModal = () => {
+    setModalUpdate(false);
+    setModalEye(false);
+    setModalDelete(false);
+  };
+
+  const handleOpenModalEye = (item: ExpenseVehicleProps) => {
+    item.expense_vehicle_services;
+    setSelectedMaintenance(item);
+    setModalEye(true);
+  };
+
+  const handleOpenModalUpdate = (item: ExpenseVehicleProps) => {
+    setSelectedMaintenance(item);
+    setModalUpdate(true);
+  };
+
+  const handleOpenModalDelete = (item: ExpenseVehicleProps) => {
+    setSelectedMaintenance(item);
+    setModalDelete(true);
   };
 
   return (
@@ -173,13 +225,40 @@ export default function ExpenseMaintenanceData() {
               key={index}
             >
               <td className="py-3 hidden slg:table-cell">{index + 1}</td>
+
               <td className="slg:py-3">
                 <span className="flex gap-2 slg:table-cell">
                   <Text width={17} height={17} className="slg:hidden" />
                   {item.description}
                 </span>
               </td>
-              <td className="slg:py-3">
+              <td className="slg:py-3 ">
+                <section className="slg:hidden absolute flex gap-2  justify-end w-4/5">
+                  <button
+                    className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                    onClick={() => handleOpenModalEye(item)}
+                  >
+                    <Eye width={15} color="white" />
+                  </button>
+                  <button
+                    className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                    onClick={() => handleOpenModalUpdate(item)}
+                  >
+                    <Pencil width={15} color="white" />
+                  </button>
+                  <button
+                    className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                    onClick={() => handleOpenModalDelete(item)}
+                  >
+                    <Trash width={15} color="white" />
+                  </button>
+                </section>
+                <span className="flex gap-2 slg:table-cell">
+                  <CalendarDays width={17} height={17} className="slg:hidden" />
+                  {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
+                </span>
+              </td>
+              <td className="hidden slg:py-3">
                 <span className="flex gap-2 slg:table-cell">
                   <Text width={17} height={17} className="slg:hidden" />
                   {item.expense_vehicle_services &&
@@ -192,25 +271,13 @@ export default function ExpenseMaintenanceData() {
                     )}
                 </span>
               </td>
-              <td className="slg:py-3 ">
-                <section className="slg:hidden absolute flex gap-2  justify-end w-4/5">
-                  <button
-                    className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
-                  >
-                    <Pencil width={15} color="white" />
-                  </button>
-                  <button
-                    className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
-                  >
-                    <Trash width={15} color="white" />
-                  </button>
-                </section>
+
+              <td className="slg:py-3">
                 <span className="flex gap-2 slg:table-cell">
-                  <CalendarDays width={17} height={17} className="slg:hidden" />
-                  {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
+                  <Map width={17} height={17} className="slg:hidden" />
+                  {formatKm(item.km)}{" "}
                 </span>
               </td>
-              <td className="slg:py-3">{formatKm(item.km)}</td>
               <td className="slg:py-3 ">
                 <span className="flex gap-2 slg:table-cell">
                   <BadgeDollarSign
@@ -224,11 +291,19 @@ export default function ExpenseMaintenanceData() {
               <td className="hidden  slg:flex gap-2 py-4 px-2  justify-end">
                 <button
                   className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                  onClick={() => handleOpenModalEye(item)}
+                >
+                  <Eye width={15} color="white" />
+                </button>
+                <button
+                  className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                  onClick={() => handleOpenModalUpdate(item)}
                 >
                   <Pencil width={15} color="white" />
                 </button>
                 <button
                   className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                  onClick={() => handleOpenModalDelete(item)}
                 >
                   <Trash width={15} color="white" />
                 </button>
@@ -236,6 +311,51 @@ export default function ExpenseMaintenanceData() {
             </tr>
           ))}
       </RefulingLayout>
+
+      {modalEye && selectedMaintenance && (
+        <ExpenseMaintenanceSelf
+          handleClose={handleCloseModal}
+          item={{
+            ...selectedMaintenance,
+            amount: selectedMaintenance.amount.toString(),
+            km: selectedMaintenance.km.toString(), // Converter km para string
+          }}
+        />
+      )}
+
+      {modalUpdate && selectedMaintenance && (
+        <ExpenseMaintenanceUpdate
+          handleClose={handleCloseModal}
+          expenseVehicleId={selectedMaintenance.id ?? ""}
+          item={{
+            ...selectedMaintenance,
+            amount: selectedMaintenance.amount.toString(),
+            km: selectedMaintenance.km.toString(), // Converter km para string
+            expense_vehicle_services:
+              selectedMaintenance.expense_vehicle_services?.map((service) => ({
+                ...service,
+                value: service.value.toString(),
+              })) ?? [],
+          }}
+        />
+      )}
+
+      {modalDelete && selectedMaintenance && (
+        <ExpenseMaintenanceDelete
+          handleClose={handleCloseModal}
+          expenseVehicleId={selectedMaintenance.id ?? ""}
+          item={{
+            ...selectedMaintenance,
+            amount: selectedMaintenance.amount.toString(),
+            km: selectedMaintenance.km.toString(), // Converter km para string
+            expense_vehicle_services:
+              selectedMaintenance.expense_vehicle_services?.map((service) => ({
+                ...service,
+                value: service.value.toString(),
+              })) ?? [],
+          }}
+        />
+      )}
     </>
   );
 }

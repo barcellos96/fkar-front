@@ -23,6 +23,12 @@ interface SimpleUser {
   phone: string;
 }
 
+interface AvatarProps {
+  id: string;
+  keyImg: string;
+  urlImg: string;
+}
+
 interface CreateUserProps extends SimpleUser {
   password: string;
 }
@@ -32,6 +38,7 @@ interface UserProps extends SimpleUser {
   created_at: string;
   updated_at: string;
   isActive: boolean;
+  avatar: AvatarProps;
 }
 
 interface IUserData {
@@ -40,6 +47,8 @@ interface IUserData {
   CreateUser: (data: CreateUserProps) => Promise<UserProps>;
   UpdateUser: (data: UpdateUser) => Promise<object>;
   Logout(): Promise<void>;
+  UploadAvatar: (avatar: any) => Promise<object>;
+  value: string;
 }
 
 interface ICihldrenReact {
@@ -110,6 +119,31 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
+  const [value, setValue] = useState<string>("");
+  const UploadAvatar = async (avatar: any) => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+    };
+
+    const formDataProfile = new FormData();
+    console.log("avatar ", avatar);
+    formDataProfile.append("avatar", avatar);
+
+    const response = await api
+      .post("/upload-avatar", formDataProfile, config)
+      .then((res) => {
+        toast.success("Imagem atualizada com sucesso!");
+        setValue(res.data);
+      })
+      .catch((err) => {
+        toast.error("Erro ao cadastrar avatar", { position: "top-right" });
+        return err;
+      });
+
+    return response;
+  };
+
   const Logout = async () => {
     destroyCookie(undefined, "user:accessToken", { path: "/" });
     destroyCookie(undefined, "vehicle:selectedVehicleId", { path: "/" });
@@ -131,9 +165,11 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
       value={{
         UserLogged,
         user,
+        value,
         CreateUser,
         UpdateUser,
         Logout,
+        UploadAvatar,
       }}
     >
       {children}

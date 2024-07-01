@@ -1,7 +1,6 @@
 import {
   User,
   Car,
-  Plus,
   ListIcon,
   BadgeHelp,
   Settings,
@@ -10,13 +9,20 @@ import {
   Wallet,
   Wrench,
   AlarmClock,
+  CornerDownRight,
+  TrendingUp,
 } from "lucide-react";
 
 export const navigationMain = [
   {
+    name: "Inicio",
+    icon: CornerDownRight,
+    path: "/dashboard",
+  },
+  {
     name: "Histórico",
     icon: ListIcon,
-    path: "/dashboard",
+    path: "/dashboard/historico",
   },
 
   {
@@ -29,6 +35,11 @@ export const navigationMain = [
     icon: Bell,
     path: "/dashboard/lembretes",
   },
+  // {
+  //   name: "Relatorios",
+  //   icon: TrendingUp,
+  //   path: "/dashboard/relatorios",
+  // },
   {
     name: "Perfil",
     icon: User,

@@ -142,69 +142,39 @@ export default function Content() {
             />
           )}
 
-          <div className="flex flex-row gap-1 items-center">
-            <section className="flex text-base cursor-pointer border border-zinc-700 items-center px-1 py-1 rounded-lg outline-none">
-              <CarFront height={16} width={16} />
-              <select
-                id="select-option"
-                className="outline-none cursor-pointer"
-                onChange={handleSelectChange}
-                value={vehicleId}
-                onClick={
-                  vehicle.length === 0
-                    ? () => push("/dashboard/meus-veiculos")
-                    : handleOpenMenu
-                } // Abrir menu ao clicar no select ou direcionar para criar um veiculo
-              >
-                {vehicle.length === 0 ? (
-                  <option title={" Nenhum veiculo cadastrado"}>
-                    {/* push("/dashboard/meus-veiculos") */}
-                    Nenhum veiculo cadastrado
+          <section className="flex text-base cursor-pointer border border-zinc-700 items-center px-1 py-1 rounded-lg outline-none">
+            <CarFront size={22} />
+            <select
+              id="select-option"
+              className="outline-none cursor-pointer p-2"
+              onChange={handleSelectChange}
+              value={vehicleId}
+              onClick={
+                vehicle.length === 0
+                  ? () => push("/dashboard/meus-veiculos")
+                  : handleOpenMenu
+              } // Abrir menu ao clicar no select ou direcionar para criar um veiculo
+            >
+              {vehicle.length === 0 ? (
+                <option title={" Nenhum veiculo cadastrado"}>
+                  {/* push("/dashboard/meus-veiculos") */}
+                  Nenhum veiculo cadastrado
+                </option>
+              ) : (
+                vehicle?.map((item, index) => (
+                  <option
+                    key={index}
+                    value={item.id}
+                    id={item.id}
+                    title={item.title}
+                    className="text-lg"
+                  >
+                    {item.title}
                   </option>
-                ) : (
-                  vehicle?.map((item, index) => (
-                    <option
-                      key={index}
-                      value={item.id}
-                      id={item.id}
-                      title={item.title}
-                    >
-                      {item.title}
-                    </option>
-                  ))
-                )}
-              </select>
-            </section>
-
-            {vehicle.length !== 0 && (
-              <div
-                className={`${
-                  vehicle.length === 0
-                    ? "hidden sm:flex "
-                    : "flex items-center justify-center gap-1"
-                }`}
-              >
-                <div className="h-4 w-px hidden s:flex bg-zinc-300" />
-
-                <section className="hidden s:flex items-center gap-2 text-nowrap">
-                  {plate ? (
-                    <span className=" text-sm border border-zinc-700 rounded-md px-2 py-1">
-                      {plate}
-                    </span>
-                  ) : (
-                    <span className=" text-sm border w-4 border-zinc-700 rounded-md px-6 py-3"></span>
-                  )}
-                </section>
-
-                <div className="h-4 w-px hidden s:flex bg-zinc-300 " />
-
-                <section className="flex items-center gap-1 border border-zinc-700  rounded-md px-2 py-1">
-                  <Map size={15} />
-                  <span className="text-sm ">{formatKm(km ? km : 0)}</span>
-                </section>
-              </div>
-            )}
-          </div>
+                ))
+              )}
+            </select>
+          </section>
         </div>
       )}
 

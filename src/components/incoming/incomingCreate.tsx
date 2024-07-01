@@ -1,11 +1,9 @@
 "use client";
 
 import Loading from "@/components/loading";
-import { ExpenseTypeContext } from "@/providers/expense/expenseType";
-import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft, TrendingDown, TrendingUp } from "lucide-react";
+import { ChevronLeft, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MouseEvent, useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";

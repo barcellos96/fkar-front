@@ -9,7 +9,6 @@ import { useContext, useEffect, useState } from "react";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import Loading from "../loading";
-import { UserContext } from "@/providers/user";
 
 type LoginProps = {
   email: string;
@@ -101,7 +100,7 @@ export default function FormsLogin() {
           </button>
           <Link
             className="inline-block align-baseline font-bold text-base text-green-700 hover:opacity-80"
-            href={"/dashboard"}
+            href={"/recuperar-senha"}
           >
             Esqueceu sua senha?
           </Link>

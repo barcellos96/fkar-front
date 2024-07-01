@@ -3,7 +3,7 @@
 import LogoMenu from "@/assets/logo-2.png";
 import { MainNavigation, SecondNavigation } from "./NavigationMenu";
 import PlanoWidget from "./planWidget";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { UserContext } from "@/providers/user";
 import ProfileSideBar from "./profileSideBar";
 import ProfileSideBarSkeleton from "./profileSideBar/skeleton";

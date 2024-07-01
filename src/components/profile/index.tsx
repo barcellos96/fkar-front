@@ -6,6 +6,7 @@ import MyAccount from "./myAccount";
 import MyAccountSkeleton from "./myAccount/skeleton";
 import Address from "./address";
 import ChangePassword from "./password";
+import Subscription from "./plan";
 
 const tabList = [
   {
@@ -63,7 +64,7 @@ export default function ProfileLayout() {
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-lg p-5">
-          {active === tabList[0].name && <span>Planos FKar</span>}
+          {active === tabList[0].name && <Subscription />}
           {active === tabList[1].name && <MyAccount />}
           {active === tabList[2].name && <Address />}
           {active === tabList[3].name && <ChangePassword />}

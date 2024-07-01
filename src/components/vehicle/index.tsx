@@ -21,6 +21,7 @@ export default function VehicleLayout({ children }: Props) {
     useContext(VehicleContext);
   const { GetVehicleType, vehicleType, value } = useContext(VehicleTypeContext);
   const [onModal, setOnModal] = useState(false);
+  console.log("onModal ", onModal);
   const [loading, setLoading] = useState(false);
   const limitVehicles = 2;
 
@@ -143,202 +144,201 @@ export default function VehicleLayout({ children }: Props) {
         </table>
       )}
 
-      {onModal ||
-        (modalCreateVehicle && (
-          <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50 ">
-            <Modal.Root onClose={handleCloseModal}>
-              <Modal.Title
-                title="Cadastrar Novo Veiculo"
-                onClose={handleCloseModal}
-              />
-              <div className="flex flex-col gap-3">
+      {(onModal || modalCreateVehicle) && (
+        <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50 ">
+          <Modal.Root onClose={handleCloseModal}>
+            <Modal.Title
+              title="Cadastrar Novo Veiculo"
+              onClose={handleCloseModal}
+            />
+            <div className="flex flex-col gap-3">
+              <section className="flex flex-col gap-1">
+                <label
+                  htmlFor="select-option"
+                  className="font-semibold text-sm uppercase ms-1"
+                >
+                  Tipo: *
+                </label>
+                <select
+                  id="select-option"
+                  className="cursor-pointer border items-center px-2 py-2 rounded-lg outline-none"
+                  value={modalData.vehicle_type_id} // Use value ao invés de defaultValue
+                  onChange={(e) =>
+                    setModalData({
+                      ...modalData,
+                      vehicle_type_id: e.target.value,
+                    })
+                  }
+                >
+                  <option value="title" title="Tipo de Veículo">
+                    Tipo de veículo:
+                  </option>
+                  {vehicleType?.map((item, index) => (
+                    <option
+                      key={index}
+                      value={item.id}
+                      id={item.id}
+                      title={item.type}
+                    >
+                      {item.type}
+                    </option>
+                  ))}
+                </select>
+                {(checkErrors && !modalData.vehicle_type_id) ||
+                modalData.vehicle_type_id === "title" ? (
+                  <span className="text-red-500 text-sm ms-2">
+                    Esse é um titulo
+                  </span>
+                ) : undefined}
+              </section>
+
+              <section className="flex flex-col gap-1">
+                <span className="font-semibold text-sm uppercase ms-1">
+                  Apelido: *
+                </span>
+                <Modal.Input
+                  icon={Text}
+                  id="title"
+                  placeholder="Carro Principal"
+                  value={modalData.title}
+                  onChange={(e) =>
+                    setModalData({ ...modalData, title: e.target.value })
+                  }
+                  errorMessage={
+                    checkErrors && !modalData.title
+                      ? "Obrigatório preencher: Apelido"
+                      : undefined
+                  } // Verifica se há erro somente após o envio do formulário
+                />
+              </section>
+
+              <section className="flex flex-col gap-1">
+                <span className="font-semibold text-sm uppercase ms-1">
+                  Placa: *
+                </span>
+                <Modal.Input
+                  icon={Text}
+                  id="plate"
+                  placeholder="Placa do Veículo"
+                  value={modalData.plate}
+                  onChange={(e) => {
+                    const formattedPlate = formatPlate(e.target.value);
+                    setModalData({
+                      ...modalData,
+                      plate: formattedPlate,
+                    });
+                  }}
+                  errorMessage={
+                    checkErrors && !modalData.plate
+                      ? "Obrigatório preencher: Placa"
+                      : undefined
+                  }
+                />
+              </section>
+
+              <section className="flex flex-col gap-1">
+                <span className="font-semibold text-sm uppercase ms-1">
+                  Marca: *
+                </span>
+                <Modal.Input
+                  // icon={AlarmClock}
+                  id="brand"
+                  placeholder="Hyundai"
+                  value={modalData.brand}
+                  onChange={(e) =>
+                    setModalData({ ...modalData, brand: e.target.value })
+                  }
+                  errorMessage={
+                    checkErrors && !modalData.brand
+                      ? "Obrigatório preencher: Marca"
+                      : undefined
+                  } // Verifica se há erro somente após o envio do formulário
+                />
+              </section>
+
+              <section className="flex flex-col gap-1">
+                <span className="font-semibold text-sm uppercase ms-1">
+                  Modelo: *
+                </span>
+                <Modal.Input
+                  // icon={AlarmClock}
+                  id="model"
+                  placeholder="HB20 automatico"
+                  value={modalData.model}
+                  onChange={(e) =>
+                    setModalData({ ...modalData, model: e.target.value })
+                  }
+                  errorMessage={
+                    checkErrors && !modalData.model
+                      ? "Obrigatório preencher: Modelo"
+                      : undefined
+                  } // Verifica se há erro somente após o envio do formulário
+                />
+              </section>
+
+              <div className="flex gap-1">
                 <section className="flex flex-col gap-1">
-                  <label
-                    htmlFor="select-option"
-                    className="font-semibold text-sm uppercase ms-1"
-                  >
-                    Tipo: *
-                  </label>
-                  <select
-                    id="select-option"
-                    className="cursor-pointer border items-center px-2 py-2 rounded-lg outline-none"
-                    value={modalData.vehicle_type_id} // Use value ao invés de defaultValue
+                  <span className="font-semibold text-sm uppercase ms-1">
+                    Ano: *
+                  </span>
+                  <Modal.Input
+                    icon={CalendarFold}
+                    type="number"
+                    id="year"
+                    placeholder="2015"
+                    required
+                    value={modalData.year !== 0 ? modalData.year : ""}
                     onChange={(e) =>
                       setModalData({
                         ...modalData,
-                        vehicle_type_id: e.target.value,
+                        year: Number(e.target.value),
                       })
                     }
-                  >
-                    <option value="title" title="Tipo de Veículo">
-                      Tipo de veículo:
-                    </option>
-                    {vehicleType?.map((item, index) => (
-                      <option
-                        key={index}
-                        value={item.id}
-                        id={item.id}
-                        title={item.type}
-                      >
-                        {item.type}
-                      </option>
-                    ))}
-                  </select>
-                  {(checkErrors && !modalData.vehicle_type_id) ||
-                  modalData.vehicle_type_id === "title" ? (
-                    <span className="text-red-500 text-sm ms-2">
-                      Esse é um titulo
-                    </span>
-                  ) : undefined}
-                </section>
-
-                <section className="flex flex-col gap-1">
-                  <span className="font-semibold text-sm uppercase ms-1">
-                    Apelido: *
-                  </span>
-                  <Modal.Input
-                    icon={Text}
-                    id="title"
-                    placeholder="Carro Principal"
-                    value={modalData.title}
-                    onChange={(e) =>
-                      setModalData({ ...modalData, title: e.target.value })
-                    }
                     errorMessage={
-                      checkErrors && !modalData.title
-                        ? "Obrigatório preencher: Apelido"
+                      checkErrors && !modalData.year
+                        ? "Obrigatório preencher: Ano"
                         : undefined
-                    } // Verifica se há erro somente após o envio do formulário
+                    }
                   />
                 </section>
 
                 <section className="flex flex-col gap-1">
                   <span className="font-semibold text-sm uppercase ms-1">
-                    Placa: *
+                    Quilometragem:
                   </span>
                   <Modal.Input
-                    icon={Text}
-                    id="plate"
-                    placeholder="Placa do Veículo"
-                    value={modalData.plate}
-                    onChange={(e) => {
-                      const formattedPlate = formatPlate(e.target.value);
+                    icon={Map}
+                    type="text"
+                    id="km"
+                    placeholder="75.500"
+                    required
+                    value={
+                      modalData.km === 0
+                        ? ""
+                        : formatNumber(modalData.km.toString())
+                    } // Formatando o valor atual da quilometragem
+                    onChange={(e) =>
                       setModalData({
                         ...modalData,
-                        plate: formattedPlate,
-                      });
-                    }}
-                    errorMessage={
-                      checkErrors && !modalData.plate
-                        ? "Obrigatório preencher: Placa"
-                        : undefined
+                        km: Number(e.target.value.replace(/\D/g, "")), // Armazenando apenas números no estado
+                      })
                     }
                   />
                 </section>
-
-                <section className="flex flex-col gap-1">
-                  <span className="font-semibold text-sm uppercase ms-1">
-                    Marca: *
-                  </span>
-                  <Modal.Input
-                    // icon={AlarmClock}
-                    id="brand"
-                    placeholder="Hyundai"
-                    value={modalData.brand}
-                    onChange={(e) =>
-                      setModalData({ ...modalData, brand: e.target.value })
-                    }
-                    errorMessage={
-                      checkErrors && !modalData.brand
-                        ? "Obrigatório preencher: Marca"
-                        : undefined
-                    } // Verifica se há erro somente após o envio do formulário
-                  />
-                </section>
-
-                <section className="flex flex-col gap-1">
-                  <span className="font-semibold text-sm uppercase ms-1">
-                    Modelo: *
-                  </span>
-                  <Modal.Input
-                    // icon={AlarmClock}
-                    id="model"
-                    placeholder="HB20 automatico"
-                    value={modalData.model}
-                    onChange={(e) =>
-                      setModalData({ ...modalData, model: e.target.value })
-                    }
-                    errorMessage={
-                      checkErrors && !modalData.model
-                        ? "Obrigatório preencher: Modelo"
-                        : undefined
-                    } // Verifica se há erro somente após o envio do formulário
-                  />
-                </section>
-
-                <div className="flex gap-1">
-                  <section className="flex flex-col gap-1">
-                    <span className="font-semibold text-sm uppercase ms-1">
-                      Ano: *
-                    </span>
-                    <Modal.Input
-                      icon={CalendarFold}
-                      type="number"
-                      id="year"
-                      placeholder="2015"
-                      required
-                      value={modalData.year !== 0 ? modalData.year : ""}
-                      onChange={(e) =>
-                        setModalData({
-                          ...modalData,
-                          year: Number(e.target.value),
-                        })
-                      }
-                      errorMessage={
-                        checkErrors && !modalData.year
-                          ? "Obrigatório preencher: Ano"
-                          : undefined
-                      }
-                    />
-                  </section>
-
-                  <section className="flex flex-col gap-1">
-                    <span className="font-semibold text-sm uppercase ms-1">
-                      Quilometragem:
-                    </span>
-                    <Modal.Input
-                      icon={Map}
-                      type="text"
-                      id="km"
-                      placeholder="75.500"
-                      required
-                      value={
-                        modalData.km === 0
-                          ? ""
-                          : formatNumber(modalData.km.toString())
-                      } // Formatando o valor atual da quilometragem
-                      onChange={(e) =>
-                        setModalData({
-                          ...modalData,
-                          km: Number(e.target.value.replace(/\D/g, "")), // Armazenando apenas números no estado
-                        })
-                      }
-                    />
-                  </section>
-                </div>
               </div>
+            </div>
 
-              <Modal.Actions
-                onSubmitAction={() => {
-                  setLoading(true);
-                  handleSubmit();
-                }}
-                loading={loading}
-                onCancelAction={handleCloseModal}
-              />
-            </Modal.Root>
-          </div>
-        ))}
+            <Modal.Actions
+              onSubmitAction={() => {
+                setLoading(true);
+                handleSubmit();
+              }}
+              loading={loading}
+              onCancelAction={handleCloseModal}
+            />
+          </Modal.Root>
+        </div>
+      )}
     </div>
   );
 }

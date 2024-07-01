@@ -14,22 +14,7 @@ export default function Dashboard() {
   return (
     <LayoutDashboard>
       <div className="grid lg:grid-cols-dashUpLg gap-6 overflow-hidden -ml-2 ">
-        <div className="lg:hidden mt-7 ms-2 -mb-8">
-          <UpdatePlanCard />
-          <ReminderTimeline />
-
-          <FinanceSummary />
-        </div>
-        <div>
-          <HistoryTimeline />
-        </div>
-        <div>
-          <div className="hidden lg:block ">
-            <UpdatePlanCard />
-            <ReminderTimeline />
-            <FinanceSummary />
-          </div>
-        </div>
+        <HistoryTimeline />
       </div>
     </LayoutDashboard>
   );

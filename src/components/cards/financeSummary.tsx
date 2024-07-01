@@ -16,6 +16,7 @@ export default function FinanceSummary() {
   );
   const { vehicle } = useContext(VehicleContext);
 
+  console.log("filteredListAll ", filteredListAll?.total);
   const filteredByIncoming = filteredListAll?.filteredData.filter(
     (item) => item.incoming_type
   );
@@ -94,12 +95,14 @@ export default function FinanceSummary() {
   const total = service + incoming + expense + fuel;
 
   return (
-    <div className="mt-5 mb-7 rounded-xl shadow-lg relative bg-white">
+    <div className="mt-5 pb-3 rounded-xl shadow-lg relative bg-white">
       <h3 className="flex justify-between px-5 py-2 mb-4 font-semibold bg-green-200 rounded-t-lg">
-        <span>
+        <span className="text-sm slg:text-lg">
           ÚLTIMO MÊS {`(${formattedStartDate} - ${formattedEndDate})`}
         </span>
-        <span className="">TOTAL: {`${formatCurrency(total)}`}</span>
+        <span className="text-sm slg:text-lg">
+          TOTAL: {`${formatCurrency(total)}`}
+        </span>
       </h3>
       <div className="flex flex-row items-center justify-around">
         <div className="flex flex-col items-center justify-center">
@@ -114,7 +117,7 @@ export default function FinanceSummary() {
             width={40}
           />
           <h5 className="text-sm font-light mt-1">SERVIÇOS</h5>
-          <span className="text-base font-semibold mt-1">
+          <span className="text-sm slg:text-base font-semibold mt-1">
             {formatCurrency(service)}
           </span>
           <div className="w-16 h-16">
@@ -133,7 +136,7 @@ export default function FinanceSummary() {
             width={40}
           />
           <h5 className="text-sm font-light mt-1">DESPESAS</h5>
-          <span className="text-base font-semibold mt-1">
+          <span className="text-sm slg:text-base font-semibold mt-1">
             {formatCurrency(expense)}
           </span>
           <div className="w-16 h-16">
@@ -152,7 +155,7 @@ export default function FinanceSummary() {
             width={40}
           />
           <h5 className="text-sm font-light mt-1">RECEITAS</h5>
-          <span className="text-base font-semibold mt-1">
+          <span className="text-sm slg:text-base font-semibold mt-1">
             {formatCurrency(incoming)}
           </span>
           <div className="w-16 h-16">
@@ -171,7 +174,7 @@ export default function FinanceSummary() {
             width={40}
           />
           <h5 className="text-sm font-light mt-1">ABASTEC...</h5>
-          <span className="text-base font-semibold mt-1">
+          <span className="text-sm slg:text-base font-semibold mt-1">
             {formatCurrency(fuel)}
           </span>
           <div className="w-16 h-16  ">
@@ -179,12 +182,12 @@ export default function FinanceSummary() {
           </div>
         </div>
       </div>
-      <button
+      {/* <button
         type="button"
-        className="bg-green-200 hover:bg-green-300 font-semibold text-base w-full mx-auto py-2  relative top-5 rounded-b-lg transition duration-300 ease-linear"
+        className="bg-green-200 hover:bg-green-300 font-semibold text-sm slg:text-base w-full mx-auto py-2  relative top-5 rounded-b-lg transition duration-300 ease-linear"
       >
         VER RELATORIOS COMPLETOS
-      </button>
+      </button> */}
     </div>
   );
 }

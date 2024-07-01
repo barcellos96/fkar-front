@@ -33,11 +33,13 @@ const ReminderTimeline = () => {
       <div className="gap-2 flex flex-row justify-between items-center px-3 py-2 rounded-t-lg bg-green-200 truncate">
         <span className="flex items-center">
           <Bell size={16} />
-          <h2 className="ml-1 font-semibold truncate"> PRÓXIMOS LEMBRETES</h2>
+          <h2 className="ml-1 text-sm slg:text-lg font-semibold truncate">
+            PRÓXIMOS LEMBRETES
+          </h2>
         </span>
         <button
           type="button"
-          className="text-green-700 font-bold hover:text-blue-500"
+          className="text-green-700 text-sm slg:text-lg font-semibold hover:text-green-500"
           onClick={() => push("/dashboard/lembretes")}
         >
           Ver todos
@@ -58,7 +60,7 @@ const ReminderTimeline = () => {
                 className="border-s-8 border-green-200 px-5 py-3 rounded-xl shadow-md mb-2 me-2 "
               >
                 <div className="flex flex-row items-center justify-between">
-                  <h3 className="text-base font-semibold text-gray-900">
+                  <h3 className="text-sm slg:text-base font-semibold text-gray-900">
                     {item.title.toUpperCase()}
                   </h3>
                   <section className="flex gap-1">
@@ -80,7 +82,7 @@ const ReminderTimeline = () => {
                     </span>
                   </section>
                 </div>
-                <div className="flex flex-row items-center ml-1 mt-1 text-gray-400 leading-none">
+                <div className="flex flex-row items-center  mt-2 text-gray-400 leading-none">
                   <CalendarDays className="w-4 h-4 mr-1" />
                   <span className="text-sm">
                     {" "}

@@ -10,6 +10,7 @@ import TableFuelType from "./fuelType";
 import TableExpenseService from "./expenseService";
 
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
+import Subscription from "../profile/plan";
 
 const tabList = [
   {
@@ -85,7 +86,7 @@ export default function ConfigLayout() {
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-lg p-5">
-          {active === tabList[0].name && <span>Planos FKar</span>}
+          {active === tabList[0].name && <Subscription />}
           {active === tabList[1].name && <TableTypeExpense title={active} />}
           {active === tabList[2].name && <TableExpenseService title={active} />}
           {active === tabList[3].name && <TableIncomingType title={active} />}

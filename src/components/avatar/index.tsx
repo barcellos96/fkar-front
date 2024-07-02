@@ -6,6 +6,7 @@ import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 
 import user_avatar from "../../assets/user-avatar.png";
+import LogoutButton from "../logout/button";
 
 // Definindo o tipo correto para a referência do Cropper
 type ReactCropperElement = HTMLImageElement & {
@@ -42,11 +43,9 @@ export default function AvatarLayout() {
 
   const saveCropImage = async () => {
     const blob = await fetch(pview).then((res) => res.blob());
-    console.log("blob ", blob.type.split("/")[0]);
 
     if (blob.type.split("/")[0] !== "image") {
       setError(true);
-      console.log("Error ", error);
     } else {
       await UploadAvatar(blob);
       setImgCrop(false);
@@ -72,7 +71,7 @@ export default function AvatarLayout() {
         {user?.avatar.urlImg ? (
           <img
             src={user?.avatar.urlImg ? user?.avatar.urlImg : user_avatar.src}
-            className="w-10 h-10 rounded-full"
+            className="w-8 h-8 rounded-full"
           />
         ) : (
           <div className="grid items-center gap-2 grid-cols-profileSideBar animate-pulse">
@@ -87,11 +86,8 @@ export default function AvatarLayout() {
                 <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
               </svg>
             </div>
-            {/* <div className="flex flex-1 flex-col truncate">
-              <div className="h-4 bg-gray-300 rounded w-24 mb-1"></div>
-              <div className="h-4 bg-gray-300 rounded w-36"></div>
-            </div>
-            <div className="h-7 w-7 bg-gray-300 rounded-md"></div> */}
+
+            {/* < className="h-7 w-7 bg-gray-300 rounded-md"/> */}
           </div>
         )}
       </div>
@@ -100,6 +96,7 @@ export default function AvatarLayout() {
         <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50">
           <div className="bg-white p-4 rounded-lg">
             <input type="file" accept="image/*" onChange={handleFileChange} />
+
             {src && (
               <Cropper
                 src={src}

@@ -127,7 +127,6 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
     };
 
     const formDataProfile = new FormData();
-    console.log("avatar ", avatar);
     formDataProfile.append("avatar", avatar);
 
     const response = await api

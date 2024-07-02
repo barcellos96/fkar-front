@@ -53,11 +53,11 @@ export const navigationSecond = [
     icon: Settings,
     path: "/dashboard/config",
   },
-  {
-    name: "Suporte",
-    icon: BadgeHelp,
-    path: "/suporte",
-  },
+  // {
+  //   name: "Suporte",
+  //   icon: BadgeHelp,
+  //   path: "/suporte",
+  // },
 ];
 
 export const navigationPoppoverSideBar = [

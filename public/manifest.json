@@ -1,0 +1,53 @@
+{
+  "background_color": "#ffffff",
+  "description": "Gestão de Veículos Particulares e Empresariais. Gerencie seus veículos facilmente através da palma da sua mão com aplicativo da Fkar. Mantenha o controle total de suas receitas e despesas do veiculo. ",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "FKAR Gestão Veicular",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "FKAR",
+  "start_url": "/login",
+  "theme_color": "#15803d",
+  "icons": [
+    {
+      "src": "/img/icons/icon-600x600.png",
+      "type": "image/png",
+      "sizes": "600x600"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/img/prints/1.jpeg",
+      "type": "image/jpeg",
+      "sizes": "857x1600"
+    },
+    {
+      "src": "/img/prints/2.jpeg",
+      "type": "image/jpeg",
+      "sizes": "853x1600"
+    },
+    {
+      "src": "/img/prints/3.jpeg",
+      "type": "image/jpeg",
+      "sizes": "852x1600"
+    },
+    {
+      "src": "/img/prints/5.jpeg",
+      "type": "image/jpeg",
+      "sizes": "858x1599"
+    },
+    {
+      "src": "/img/prints/6.jpeg",
+      "type": "image/jpeg",
+      "sizes": "855x1600"
+    }
+  ],
+  "id": "/",
+  "lang": "pt",
+  "display_override": ["window-controls-overlay", "fullscreen", "standalone"],
+  "categories": ["business", "entertainment", "finance"],
+  "edge_side_panel": {
+    "preferred_width": 500
+  }
+}

@@ -17,7 +17,6 @@ export default function Dashboard() {
         <div className="lg:hidden mt-7 ms-2 -mb-8">
           <UpdatePlanCard />
           <ReminderTimeline />
-
           <FinanceSummary />
         </div>
         <div>

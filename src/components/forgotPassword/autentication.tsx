@@ -15,7 +15,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function FormsAuthentication() {
   const { AuthenticationCode, promise } = useContext(AuthContext);
-  console.log("promise ", promise);
 
   const { "user:accessToken": token } = parseCookies();
   const router = useRouter();

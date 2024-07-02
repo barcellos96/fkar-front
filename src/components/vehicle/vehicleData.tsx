@@ -47,7 +47,6 @@ export default function VehicleData() {
   } = useContext(VehicleContext);
   const { GetVehicleType, vehicleType } = useContext(VehicleTypeContext);
 
-  console.log("modalCreateVehicle ", modalCreateVehicle);
 
   const [onModal, setOnModal] = useState(false);
   const [onModalUpdate, setOnModalUpdate] = useState(false);

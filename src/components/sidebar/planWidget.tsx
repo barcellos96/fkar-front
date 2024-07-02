@@ -5,10 +5,10 @@ export default function PlanoWidget() {
   const { push } = useRouter();
 
   return (
-    <div className="flex flex-col rounded-lg bg-green-100 max-w-60 px-4 py-3 gap-1 shadow-md">
-      <span className="text-sm font-bold text-green-700">
+    <div className="flex flex-col rounded-lg bg-green-100 max-w-60 px-2 py-2 gap-1 shadow-md">
+      {/* <span className="text-sm font-bold text-green-700">
         SEU PLANO: <span className="text-zinc-600">GRATUITO</span>
-      </span>
+      </span> */}
 
       <button
         type="button"

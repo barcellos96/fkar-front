@@ -343,7 +343,6 @@ export const ExpenseVehicleProvider = ({ children }: ICihldrenReact) => {
         setListAll(res.data.response);
       })
       .catch((err) => {
-        console.log("err ", err);
         toast.error(err.response.data.message, { position: "top-right" });
         return err;
       });

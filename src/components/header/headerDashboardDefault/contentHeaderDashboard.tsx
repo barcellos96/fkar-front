@@ -146,7 +146,7 @@ export default function Content() {
             <CarFront size={22} />
             <select
               id="select-option"
-              className="outline-none cursor-pointer p-2"
+              className="outline-none cursor-pointer p-1 bg-transparent max-w-32 sm:max-w-max"
               onChange={handleSelectChange}
               value={vehicleId}
               onClick={

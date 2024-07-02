@@ -9,12 +9,14 @@ import ProfileSideBar from "./profileSideBar";
 import ProfileSideBarSkeleton from "./profileSideBar/skeleton";
 import "../scrollbar/scrollbar.css"; // Importa o arquivo CSS personalizado
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {
   onClose?: () => void;
 }
 
 export default function Sidebar({ onClose }: SidebarProps) {
+  const { push } = useRouter();
   const { UserLogged, user } = useContext(UserContext);
 
   useEffect(() => {
@@ -28,9 +30,16 @@ export default function Sidebar({ onClose }: SidebarProps) {
   }, []);
 
   return (
-    <aside className="z-30 fixed flex flex-col border-r border-zinc-100 bg-zinc-50 px-6 py-3 shadow-xl max-[1500px]:gap-0 gap-7 h-full overflow-auto custom-scrollbar">
-      <div className="h-14 relative max-[1500px]:mb-5 mb-1">
-        <img src={LogoMenu.src} alt="Logo Menu Fkar" width={120} height={150} />
+    <aside className="z-30 fixed flex flex-col border-r border-zinc-100 bg-zinc-50 px-6 py-3 shadow-xl max-[1500px]:gap-0 gap-7 h-full overflow-auto overflow-x-hidden custom-scrollbar ">
+      <div className="h-14 relative max-[1500px]:mb-2 mb-1">
+        <img
+          src={LogoMenu.src}
+          alt="Logo Menu Fkar"
+          className="cursor-pointer"
+          width={120}
+          height={150}
+          onClick={() => push("/dashboard")}
+        />
       </div>
 
       <button

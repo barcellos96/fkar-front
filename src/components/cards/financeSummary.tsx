@@ -6,7 +6,6 @@ import DoughnutChart from "../charts/doughnut";
 import { useContext, useEffect } from "react";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { parseCookies } from "nookies";
-import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 import formatCurrency from "@/utils/formatCurrency";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
 
@@ -16,7 +15,6 @@ export default function FinanceSummary() {
   );
   const { vehicle } = useContext(VehicleContext);
 
-  console.log("filteredListAll ", filteredListAll?.total);
   const filteredByIncoming = filteredListAll?.filteredData.filter(
     (item) => item.incoming_type
   );

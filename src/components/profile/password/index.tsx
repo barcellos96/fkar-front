@@ -62,7 +62,7 @@ export default function ChangePassword() {
         />
 
         {/* formulario */}
-        <div className="flex lg:flex-row flex-col mb-4 gap-1">
+        <div className="flex lgg:flex-row flex-col mb-4 gap-1">
           <div className="flex flex-col w-4/5">
             <span className="text-base font-semibold mb-1 ml-1 ">
               Nova Senha:

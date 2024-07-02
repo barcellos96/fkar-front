@@ -1,16 +1,28 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { BadgeHelp, Bell, Menu } from "lucide-react";
 import Sidebar from "@/components/sidebar";
 import Content from "./headerDashboardDefault/contentHeaderDashboard";
 import { useState } from "react";
 import AvatarLayout from "../avatar";
+import { useRouter } from "next/navigation";
+import HelpContent from "./help";
+import NotificationContent from "./notification";
 
 export default function HeaderDashboardDefault() {
+  const { push } = useRouter();
+
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState<string | null>(null);
 
   const handleOpenMenu = () => setMenuOpen(true);
   const handleCloseMenu = () => setMenuOpen(false);
+
+  const handlePopoverToggle = (popover: string) => {
+    setPopoverOpen((prevPopover) => (prevPopover === popover ? null : popover));
+  };
+
+  const handleClosePopover = () => setPopoverOpen(null);
 
   return (
     <div
@@ -36,7 +48,29 @@ export default function HeaderDashboardDefault() {
         {/* ------------------------------*/}
         <Content />
       </section>
-      <AvatarLayout />
+      <section className="flex items-center gap-3">
+        <div className="relative">
+          <Bell
+            size={18}
+            onClick={() => handlePopoverToggle("bell")}
+            className="cursor-pointer"
+          />
+          {popoverOpen === "bell" && (
+            <NotificationContent handleClosePopover={handleClosePopover} />
+          )}
+        </div>
+        <div className="relative">
+          <BadgeHelp
+            size={18}
+            onClick={() => handlePopoverToggle("help")}
+            className="cursor-pointer"
+          />
+          {popoverOpen === "help" && (
+            <HelpContent handleClosePopover={handleClosePopover} />
+          )}
+        </div>
+        <AvatarLayout />
+      </section>
     </div>
   );
 }

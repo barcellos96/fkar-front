@@ -21,7 +21,6 @@ export default function VehicleLayout({ children }: Props) {
     useContext(VehicleContext);
   const { GetVehicleType, vehicleType, value } = useContext(VehicleTypeContext);
   const [onModal, setOnModal] = useState(false);
-  console.log("onModal ", onModal);
   const [loading, setLoading] = useState(false);
   const limitVehicles = 2;
 

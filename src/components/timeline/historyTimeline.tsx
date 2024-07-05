@@ -17,6 +17,7 @@ import {
   Banknote,
   CalendarDays,
   Wallet,
+
 } from "lucide-react";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { parseCookies } from "nookies";
@@ -25,27 +26,34 @@ import { formatKm } from "@/hooks/km";
 import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
 import StartHistoric from "../../assets/start-historic.png";
+import Editions from "./editions";
+import { IncomingContext } from "@/providers/incoming";
 
 const HistoryTimeline = () => {
-  const { ListAll, listAll } = useContext(ExpenseVehicleContext);
+  const { ListAll, listAll, value } = useContext(ExpenseVehicleContext);
+  const { valueIncoming } = useContext(IncomingContext)
+  console.log('value', value);
   const { vehicle } = useContext(VehicleContext);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
+  const [modalOn, setModalOn] = useState(false);
+  const [item, setItem] = useState();
+  console.log('item', item);
 
   const cookies = parseCookies();
   const savedVehicleId = cookies["vehicle:selectedVehicleId"];
 
   useEffect(() => {
-    if (savedVehicleId && listAll === null && vehicle?.length !== 0) {
+    if (vehicle?.length !== 0) {
       ListAll({
         vehicleId: savedVehicleId,
         page: "1",
         limit: limit.toString(),
       });
     }
-  }, [savedVehicleId]);
+  }, [savedVehicleId, value, valueIncoming]);
 
   const loadMoreItems = useCallback(async () => {
     const cookies = parseCookies();
@@ -65,7 +73,7 @@ const HistoryTimeline = () => {
     } finally {
       setLoading(false);
     }
-  }, [limit, savedVehicleId]);
+  }, [limit, savedVehicleId, value, valueIncoming]);
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect();
@@ -84,7 +92,7 @@ const HistoryTimeline = () => {
       if (lastItem) observer.current.observe(lastItem);
     }
     return () => observer.current?.disconnect();
-  }, [listAll, loadMoreItems, loading, limit, savedVehicleId]);
+  }, [listAll, loadMoreItems, loading, limit, savedVehicleId, value, valueIncoming]);
 
   const getExpenseIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -112,6 +120,16 @@ const HistoryTimeline = () => {
     }
   };
 
+  const handleModalOn = (item: any) => {
+    setModalOn(true);
+    setItem(item);
+  };
+
+  const handleModalClose = () => {
+    setModalOn(false);
+    setItem(undefined);
+  };
+
   return (
     <div className="ms-2 mt-5 mb-4 max-h-screen  rounded-xl shadow-lg pt-5 bg-white">
       <h2 className="ml-10 font-semibold mb-3">HISTÓRICO</h2>
@@ -121,6 +139,9 @@ const HistoryTimeline = () => {
         style={{ maxHeight: "85vh" }}
       >
         <ol className={`relative border-s border-zinc-300 text-sm `}>
+          
+          {modalOn && <Editions item={item} onClose={handleModalClose}/>}
+
           {listAll && listAll.list.length > 0
             ? listAll.list.map((item, index) => (
                 <li
@@ -128,6 +149,7 @@ const HistoryTimeline = () => {
                   className={`mb-7 ms-8 ${
                     index === listAll.list.length - 1 ? "last-item" : ""
                   } cursor-pointer`}
+                  onClick={() => handleModalOn(item)}
                 >
                   {
                     <span
@@ -146,8 +168,8 @@ const HistoryTimeline = () => {
                   }
 
                   {item.type === "expense" ? (
-                    <div className="flex flex-wrap  items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-                      <h3 className="flex flex-wrap">{item.description}</h3>
+                    <div className="flex flex-wrap items-center mb-1 text-lg font-semibold text-gray-900">
+                      <h3 className="flex  flex-wrap">{item.description}</h3>
                     </div>
                   ) : (
                     <div className="flex flex-wrap  items-center justify-between mb-1 text-lg font-semibold text-gray-900">

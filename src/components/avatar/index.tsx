@@ -6,7 +6,6 @@ import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 
 import user_avatar from "../../assets/user-avatar.png";
-import LogoutButton from "../logout/button";
 
 // Definindo o tipo correto para a referência do Cropper
 type ReactCropperElement = HTMLImageElement & {
@@ -14,8 +13,7 @@ type ReactCropperElement = HTMLImageElement & {
 };
 
 export default function AvatarLayout() {
-  const { UploadAvatar } = useContext(UserContext);
-  const { UserLogged, user, value } = useContext(UserContext);
+  const { UploadAvatar, UserLogged, user, value } = useContext(UserContext);
   const cropperRef = useRef<ReactCropperElement>(null);
 
   const [imgCrop, setImgCrop] = useState(false);
@@ -47,7 +45,7 @@ export default function AvatarLayout() {
     if (blob.type.split("/")[0] !== "image") {
       setError(true);
     } else {
-      await UploadAvatar(blob);
+      await UploadAvatar(blob, user?.id ?? "");
       setImgCrop(false);
     }
   };
@@ -68,7 +66,7 @@ export default function AvatarLayout() {
         className="flex items-center cursor-pointer hover:opacity-70"
         onClick={openDialog}
       >
-        {user?.avatar.urlImg ? (
+        {user?.avatar?.urlImg ? (
           <img
             src={user?.avatar.urlImg ? user?.avatar.urlImg : user_avatar.src}
             className="w-8 h-8 rounded-full"

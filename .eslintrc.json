@@ -1,4 +1,10 @@
 {
   "extends": "next/core-web-vitals",
-  "plugins": ["react"]
+  "plugins": ["react"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "off", // <--- THIS IS THE NEW RULE
+    "@next/next/no-img-element": "off"
+
+  }
 }

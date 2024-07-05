@@ -86,6 +86,7 @@ export default function RefuelingData() {
     if (expenseType === null) {
       GetExpenseType();
     }
+
   }, [value]);
 
   useEffect(() => {
@@ -110,10 +111,11 @@ export default function RefuelingData() {
         }
       });
     }
+
   }, [expenseType, selectedVehicleId, currentPage, limitPage, value]);
 
   if (!expenseVehicle) {
-    return <TableSkeleton />; // Mostra o skeleton enquanto carrega
+    return <TableSkeleton />; // Mostra o skeleton enquanto carregaPP
   }
 
   if (expenseVehicle?.data.length === 0) {
@@ -248,12 +250,6 @@ export default function RefuelingData() {
             >
               <td className="py-3 hidden slg:table-cell">{index + 1} - </td>
               <td className="slg:hidden">
-                <span className="flex gap-2 slg:hidden">
-                  <Text width={17} height={17} className="slg:hidden" />
-                  {item.description}
-                </span>
-              </td>
-              <td className="slg:py-3 ">
                 <section className="slg:hidden absolute flex gap-2  justify-end w-4/5">
                   <button
                     className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
@@ -263,6 +259,7 @@ export default function RefuelingData() {
                   </button>
                   <button
                     className={`bg-green-600 flex items-center justify-center rounded-full h-7 w-7 hover:bg-opacity-60 `}
+                    onClick={() => handleOpenModalUpdate(item)}
                   >
                     <Pencil width={15} color="white" />
                   </button>
@@ -273,6 +270,12 @@ export default function RefuelingData() {
                     <Trash width={15} color="white" />
                   </button>
                 </section>
+                <span className="flex gap-2 slg:hidden">
+                  <Text width={17} height={17} className="slg:hidden" />
+                  {item.description}
+                </span>
+              </td>
+              <td className="slg:py-3 ">
                 <span className="flex gap-2 slg:table-cell">
                   <CalendarDays width={17} height={17} className="slg:hidden" />
                   {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}

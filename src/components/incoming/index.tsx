@@ -1,13 +1,13 @@
 "use client";
 
-import { TrendingDown } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import HeaderComposition from "@/components/header/headerComposition";
 
 interface Props {
   children?: ReactNode[];
-  pagination?: ReactNode;
+  pagination?: ReactNode;  
 }
 
 export default function IncomingLayout({ children, pagination }: Props) {
@@ -20,7 +20,7 @@ export default function IncomingLayout({ children, pagination }: Props) {
   return (
     <div className="w-full bg-white rounded-lg gap-4 px-6 py-5 mt-3 mb-5 shadow-lg ">
       <HeaderComposition
-        icon={TrendingDown}
+        icon={TrendingUp}
         title="Receitas"
         nameButton="Nova Receita"
         typeSubmit="button"

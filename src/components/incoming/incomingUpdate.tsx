@@ -3,7 +3,6 @@
 import { VehicleContext } from "@/providers/vehicle/vehicle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Wrench } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { MouseEvent, useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -72,6 +71,9 @@ export default function IncomingUpdate({
     hour12: false,
   });
 
+  
+  console.log('item incoming type', item.incoming_type?.name);
+
   const defaultValues = {
     date: formattedDate,
     time: formattedTime,
@@ -79,7 +81,7 @@ export default function IncomingUpdate({
     km: item.km ?? "",
     amount_received: item.amount_received ?? "",
     observation: item.observation ?? "",
-    incomingTypeId: item.incoming_type?.name ?? "",
+    incomingTypeId: item.incoming_type?.id ?? "",
     vehicleId: selectedVehicleId,
   };
 
@@ -134,6 +136,7 @@ export default function IncomingUpdate({
     setLoading(true);
 
     try {
+      console.log('incomingId', incomingId);
       await UpdateIncoming(incomingId, formattedValueWithNumbers).finally(
         () => {
           setLoading(false);
@@ -159,10 +162,6 @@ export default function IncomingUpdate({
     value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     return value;
   };
-
-  useEffect(() => {
-    setValue("incomingTypeId", item.incoming_type?.id ?? "");
-  }, [item.incoming_type, setValue]);
 
   return (
     <Modal.Root onClose={handleClose}>
@@ -193,6 +192,8 @@ export default function IncomingUpdate({
             id="incoming_type"
             className="h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
             {...register("incomingTypeId")}
+            defaultValue={item?.incoming_type?.id ?? ""}
+
           >
             {incomingType?.map((item, index) => (
               <option key={index} value={item.id}>

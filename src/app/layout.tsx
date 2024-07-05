@@ -17,32 +17,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className="text-zinc-600 bg-zinc-100" lang="en">
+    <html className="text-zinc-600 bg-zinc-100" lang="pt">
       <head>
         <meta name="application-name" content="FKAR Gestão de Veículos" />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#15803d"/>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
         />
         <meta name="apple-mobile-web-app-title" content="FKAR" />
-        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
         <meta name="msapplication-TileColor" content="#15803d" />
         <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta
-          name="apple-mobile-web-app-title"
-          content="FKAR Gestão de Veículos"
-        />
-
+      
+        <link rel="manifest" href="/manifest.json" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.ico" />
 
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="FKAR" />
-        <meta property="og:site_name" content="FKAR Gestão de Veículos" />
+      
       </head>
       <body className={inter.className} suppressHydrationWarning={true}>
         <div className={inter.className}>

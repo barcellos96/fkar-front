@@ -1,11 +1,11 @@
 {
   "background_color": "#ffffff",
-  "description": "Gestão de Veículos Particulares e Empresariais. Gerencie seus veículos facilmente através da palma da sua mão com aplicativo da Fkar. Mantenha o controle total de suas receitas e despesas do veiculo. ",
+  "description": "Gestão de Veículos Particulares e Empresariais. Gerencie seus veículos facilmente através da palma da sua mão com aplicativo da Fkar. Mantenha o controle total de suas receitas e despesas do veiculo.",
   "dir": "ltr",
-  "display": "standalone",
+  "display":"standalone",
   "name": "FKAR Gestão Veicular",
-  "orientation": "any",
-  "scope": "/",
+  "orientation": "portrait",
+  "scope": "/login",
   "short_name": "FKAR",
   "start_url": "/login",
   "theme_color": "#15803d",
@@ -45,9 +45,16 @@
   ],
   "id": "/",
   "lang": "pt",
-  "display_override": ["window-controls-overlay", "fullscreen", "standalone"],
-  "categories": ["business", "entertainment", "finance"],
+  "display_override": ["window-controls-overlay", "standalone"],
+  "categories": ["business", "entertainment", "finance", "navigation", "utilities", "education"],
   "edge_side_panel": {
     "preferred_width": 500
+  },
+  "related_applications": [
+  {
+    "platform": "windows",
+    "url": "https://drivvo.com/pt-BR",
+    "id": "drivvo.DrivvoApp"
   }
+]
 }

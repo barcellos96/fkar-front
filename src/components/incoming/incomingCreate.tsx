@@ -20,7 +20,7 @@ export default function IncomingCreate() {
   const [sectionPlus, setSectionPlus] = useState(false);
 
   const { selectedVehicleId } = useContext(VehicleContext);
-  const { GetIncoming, GetIncomingType, value, incomingType, CreateIncoming } =
+  const { GetIncoming, GetIncomingType, valueIncoming, incomingType, CreateIncoming } =
     useContext(IncomingContext);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function IncomingCreate() {
         setLoading(false); // Finaliza o estado de loading
       }
     );
-  }, [value, selectedVehicleId]);
+  }, [valueIncoming, selectedVehicleId]);
 
   const date = new Date();
   const time = new Date();

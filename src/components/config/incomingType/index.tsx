@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil, Trash, Wallet } from "lucide-react";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TableSkeleton from "../../tablesNotData/skeleton";
 import TablePageConfig from "../tablePageConfig/table";
 import { IncomingContext } from "@/providers/incoming";
@@ -20,7 +20,7 @@ export default function TableIncomingType({ title }: Props) {
   const {
     GetIncomingType,
     incomingType,
-    value,
+    valueIncoming,
     DeleteIncomingType,
     UpdateIncomingType,
   } = useContext(IncomingContext);
@@ -54,7 +54,7 @@ export default function TableIncomingType({ title }: Props) {
 
       fetchData();
     }
-  }, [value]);
+  }, [valueIncoming]);
 
   const typeModal = onModalUpdate ? "Atualizar " : "Excluir ";
   const colorModal = onModalUpdate ? "bg-yellow-600" : "bg-red-700";

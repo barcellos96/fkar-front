@@ -9,7 +9,7 @@ import {
   Pencil,
   Plus,
   Trash,
-  TrendingDown,
+  TrendingUp,
 } from "lucide-react";
 import { formatKm } from "@/hooks/km";
 import { format, parseISO } from "date-fns";
@@ -47,7 +47,7 @@ export default function IncomingData() {
   const handleSubmit = () => {
     push("/dashboard/receitas/criar");
   };
-  const { GetIncomingType, incomingType, GetIncoming, incomingData, value } =
+  const { GetIncomingType, incomingType, GetIncoming, incomingData, valueIncoming } =
     useContext(IncomingContext);
   const { selectedVehicleId } = useContext(VehicleContext);
 
@@ -62,12 +62,14 @@ export default function IncomingData() {
   useEffect(() => {
     setLoading(true); // Inicia o estado de loading
 
-    Promise.all([GetIncoming(selectedVehicleId), GetIncomingType()]).finally(
-      () => {
-        setLoading(false); // Finaliza o estado de loading
-      }
-    );
-  }, [value, selectedVehicleId]);
+    if (selectedVehicleId) {
+      Promise.all([GetIncoming(selectedVehicleId), GetIncomingType()]).finally(
+        () => {
+          setLoading(false); // Finaliza o estado de loading
+        }
+      );
+    }
+  }, [valueIncoming, selectedVehicleId]);
 
   if (!incomingData || !incomingType) {
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega
@@ -157,13 +159,13 @@ export default function IncomingData() {
               </td>
               <td className="slg:py-3">
                 <span className="flex gap-2 slg:table-cell">
-                  <TrendingDown width={17} height={17} className="slg:hidden" />
+                  <TrendingUp width={17} height={17} className="slg:hidden" />
                   {item.title}
                 </span>
               </td>
               <td className="slg:py-3">
                 <span className="flex gap-2 slg:table-cell">
-                  <TrendingDown width={17} height={17} className="slg:hidden" />
+                  <TrendingUp width={17} height={17} className="slg:hidden" />
                   {item.incoming_type.name}
                 </span>
               </td>

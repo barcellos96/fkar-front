@@ -128,7 +128,7 @@ interface IIncomingData {
   incomingType?: GetIncomingTypeProps[] | null;
   GetIncomingType: () => Promise<void>;
   CreateIncomingType(data: IIncomingTypeProps): Promise<ValueProps>;
-  value?: ValueProps;
+  valueIncoming?: ValueProps;
   DeleteIncomingType(id: string): Promise<DeleteIncomingProps>;
   UpdateIncomingType(
     id: string,
@@ -162,7 +162,7 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
   const [incomingType, setIncomingType] = useState<
     GetIncomingTypeProps[] | null
   >(null);
-  const [value, setValue] = useState();
+  const [valueIncoming, setValue] = useState();
 
   const CreateIncomingType = async (
     data: IIncomingTypeProps
@@ -332,10 +332,13 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
       headers: { Authorization: `bearer ${token}` },
     };
 
+    console.log('incomingId', incomingId);
     const response = await api
       .patch(`/incoming/${incomingId}`, data, config)
       .then((res) => {
-        toast.success(res.data.response.message, { position: "top-right" });
+        console.log('res', res.data);
+
+        toast.success(`Receita atualizada!`, { position: "top-right" });
         setValue(res.data);
         setIncomingData(null);
       })
@@ -355,7 +358,7 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
         DeleteIncomingType,
         CreateIncomingType,
         UpdateIncomingType,
-        value,
+        valueIncoming,
         GetIncoming,
         incomingData,
         CreateIncoming,

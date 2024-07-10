@@ -1,20 +1,28 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface CardProps {
   title: string;
   price: string;
   features: string[];
   enabled: boolean;
+  nameButton?: boolean;
 }
 
-export default function Subscription() {
+interface Props {
+  onDash?: boolean;
+}
+
+export default function Subscription({ onDash }: Props) {
   return (
-    <div className=" bg-gray-100 flex items-center justify-center rounded-lg">
-      <div className="max-w-4xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-8 text-center">
+    <div id="planos" className="  flex items-center justify-center rounded-lg">
+      <div className="mx-auto p-6">
+        <h1 className="text-2xl lgg:text-4xl font-bold mb-8 text-center text-zinc-800">
           Planos de Assinatura
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 slg:grid-cols-3 gap-6">
           <PlanCard
             title="Gratuito"
             price="R$0/mês"
@@ -29,10 +37,11 @@ export default function Subscription() {
               "-> Acesso ilimitado Web, IOS e Android",
             ]}
             enabled={true}
+            nameButton={onDash}
           />
           <PlanCard
             title="Ouro"
-            price="R$29,90/mês"
+            price="R$14,90/mês"
             features={[
               "-> Tudo do plano GRATUITO",
               "-> Adicionar arquivos",
@@ -42,15 +51,17 @@ export default function Subscription() {
               "-> Sem anuncios",
             ]}
             enabled={false}
+            nameButton={onDash}
           />
           <PlanCard
             title="Diamante"
-            price="R$49,90/mês"
+            price="R$29,90/mês"
             features={[
               "-> Tudo do plano OURO",
               "-> Veículos ilimitados",
               "-> Motoristas ilitmitados",
             ]}
+            nameButton={onDash}
             enabled={false}
           />
         </div>
@@ -59,10 +70,12 @@ export default function Subscription() {
   );
 }
 
-function PlanCard({ title, price, features, enabled }: CardProps) {
+function PlanCard({ title, price, features, enabled, nameButton }: CardProps) {
+  const { push } = useRouter();
+
   return (
     <div
-      className={`border rounded-lg p-6 ${
+      className={`max-w-[350px] border rounded-lg p-6 ${
         enabled ? "bg-white" : "bg-gray-200"
       } shadow-md`}
     >
@@ -76,8 +89,11 @@ function PlanCard({ title, price, features, enabled }: CardProps) {
         ))}
       </ul>
       {enabled ? (
-        <button className="block w-full text-center bg-green-700 text-white py-2 rounded hover:bg-green-600 transition duration-300">
-          Ativo
+        <button
+          onClick={() => !nameButton && push("/cadastrar")}
+          className="block w-full text-center bg-green-700 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+        >
+          {!nameButton ? "Testar Gratuitamente :)" : "Ativo"}
         </button>
       ) : (
         <button

@@ -28,6 +28,12 @@ const config: Config = {
       "5xl": "3.052rem",
     },
     extend: {
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      },
+      boxShadow: {
+        "custom-glow": "0 0 40px 5px rgba(255, 255, 255, 0.3)",
+      },
       gridTemplateColumns: {
         app: "minmax(16rem, 19rem) 1fr",
         profileLayout: "minmax(9.5rem, 20rem) minmax(18rem, 1fr)",
@@ -35,8 +41,46 @@ const config: Config = {
         profileSideBar: "max-content 1fr max-content",
         dashUpLg: "minmax(25rem,1fr) minmax(14rem, 1fr)",
       },
+      keyframes: {
+        customBounce: {
+          "0%, 100%": {
+            transform: "translateY(0)",
+            "animation-timing-function": "ease-in-out",
+          },
+          "50%": {
+            transform: "translateY(-15px)", // Ajuste a altura do salto aqui para um movimento mais suave
+            "animation-timing-function": "ease-in-out",
+          },
+        },
+        pulseCircle: {
+          "0%, 100%": {
+            transform: "scale(1)",
+            opacity: "1",
+            borderColor: "rgba(255, 0, 0, 1)",
+          },
+          "50%": {
+            transform: "scale(1.1)",
+            opacity: "0.7",
+            borderColor: "rgba(0, 0, 255, 1)",
+          },
+        },
+        growShrink3: {
+          "0%, 100%": {
+            transform: "scale(1)",
+          },
+          "50%": {
+            transform: "scale(0.4)",
+          },
+        },
+      },
+      animation: {
+        "custom-bounce": "customBounce 2s infinite", // Ajuste a duração da animação aqui
+        "pulse-circle": "pulseCircle 2s infinite",
+        "grow-shrink": "growShrink3 5s ease-in-out 0.4s infinite both",
+      },
     },
   },
   plugins: [],
 };
+
 export default config;

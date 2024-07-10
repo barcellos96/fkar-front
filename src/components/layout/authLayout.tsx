@@ -7,7 +7,7 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col items-center sm:items-stretch lg:flex-row bg-white ">
+    <div className="min-h-screen flex flex-col items-center sm:items-stretch lg:flex-row bg-white">
       {/* Lado esquerdo */}
       <div className="flex items-center justify-center w-auto h-auto lg:w-1/2 sm:bg-green-100 md:flex ">
         <img

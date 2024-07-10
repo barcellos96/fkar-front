@@ -12,8 +12,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserContext } from "@/providers/user";
 import { formatPhone } from "@/hooks/phone";
 import { formatCPF } from "@/hooks/cpf";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function FormsRegister() {
+  const { back } = useRouter();
   const { CreateUser } = useContext(UserContext);
 
   const [loading, setLoading] = useState(false);
@@ -60,6 +63,13 @@ export default function FormsRegister() {
 
   return (
     <div className="flex flex-col items-center justify-center lg:w-1/2 ">
+      <span
+        onClick={back}
+        className="flex flex-row items-center  w-full px-12 mb-7 gap-2"
+      >
+        <ArrowLeft size={20} /> <p className="text-zinc-400">Voltar</p>
+      </span>
+
       <h1 className="flex text-center text-2xl font-bold sm:w-max">
         Crie sua conta na FKar
       </h1>

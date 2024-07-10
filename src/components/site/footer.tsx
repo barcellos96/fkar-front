@@ -1,7 +1,21 @@
+"use client";
+
 import { Instagram } from "lucide-react";
 import Logo from "../../assets/logo.png";
+import { MouseEvent } from "react";
 
 export default function Footer() {
+  const handleScrollToSection = (
+    e: MouseEvent<HTMLAnchorElement>,
+    sectionId: string
+  ) => {
+    e.preventDefault();
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <footer className="bg-zinc-700 text-white pt-8 pb-20 slg:px-32 ">
       <div className="container mx-auto flex flex-row justify-between  space-y-4">
@@ -17,16 +31,32 @@ export default function Footer() {
         {/* Navigation Links */}
         <div className="flex flex-col">
           <section className="flex flex-col gap-2">
-            <a href="#" className="hover:underline">
-              Home
-            </a>
-            <a href="#services" className="hover:underline">
+            <a
+              href="#serviços"
+              className="hover:underline"
+              onClick={(e) => handleScrollToSection(e, "serviços")}
+            >
               Serviços
             </a>
-            <a href="#plans" className="hover:underline">
+            <a
+              href="#planos"
+              className="hover:underline"
+              onClick={(e) => handleScrollToSection(e, "planos")}
+            >
               Planos
             </a>
-            <a href="#contact" className="hover:underline">
+            <a
+              href="#duvidas"
+              className="hover:underline"
+              onClick={(e) => handleScrollToSection(e, "duvidas")}
+            >
+              FAQ
+            </a>
+            <a
+              href="#contato"
+              className="hover:underline"
+              onClick={(e) => handleScrollToSection(e, "contato")}
+            >
               Contato
             </a>
           </section>

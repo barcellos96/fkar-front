@@ -11,6 +11,7 @@ import {
   History,
   User,
   TrendingUp,
+  Smile,
 } from "lucide-react";
 
 import Smartmockup from "../../assets/smartmockups_3_em_1.png";
@@ -76,7 +77,7 @@ export default function Services() {
         </div>
       </div>
 
-      <div className="flex flex-col pb-10 items-center justify-center w-full bg-gradient-radial from-white via-white/500 to-green-700 my-20">
+      <div className="flex flex-col pb-10 items-center justify-center w-full bg-gradient-radial from-green-100 to-white my-20">
         <img
           src={Smartmockup.src}
           alt="smartmockup tablet, celular e notebook"
@@ -85,9 +86,9 @@ export default function Services() {
 
         <button
           onClick={() => push("/cadastrar")}
-          className="bg-white font-bold text-green-700 shadow-lg w-72 py-2 rounded-xl hover:bg-green-700 hover:text-white"
+          className="flex  items-center justify-center gap-2 bg-transparent border border-green-700 font-bold text-green-700 shadow-lg w-96 py-2 rounded-xl hover:bg-green-700 hover:text-white"
         >
-          Comece a sua gestão grátis
+          Comece a sua gestão sem custos <Smile />
         </button>
       </div>
 

@@ -72,7 +72,6 @@ export default function IncomingUpdate({
   });
 
   
-  console.log('item incoming type', item.incoming_type?.name);
 
   const defaultValues = {
     date: formattedDate,
@@ -136,7 +135,6 @@ export default function IncomingUpdate({
     setLoading(true);
 
     try {
-      console.log('incomingId', incomingId);
       await UpdateIncoming(incomingId, formattedValueWithNumbers).finally(
         () => {
           setLoading(false);

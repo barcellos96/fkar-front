@@ -332,12 +332,9 @@ export const IncomingProvider = ({ children }: ICihldrenReact) => {
       headers: { Authorization: `bearer ${token}` },
     };
 
-    console.log('incomingId', incomingId);
     const response = await api
       .patch(`/incoming/${incomingId}`, data, config)
       .then((res) => {
-        console.log('res', res.data);
-
         toast.success(`Receita atualizada!`, { position: "top-right" });
         setValue(res.data);
         setIncomingData(null);

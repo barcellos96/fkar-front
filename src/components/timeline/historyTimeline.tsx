@@ -32,7 +32,6 @@ import { IncomingContext } from "@/providers/incoming";
 const HistoryTimeline = () => {
   const { ListAll, listAll, value } = useContext(ExpenseVehicleContext);
   const { valueIncoming } = useContext(IncomingContext)
-  console.log('value', value);
   const { vehicle } = useContext(VehicleContext);
 
   const observer = useRef<IntersectionObserver | null>(null);
@@ -40,7 +39,6 @@ const HistoryTimeline = () => {
   const [loading, setLoading] = useState(false);
   const [modalOn, setModalOn] = useState(false);
   const [item, setItem] = useState();
-  console.log('item', item);
 
   const cookies = parseCookies();
   const savedVehicleId = cookies["vehicle:selectedVehicleId"];

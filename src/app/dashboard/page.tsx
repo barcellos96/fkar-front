@@ -1,5 +1,7 @@
 import FinanceSummary from "@/components/cards/financeSummary";
 import UpdatePlanCard from "@/components/cards/updatePlanCard";
+import ButtonFloatDashboard from "@/components/dashboard/buttonFloatDashboard";
+import PoppoverButtonFloat from "@/components/dashboard/poppoverButtonFloat";
 import LayoutDashboard from "@/components/layout/layoutDashboard";
 import HistoryTimeline from "@/components/timeline/historyTimeline";
 import ReminderTimeline from "@/components/timeline/reminderTimeline";
@@ -13,7 +15,7 @@ export const metadata: Metadata = {
 export default function Dashboard() {
   return (
     <LayoutDashboard>
-      <div className="grid lg:grid-cols-dashUpLg gap-6 overflow-hidden -ml-2 ">
+      <div className="grid lg:grid-cols-dashUpLg gap-6 overflow-hidden -ml-2">
         <div className="lg:hidden mt-7 ms-2 -mb-8">
           <UpdatePlanCard />
           <ReminderTimeline />
@@ -29,6 +31,7 @@ export default function Dashboard() {
             <FinanceSummary />
           </div>
         </div>
+        <ButtonFloatDashboard />
       </div>
     </LayoutDashboard>
   );

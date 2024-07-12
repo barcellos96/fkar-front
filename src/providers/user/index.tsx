@@ -6,7 +6,7 @@ import { destroyCookie, parseCookies } from "nookies";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { toast } from "sonner";
 import { VehicleContext } from "../vehicle/vehicle";
-import IconUserStart from '../../assets/icon-600x600.png'
+import IconUserStart from "../../assets/icon-600x600.png";
 
 interface UpdateUser {
   cpf?: string;
@@ -92,7 +92,6 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
     const response = await api
       .post(`/upload-avatar/${userId}`, formDataProfile)
       .then((res) => {
-        console.log("res.data", res.data)
         toast.success("Imagem atualizada com sucesso!");
         setValue(res.data);
       })
@@ -108,18 +107,15 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
     const response = await api
       .post("/user", data)
       .then(async (res) => {
-        console.log("id user create", res.data.response.id)
         const blob = await fetch(IconUserStart.src).then((res) => res.blob());
-        await UploadAvatar(blob, res.data.response.id)
-        console.log("img", IconUserStart)
+        await UploadAvatar(blob, res.data.response.id);
         toast.success("Conta criada com sucesso!", { position: "top-right" });
         push("/login");
-
       })
       .catch((err) => {
         toast.error(err.response.data.message);
         return err;
-      })
+      });
 
     return response;
   };
@@ -145,8 +141,6 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
- 
-
   const Logout = async () => {
     destroyCookie(undefined, "user:accessToken", { path: "/" });
     destroyCookie(undefined, "vehicle:selectedVehicleId", { path: "/" });
@@ -157,7 +151,7 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
 
     // Verificar se os cookies foram deletados
     const cookies = parseCookies();
-    console.log("cookies ", cookies);
+    console.log("cookies", cookies);
 
     // Redirecionar para a página de login
     push("/login");

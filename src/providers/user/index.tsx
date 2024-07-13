@@ -142,6 +142,7 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
   };
 
   const Logout = async () => {
+    localStorage.clear();
     destroyCookie(undefined, "user:accessToken", { path: "/" });
     destroyCookie(undefined, "vehicle:selectedVehicleId", { path: "/" });
 

@@ -1,102 +1,116 @@
 "use client";
 
-import { AlarmClock, CalendarDays, Clock, Map, Plus, Text } from "lucide-react";
+import Loading from "@/components/loading";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlarmClock, ChevronLeft, Plus, TrendingDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ReactNode, useContext, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { addHours, format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Locale } from "date-fns";
+import { ReminderContext } from "@/providers/reminder";
 import HeaderComposition from "../header/headerComposition";
 import { NotDataTable } from "../tablesNotData";
-import { ReactNode, useContext, useState } from "react";
 
-import IconAlarm from "../../assets/icon-alarm-calendar.png";
-import TableSkeleton from "../tablesNotData/skeleton";
+import IconAlarm from "../../assets/icon-alarm.jpg";
 import { Modal } from "../modals";
-import { ReminderContext } from "@/providers/reminder";
-import { formatDate } from "@/hooks/date";
-import { formatTime } from "@/hooks/time";
 
 interface Props {
   children: ReactNode[];
 }
 
 export default function ReminderPageLayout({ children }: Props) {
-  const { CreateReminder } = useContext(ReminderContext);
-  const [onModal, setOnModal] = useState(false);
-  const [selectedInput, setSelectedInput] = useState("date");
-
   const [loading, setLoading] = useState(false);
-  const [checkErrors, setCheckErrors] = useState(false); // Estado para controlar a verificação de erros
+  const [onModal, setOnModal] = useState(false);
 
-  const [modalData, setModalData] = useState({
-    title: "",
-    date_reminder: "",
-    km_reminder: Number(""),
-    description: "",
+  const { CreateReminder } = useContext(ReminderContext);
+
+  const date = new Date();
+  const time = new Date();
+
+  // Formatar a data no estilo yyyy-MM-dd
+  const formattedDate = date
+    .toLocaleDateString("pt-BR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .replace(/\//g, "-")
+    .split("-")
+    .reverse()
+    .join("-");
+
+  // Formatar o tempo no estilo hh:mm
+  const formattedTime = time.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   });
 
-  const checkFormErrors = () => {
-    return !modalData.title || !modalData.date_reminder;
+  const defaultValues = {
+    title: "",
+    date: formattedDate,
+    time: formattedTime,
+    description: "",
   };
 
-  const handleSubmit = () => {
+  const schema = z.object({
+    title: z.string().min(1, "descrição do gasto obrigatório"),
+    date: z.string().min(1, "data obrigatória"),
+    time: z.string().min(1, "hora obrigatória"),
+    description: z.string(),
+  });
+
+  type RegisterProps = z.infer<typeof schema>;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterProps>({
+    values: defaultValues,
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit: SubmitHandler<RegisterProps> = async (value) => {
+    // Combine date and time into a single Date object
+    const dateTimeString = `${value.date}T${value.time}`;
+    const dateTime = new Date(dateTimeString);
+
+    // Adjust for the time zone difference (Brasília is UTC-3)
+    const adjustedDateTime = addHours(dateTime, 3); // Adjusting the time to UTC
+
+    const dateFormated = format(adjustedDateTime, "yyyy-MM-dd HH:mm:ss", {
+      locale: ptBR as Locale,
+    });
+    const { time, ...rest } = value; // Desestruturando para remover a propriedade 'time'
+
+    const formattedValue = { ...rest, date_reminder: dateFormated };
+
+    // Convertendo os campos necessários de string para number
+    const formattedValueWithNumbers = {
+      ...formattedValue,
+    };
+
+    console.log("formattedValueWithNumbers", formattedValueWithNumbers);
     setLoading(true);
-    setCheckErrors(true); // Habilita a verificação de erros ao enviar o formulário
-
-    let dataToSend: {
-      title: string;
-      date_reminder?: string;
-      km_reminder?: number;
-      description: string;
-    } = { ...modalData };
-
-    if (modalData.km_reminder === 0) {
-      const { km_reminder, ...rest } = dataToSend;
-      dataToSend = rest;
-    } else if (
-      modalData.date_reminder === " " ||
-      modalData.date_reminder === ""
-    ) {
-      const { date_reminder, ...rest } = dataToSend;
-      dataToSend = rest;
-    }
-
-    if (!checkFormErrors()) {
-      // Formata a data antes de enviar
-      const date = dataToSend.date_reminder
-        ? dataToSend.date_reminder.split(" ")[0].split("/").reverse().join("/")
-        : "";
-      const hour =
-        dataToSend.date_reminder?.split(" ")[1] !== ""
-          ? dataToSend.date_reminder?.split(" ")[1]
-          : "09:00";
-
-      const formatDateReminder = date + " " + hour;
-
-      dataToSend.date_reminder = formatDateReminder;
-
-      CreateReminder(dataToSend).finally(() => {
-        setLoading(false);
-        handleCloseModal();
-      });
-      setModalData({
-        title: "",
-        date_reminder: "",
-        km_reminder: Number(""),
-        description: "",
-      });
-      setCheckErrors(false); // Desabilita a verificação de erros após o envio
-    } else {
+    try {
+      await CreateReminder(formattedValueWithNumbers);
+      setLoading(false);
+    } catch (error) {
       setLoading(false);
     }
   };
 
-  const handleCloseModal = () => setOnModal(false);
-  const handleOpenModal = () => setOnModal(true);
-
-  const handleCheckboxChange = (input: string) => {
-    setSelectedInput(input);
+  const handleOpenModal = () => {
+    setOnModal((prev) => !prev);
   };
 
-  if (!children) {
-    return <TableSkeleton />;
-  }
+  const handleCloseModal = () => {
+    setOnModal(false);
+  };
 
   return (
     <div className="w-full rounded-xl gap-4 px-6 py-5 mt-3 mb-5 shadow-lg bg-white">
@@ -140,130 +154,101 @@ export default function ReminderPageLayout({ children }: Props) {
         <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50">
           <Modal.Root onClose={handleCloseModal}>
             <Modal.Title title="Novo Lembrete" onClose={handleCloseModal} />
-            <Modal.Input
-              icon={AlarmClock}
-              type="text"
-              id="title"
-              placeholder="Titulo"
-              value={modalData.title}
-              onChange={(e) =>
-                setModalData({ ...modalData, title: e.target.value })
-              }
-              errorMessage={
-                checkErrors && !modalData.title
-                  ? "Obrigatório preencher: Titulo"
-                  : undefined
-              } // Verifica se há erro somente após o envio do formulário
-            />
-            <div className="flex justify-start gap-3 -mt-2 -mb-2">
-              <section className="flex items-center gap-3 border rounded-lg px-3 py-2">
+            <form action="form" onSubmit={handleSubmit(onSubmit)}>
+              {/* descrição */}
+              <div className="flex flex-col  mb-5">
                 <label
-                  htmlFor="date"
-                  className="uppercase font-light text-base "
+                  htmlFor="title"
+                  className="text-base font-semibold mb-2 ml-1 "
                 >
-                  Data
+                  Titulo:*
                 </label>
                 <input
-                  type="checkbox"
-                  id="date"
-                  checked={selectedInput === "date"}
-                  onChange={() => handleCheckboxChange("date")}
-                />
-              </section>
-              <section className="flex items-center gap-3 border rounded-lg px-3 py-2">
-                <label
-                  htmlFor="hodometer"
-                  className="uppercase font-light text-base "
-                >
-                  Hodômetro
-                </label>
-                <input
-                  type="checkbox"
-                  id="hodometer"
-                  checked={selectedInput === "hodometer"}
-                  onChange={() => handleCheckboxChange("hodometer")}
-                />
-              </section>
-            </div>
-
-            {selectedInput === "date" && (
-              <div className="flex  gap-1  ">
-                <Modal.Input
-                  icon={CalendarDays}
                   type="text"
-                  id="date_reminder"
-                  placeholder="dd/mm/yyyy"
-                  value={modalData.date_reminder.split(" ")[0]}
-                  onChange={(e) =>
-                    setModalData({
-                      ...modalData,
-                      date_reminder: `${formatDate(e.target.value)} ${
-                        modalData.date_reminder.split(" ")[1] || ""
-                      }`,
-                    })
-                  }
-                  errorMessage={
-                    checkErrors && !modalData.date_reminder
-                      ? "Obrigatório preencher: Data"
-                      : undefined
-                  } // Verifica se há erro somente após o envio do formulário
+                  id="title"
+                  className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
+                  placeholder="Descrição"
+                  {...register("title")}
                 />
-                <Modal.Input
-                  icon={Clock}
-                  type="text"
-                  id="time_reminder"
-                  placeholder="00:00"
-                  value={modalData.date_reminder.split(" ")[1] || ""}
-                  onChange={(e) =>
-                    setModalData({
-                      ...modalData,
-                      date_reminder: `${
-                        modalData.date_reminder.split(" ")[0]
-                      } ${formatTime(e.target.value)}`,
-                    })
-                  }
-                  errorMessage={
-                    checkErrors && !modalData.date_reminder
-                      ? "Obrigatório preencher: Hora"
-                      : undefined
-                  } // Verifica se há erro somente após o envio do formulário
-                />
+                {errors.title && (
+                  <span className="text-sm ml-2 mt-1.5 text-red-300">
+                    {errors.title.message}
+                  </span>
+                )}{" "}
               </div>
-            )}
-            {selectedInput === "hodometer" && (
-              <Modal.Input
-                icon={Map}
-                type="number"
-                id="km_reminder"
-                placeholder="Hodometro(km)"
-                value={modalData.km_reminder !== 0 ? modalData.km_reminder : ""}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setModalData({
-                    ...modalData,
-                    km_reminder: Number(value),
-                  });
-                }}
-              />
-            )}
-            <Modal.Input
-              icon={Text}
-              type="text"
-              id="description"
-              placeholder="Descrição"
-              value={modalData.description}
-              onChange={(e) =>
-                setModalData({ ...modalData, description: e.target.value })
-              }
-            />
-            <Modal.Actions
-              onSubmitAction={() => {
-                setLoading(true);
-                handleSubmit();
-              }}
-              loading={loading}
-              onCancelAction={handleCloseModal}
-            />
+
+              {/* data e hora */}
+              <div className="flex flex-row gap-2 ">
+                <div className="flex flex-col mb-5">
+                  <label
+                    htmlFor="date"
+                    className="text-base font-semibold mb-2 ml-1 "
+                  >
+                    Data:*
+                  </label>
+                  <input
+                    type="date"
+                    id="date"
+                    className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
+                    placeholder="Data e Hora"
+                    {...register("date")}
+                  />
+                  {errors.date && (
+                    <span className="text-sm ml-2 mt-1.5 text-red-300">
+                      {errors.date.message}
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-col  mb-5">
+                  <label
+                    htmlFor="time"
+                    className="text-base font-semibold mb-2 ml-1 "
+                  >
+                    Hora:*
+                  </label>
+                  <input
+                    type="time"
+                    id="time"
+                    className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
+                    placeholder="Descrição"
+                    {...register("time")}
+                  />
+                  {errors.time && (
+                    <span className="text-sm ml-2 mt-1.5 text-red-300">
+                      {errors.time.message}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* descrição */}
+              <div className="flex flex-col  mb-5">
+                <label
+                  htmlFor="description"
+                  className="text-base font-semibold mb-2 ml-1 "
+                >
+                  Descrição:*
+                </label>
+                <input
+                  type="text"
+                  id="description"
+                  className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
+                  placeholder="Descrição"
+                  {...register("description")}
+                />
+                {errors.description && (
+                  <span className="text-sm ml-2 mt-1.5 text-red-300">
+                    {errors.description.message}
+                  </span>
+                )}{" "}
+              </div>
+              <button
+                type="submit"
+                className="px-3 py-2 w-40 mt-5 rounded-lg text-white bg-green-700 hover:bg-opacity-80"
+              >
+                {loading ? <Loading /> : "Cadastrar"}
+              </button>
+            </form>
           </Modal.Root>
         </div>
       )}

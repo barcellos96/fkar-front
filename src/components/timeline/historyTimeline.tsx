@@ -17,7 +17,6 @@ import {
   Banknote,
   CalendarDays,
   Wallet,
-
 } from "lucide-react";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { parseCookies } from "nookies";
@@ -31,7 +30,7 @@ import { IncomingContext } from "@/providers/incoming";
 
 const HistoryTimeline = () => {
   const { ListAll, listAll, value } = useContext(ExpenseVehicleContext);
-  const { valueIncoming } = useContext(IncomingContext)
+  const { valueIncoming } = useContext(IncomingContext);
   const { vehicle } = useContext(VehicleContext);
 
   const observer = useRef<IntersectionObserver | null>(null);
@@ -44,7 +43,7 @@ const HistoryTimeline = () => {
   const savedVehicleId = cookies["vehicle:selectedVehicleId"];
 
   useEffect(() => {
-    if (vehicle?.length !== 0) {
+    if (vehicle?.length !== 0 && vehicle?.length !== undefined) {
       ListAll({
         vehicleId: savedVehicleId,
         page: "1",
@@ -59,13 +58,15 @@ const HistoryTimeline = () => {
 
     setLoading(true);
     try {
-      await ListAll({
-        vehicleId: savedVehicleId,
-        page: "1",
-        limit: limit.toString(),
-      });
+      if (vehicle?.length !== 0) {
+        await ListAll({
+          vehicleId: savedVehicleId,
+          page: "1",
+          limit: limit.toString(),
+        });
 
-      setLimit(limit + 10);
+        setLimit(limit + 10);
+      }
     } catch (error) {
       console.error("Erro ao carregar mais itens:", error);
     } finally {
@@ -90,7 +91,15 @@ const HistoryTimeline = () => {
       if (lastItem) observer.current.observe(lastItem);
     }
     return () => observer.current?.disconnect();
-  }, [listAll, loadMoreItems, loading, limit, savedVehicleId, value, valueIncoming]);
+  }, [
+    listAll,
+    loadMoreItems,
+    loading,
+    limit,
+    savedVehicleId,
+    value,
+    valueIncoming,
+  ]);
 
   const getExpenseIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -128,17 +137,26 @@ const HistoryTimeline = () => {
     setItem(undefined);
   };
 
+  const findVehicleChoice = vehicle?.find((item) => savedVehicleId === item.id);
+
   return (
     <div className="ms-2 mt-5 mb-4 max-h-screen  rounded-xl shadow-lg pt-5 bg-white">
-      <h2 className="ml-10 font-semibold mb-3">HISTÓRICO</h2>
+      <section className="flex flex-col ml-10">
+        <h2 className="font-semibold">HISTÓRICO</h2>
+        <span className=" text-base font-extralight mb-4">
+          Hodometro atual:{" "}
+          <span className="font-normal">
+            {formatKm(Number(findVehicleChoice?.km))}
+          </span>
+        </span>
+      </section>
       <div className="h-px bg-zinc-300 ml-10 mr-10" />
       <div
         className=" px-10 py-3 rounded-xl mt-2 overflow-auto custom-scrollbar "
         style={{ maxHeight: "85vh" }}
       >
         <ol className={`relative border-s border-zinc-300 text-sm `}>
-          
-          {modalOn && <Editions item={item} onClose={handleModalClose}/>}
+          {modalOn && <Editions item={item} onClose={handleModalClose} />}
 
           {listAll && listAll.list.length > 0
             ? listAll.list.map((item, index) => (

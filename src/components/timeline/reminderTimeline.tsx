@@ -29,7 +29,11 @@ const ReminderTimeline = () => {
     });
 
   return (
-    <div className=" mt-5 rounded-xl shadow-lg bg-white">
+    <div
+      className={`${
+        filteredRemindersByDate?.length === 0 && "hidden"
+      } mt-5 rounded-xl shadow-lg bg-white`}
+    >
       <div className="gap-2 flex flex-row justify-between items-center px-3 py-2 rounded-t-lg bg-green-200 truncate">
         <span className="flex items-center">
           <Bell size={16} />

@@ -8,9 +8,14 @@ import { useRouter } from "next/navigation";
 interface Props {
   children?: ReactNode[];
   pagination?: ReactNode;
+  searchInput?: ReactNode;
 }
 
-export default function RefulingLayout({ children, pagination }: Props) {
+export default function RefulingLayout({
+  children,
+  pagination,
+  searchInput,
+}: Props) {
   const { push } = useRouter();
 
   const handleSubmit = () => {
@@ -27,6 +32,7 @@ export default function RefulingLayout({ children, pagination }: Props) {
         handleSubmit={handleSubmit}
         borderColor="border-orange-500"
       />
+      <div className="-ms-6 mb-4 max-w-[600px]">{searchInput}</div>
 
       <div>
         <table className="table-auto w-full">

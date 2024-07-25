@@ -8,11 +8,13 @@ import HeaderComposition from "@/components/header/headerComposition";
 interface Props {
   children?: ReactNode[];
   pagination?: ReactNode;
+  searchInput?: ReactNode;
 }
 
 export default function ExpenseMaintenanceLayout({
   children,
   pagination,
+  searchInput,
 }: Props) {
   const { push } = useRouter();
 
@@ -30,6 +32,7 @@ export default function ExpenseMaintenanceLayout({
         handleSubmit={handleSubmit}
         borderColor="border-red-700"
       />
+      <div className="-ms-6 mb-4 max-w-[600px]">{searchInput}</div>
 
       <div>
         <table className="table-auto w-full">

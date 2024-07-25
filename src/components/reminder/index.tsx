@@ -14,7 +14,7 @@ import { ReminderContext } from "@/providers/reminder";
 import HeaderComposition from "../header/headerComposition";
 import { NotDataTable } from "../tablesNotData";
 
-import IconAlarm from "../../assets/icon-alarm.jpg";
+import IconAlarm from "../../assets/icon-alarm.png";
 import { Modal } from "../modals";
 
 interface Props {
@@ -94,7 +94,6 @@ export default function ReminderPageLayout({ children }: Props) {
       ...formattedValue,
     };
 
-    console.log("formattedValueWithNumbers", formattedValueWithNumbers);
     setLoading(true);
     try {
       await CreateReminder(formattedValueWithNumbers);

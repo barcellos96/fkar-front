@@ -6,13 +6,22 @@ import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 
 import user_avatar from "../../assets/user-avatar.png";
+import PoppoverHeaderAvatar from "./poppover";
 
 // Definindo o tipo correto para a referência do Cropper
 type ReactCropperElement = HTMLImageElement & {
   cropper: Cropper;
 };
 
-export default function AvatarLayout() {
+interface Props {
+  inProfile?: boolean;
+  header?: boolean;
+}
+
+export default function AvatarLayout({
+  inProfile = false,
+  header = false,
+}: Props) {
   const { UploadAvatar, UserLogged, user, value } = useContext(UserContext);
   const cropperRef = useRef<ReactCropperElement>(null);
 
@@ -20,13 +29,20 @@ export default function AvatarLayout() {
   const [pview, setPView] = useState<string>("");
   const [src, setSrc] = useState<string | undefined>("");
   const [error, setError] = useState(false);
+  const [onPopper, setOnPopper] = useState(false);
 
   useEffect(() => {
     UserLogged();
   }, [value]);
 
+  if (!header) {
+  }
   const openDialog = () => {
-    setImgCrop(true);
+    if (!header) {
+      setImgCrop(true);
+    } else {
+      setOnPopper((prev) => !prev);
+    }
   };
 
   const closeDialog = () => {
@@ -63,13 +79,13 @@ export default function AvatarLayout() {
   return (
     <div>
       <div
-        className="flex items-center cursor-pointer hover:opacity-70"
+        className="flex items-center cursor-pointer hover:opacity-70 shadow-sm rounded-full"
         onClick={openDialog}
       >
         {user?.avatar?.urlImg ? (
           <img
             src={user?.avatar.urlImg ? user?.avatar.urlImg : user_avatar.src}
-            className="w-8 h-8 rounded-full"
+            className={`${inProfile ? "w-20 h-20" : "w-8 h-8"}  rounded-full`}
           />
         ) : (
           <div className="grid items-center gap-2 grid-cols-profileSideBar animate-pulse">
@@ -90,16 +106,22 @@ export default function AvatarLayout() {
         )}
       </div>
 
+      {onPopper && (
+        <PoppoverHeaderAvatar setOnPopper={openDialog} onPopper={onPopper} />
+      )}
+
       {imgCrop && (
         <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-zinc-900 bg-opacity-50">
-          <div className="bg-white p-4 rounded-lg">
+          <div className="flex flex-col bg-white p-4 rounded-lg">
+            <span className="mb-6 font-semibold text-xl">
+              Alterar Foto de Perfil
+            </span>
             <input type="file" accept="image/*" onChange={handleFileChange} />
 
             {src && (
               <Cropper
                 src={src}
                 style={{ height: 400, width: "100%" }}
-                // Cropper.js options
                 aspectRatio={1}
                 guides={false}
                 crop={onCrop}

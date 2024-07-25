@@ -20,7 +20,7 @@ export default function HeaderSite() {
 
   return (
     <div>
-      <section className="flex flex-row items-center justify-between md:justify-around min-h-24 pr-5 shadow-lg md:mb-10">
+      <section className="flex flex-row items-center justify-between md:justify-around min-h-24 pr-5 shadow-sm md:mb-10">
         <img src={LogoFkar.src} alt="Logo Fkar" className="pl-0 p-4 h-28" />
 
         <Menu

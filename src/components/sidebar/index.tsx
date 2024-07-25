@@ -8,7 +8,6 @@ import { UserContext } from "@/providers/user";
 import ProfileSideBar from "./profileSideBar";
 import ProfileSideBarSkeleton from "./profileSideBar/skeleton";
 import "../scrollbar/scrollbar.css"; // Importa o arquivo CSS personalizado
-import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface SidebarProps {
@@ -30,37 +29,24 @@ export default function Sidebar({ onClose }: SidebarProps) {
   }, []);
 
   return (
-    <aside className="z-30 fixed flex flex-col border-r border-zinc-100 bg-zinc-50 px-6 py-3 shadow-xl max-[1500px]:gap-0 gap-7 h-full overflow-auto overflow-x-hidden custom-scrollbar ">
-      <div className="h-14 relative max-[1500px]:mb-2 mb-1">
-        <img
-          src={LogoMenu.src}
-          alt="Logo Menu Fkar"
-          className="cursor-pointer"
-          width={120}
-          height={150}
-          onClick={() => push("/dashboard")}
-        />
-      </div>
-
-      <button
-        className="absolute left-64 top-6 hidden max-[811px]:block text-zinc-300 "
-        onClick={onClose}
-      >
-        <X className="p-0.5 hover:text-green-700" />
-      </button>
+    <aside className="min-w-72 z-30 fixed flex flex-col border-r border-zinc-100 bg-zinc-50 px-6 py-3 shadow-xl gap-7 h-full overflow-auto overflow-x-hidden custom-scrollbar ">
+      <img
+        src={LogoMenu.src}
+        alt="Logo Menu Fkar"
+        className="cursor-pointer"
+        width={120}
+        height={150}
+        onClick={() => push("/dashboard")}
+      />
 
       <div className="flex flex-col gap-2">
         <MainNavigation />
-      </div>
-
-      <div className="mt-auto">
         <SecondNavigation />
       </div>
 
+      <div className=" mb-2 h-px bg-zinc-300 mt-auto" />
+
       <PlanoWidget />
-
-      <div className="mt-2 mb-2 h-px bg-zinc-300" />
-
       {user === null ? (
         <ProfileSideBarSkeleton />
       ) : (

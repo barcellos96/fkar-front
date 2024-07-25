@@ -34,6 +34,7 @@ import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 import ExpenseMaintenanceSelf from "./expenseMaintenanceSelf";
 import ExpenseMaintenanceUpdate from "./expenseMaintenanceUpdate";
 import ExpenseMaintenanceDelete from "./expenseMaintenanceDelete";
+import SearchInput from "@/components/timeline/search";
 
 interface ExpenseVehicleProps {
   id?: string;
@@ -62,6 +63,8 @@ export default function ExpenseMaintenanceData() {
   const { GetExpenseType, expenseType } = useContext(ExpenseTypeContext);
   const { selectedVehicleId } = useContext(VehicleContext);
 
+  const [query, setQuery] = useState<string>("");
+
   const [modalEye, setModalEye] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -82,8 +85,10 @@ export default function ExpenseMaintenanceData() {
     setLoading(true); // Inicia o estado de loading
 
     if (expenseType) {
+      console.log("expenseType", expenseType);
       expenseType?.map((item) => {
         if (item.name.toLowerCase() === "manutenção") {
+          console.log("item", item.id);
           const cookies = parseCookies();
           const savedVehicleId = cookies["vehicle:selectedVehicleId"];
 
@@ -91,7 +96,8 @@ export default function ExpenseMaintenanceData() {
             item.id,
             savedVehicleId,
             currentPage,
-            limitPage
+            limitPage,
+            query
           ).finally(() => {
             setLoading(false); // Finaliza o estado de loading
           });
@@ -100,7 +106,7 @@ export default function ExpenseMaintenanceData() {
         }
       });
     }
-  }, [expenseType, selectedVehicleId, currentPage, limitPage, value]);
+  }, [expenseType, selectedVehicleId, currentPage, limitPage, value, query]);
 
   if (!expenseVehicle) {
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega
@@ -159,6 +165,14 @@ export default function ExpenseMaintenanceData() {
     setModalDelete(true);
   };
 
+  const handleSearch = (newQuery: string) => {
+    setQuery(newQuery);
+  };
+
+  // Filter data after fetching
+  const filteredExpenseVehicleData = expenseVehicle?.data.filter(
+    (item) => item.expense_type?.name.toLowerCase() === "manutenção"
+  );
   return (
     <>
       <RefulingLayout
@@ -209,6 +223,7 @@ export default function ExpenseMaintenanceData() {
             <section className="mt-3 slg:mt-0">{`Total abastecimentos: ${expenseVehicle.total}`}</section>
           </div>
         }
+        // searchInput={<SearchInput onSearch={handleSearch} />}
       >
         {loading && (
           <tr>
@@ -218,8 +233,8 @@ export default function ExpenseMaintenanceData() {
           </tr>
         )}
         {!loading &&
-          expenseVehicle?.data.length > 0 &&
-          expenseVehicle?.data.map((item, index) => (
+          filteredExpenseVehicleData.length > 0 &&
+          filteredExpenseVehicleData.map((item, index) => (
             <tr
               className="flex flex-col slg:table-row border-b px-2 py-4 slg:px-0 slg:py-0 gap-1 "
               key={index}

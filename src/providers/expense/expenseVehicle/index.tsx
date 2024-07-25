@@ -162,6 +162,7 @@ interface ListAllProps {
   vehicleId: string;
   page?: string;
   limit?: string;
+  query?: string;
 }
 
 interface FiltredListAllProps {
@@ -176,7 +177,8 @@ interface IExpenseData {
     expenseTypeId?: string,
     vehicleId?: string,
     page?: number,
-    limite?: number
+    limite?: number,
+    query?: string
   ) => Promise<ExpenseVehicle[]>;
   value?: any;
 
@@ -196,6 +198,7 @@ interface IExpenseData {
     vehicleId,
     page,
     limit,
+    query,
   }: ListAllProps) => Promise<ListAllExpenseProps>;
 
   listAll?: ListAllExpenseProps | null;
@@ -229,12 +232,13 @@ export const ExpenseVehicleProvider = ({ children }: ICihldrenReact) => {
     expenseTypeId?: string,
     vehicleId?: string,
     page = 1,
-    limit = 10 // Defina um limite padrão para o número de resultados por página
+    limit = 10, // Defina um limite padrão para o número de resultados por página
+    query?: string
   ): Promise<ExpenseVehicle[]> => {
     const { "user:accessToken": token } = parseCookies();
     const config = {
       headers: { Authorization: `bearer ${token}` },
-      params: { page, limit, expenseTypeId, vehicleId }, // Adicione os parâmetros de consulta aqui
+      params: { page, limit, expenseTypeId, vehicleId, query }, // Adicione os parâmetros de consulta aqui
     };
 
     const response = await api
@@ -331,11 +335,12 @@ export const ExpenseVehicleProvider = ({ children }: ICihldrenReact) => {
     vehicleId,
     page,
     limit,
+    query,
   }: ListAllProps): Promise<ListAllExpenseProps> => {
     const { "user:accessToken": token } = parseCookies();
     const config = {
       headers: { Authorization: `bearer ${token}` },
-      params: { page, limit }, // Adicione os parâmetros de consulta aqui
+      params: { page, limit, query }, // Adicione os parâmetros de consulta aqui
     };
     const response = await api
       .get(`/expense-incoming/list_all/${vehicleId}`, config)

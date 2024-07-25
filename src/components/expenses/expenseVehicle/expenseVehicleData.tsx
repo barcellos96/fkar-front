@@ -35,6 +35,7 @@ import ExpenseVehicleSelf from "./expenseVehicleSelf";
 import ExpenseVehicleDelete from "./expenseVehicleDelete";
 import ExpenseVehicleUpdate from "./expenseVehicleUpdate";
 import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
+import SearchInput from "@/components/timeline/search";
 
 interface ExpenseVehicleProps {
   id?: string;
@@ -63,6 +64,8 @@ export default function ExpenseVehicleData() {
   );
   const { selectedVehicleId } = useContext(VehicleContext);
 
+  const [query, setQuery] = useState<string>("");
+
   const [modalEye, setModalEye] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -82,11 +85,12 @@ export default function ExpenseVehicleData() {
       undefined,
       savedVehicleId,
       currentPage,
-      limitPage
+      limitPage,
+      query
     ).finally(() => {
       setLoading(false); // Finaliza o estado de loading
     });
-  }, [value, selectedVehicleId, currentPage, limitPage]);
+  }, [value, selectedVehicleId, currentPage, limitPage, query]);
 
   if (!expenseVehicle) {
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega
@@ -144,6 +148,17 @@ export default function ExpenseVehicleData() {
     setModalUpdate(true);
   };
 
+  const handleSearch = (newQuery: string) => {
+    setQuery(newQuery);
+  };
+
+  // Filter data after fetching
+  const filteredExpenseVehicleData = expenseVehicle?.data.filter(
+    (item) =>
+      item.expense_type?.name.toLowerCase() !== "manutenção" &&
+      item.expense_type?.name.toLowerCase() !== "abastecimento"
+  );
+
   return (
     <>
       <ExpenseVehicleLayout
@@ -194,6 +209,7 @@ export default function ExpenseVehicleData() {
             <section className="mt-3 slg:mt-0">{`Total abastecimentos: ${expenseVehicle.total}`}</section>
           </div>
         }
+        // searchInput={<SearchInput onSearch={handleSearch} />}
       >
         {loading && (
           <tr>
@@ -204,8 +220,8 @@ export default function ExpenseVehicleData() {
         )}
 
         {!loading &&
-          expenseVehicle.data.length > 0 &&
-          expenseVehicle.data.map((item, index) => (
+          filteredExpenseVehicleData.length > 0 &&
+          filteredExpenseVehicleData.map((item, index) => (
             <tr
               className="flex flex-col slg:table-row border-b px-2 py-4 slg:px-0 slg:py-0 gap-1 "
               key={index}

@@ -17,7 +17,7 @@ export default function ProfileSideBar({
     <div className="grid items-center gap-2 grid-cols-profileSideBar">
       <AvatarLayout />
       <div className="flex flex-1 flex-col truncate">
-        <span className="text-sm font-semibold">
+        <span className="text-base font-semibold">
           {firstName + " " + lastName}
         </span>
         <span className="truncate text-sm font-light">{email}</span>

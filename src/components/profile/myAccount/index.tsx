@@ -8,6 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import MyAccountSkeleton from "./skeleton";
 import HeaderComposition from "@/components/header/headerComposition";
+import AvatarLayout from "@/components/avatar";
 
 export default function MyAccount() {
   const { UpdateUser, user } = useContext(UserContext);
@@ -64,6 +65,10 @@ export default function MyAccount() {
             title="Minha conta:"
             nameButton={loading ? <Loading /> : "Salvar"}
           />
+
+          <section className=" w-20">
+            <AvatarLayout inProfile />
+          </section>
 
           {/* formulario */}
           <div className="flex flex-row mb-4 gap-1 h-10">

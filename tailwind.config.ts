@@ -33,6 +33,8 @@ const config: Config = {
       },
       boxShadow: {
         "custom-glow": "0 0 40px 5px rgba(255, 255, 255, 0.3)",
+        "3d-bottom":
+          "0 4px 6px rgba(0, 0, 0, 0.1), 0 8px 10px rgba(0, 0, 0, 0.1), 0 12px 16px rgba(0, 0, 0, 0.1)",
       },
       gridTemplateColumns: {
         app: "minmax(16rem, 19rem) 1fr",

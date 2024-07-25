@@ -27,6 +27,7 @@ import { VehicleContext } from "@/providers/vehicle/vehicle";
 import StartHistoric from "../../assets/start-historic.png";
 import Editions from "./editions";
 import { IncomingContext } from "@/providers/incoming";
+import SearchInput from "./search";
 
 const HistoryTimeline = () => {
   const { ListAll, listAll, value } = useContext(ExpenseVehicleContext);
@@ -35,6 +36,8 @@ const HistoryTimeline = () => {
 
   const observer = useRef<IntersectionObserver | null>(null);
   const [limit, setLimit] = useState(10);
+  const [query, setQuery] = useState<string>("");
+
   const [loading, setLoading] = useState(false);
   const [modalOn, setModalOn] = useState(false);
   const [item, setItem] = useState();
@@ -48,9 +51,10 @@ const HistoryTimeline = () => {
         vehicleId: savedVehicleId,
         page: "1",
         limit: limit.toString(),
+        query,
       });
     }
-  }, [savedVehicleId, value, valueIncoming]);
+  }, [savedVehicleId, value, valueIncoming, query]);
 
   const loadMoreItems = useCallback(async () => {
     const cookies = parseCookies();
@@ -63,6 +67,7 @@ const HistoryTimeline = () => {
           vehicleId: savedVehicleId,
           page: "1",
           limit: limit.toString(),
+          query,
         });
 
         setLimit(limit + 10);
@@ -72,7 +77,7 @@ const HistoryTimeline = () => {
     } finally {
       setLoading(false);
     }
-  }, [limit, savedVehicleId, value, valueIncoming]);
+  }, [limit, savedVehicleId, value, valueIncoming, query]);
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect();
@@ -99,6 +104,7 @@ const HistoryTimeline = () => {
     savedVehicleId,
     value,
     valueIncoming,
+    query,
   ]);
 
   const getExpenseIcon = (type: string) => {
@@ -139,23 +145,35 @@ const HistoryTimeline = () => {
 
   const findVehicleChoice = vehicle?.find((item) => savedVehicleId === item.id);
 
+  const handleSearch = (newQuery: string) => {
+    setQuery(newQuery);
+  };
+
   return (
     <div className="ms-2 mt-5 mb-4 max-h-screen  rounded-xl shadow-lg pt-5 bg-white">
-      <section className="flex flex-col ml-10">
-        <h2 className="font-semibold">HISTÓRICO</h2>
-        <span className=" text-base font-extralight mb-4">
-          Hodometro atual:{" "}
-          <span className="font-normal">
-            {formatKm(Number(findVehicleChoice?.km))}
+      <div className="flex flex-col gap-2">
+        <section className="flex flex-col ml-5">
+          <h2 className="font-semibold">HISTÓRICO</h2>
+          <span className=" text-base font-extralight ">
+            Hodometro atual:{" "}
+            <span className="font-normal">
+              {formatKm(Number(findVehicleChoice?.km))}
+            </span>
           </span>
-        </span>
-      </section>
-      <div className="h-px bg-zinc-300 ml-10 mr-10" />
+        </section>
+
+        <SearchInput onSearch={handleSearch} />
+      </div>
+      {/* <div className="h-px bg-zinc-300 ml-10 mr-10" /> */}
       <div
         className=" px-10 py-3 rounded-xl mt-2 overflow-auto custom-scrollbar "
         style={{ maxHeight: "85vh" }}
       >
-        <ol className={`relative border-s border-zinc-300 text-sm `}>
+        <ol
+          className={`relative ${
+            listAll && listAll.list.length === 0 && "border-none"
+          } border-s border-zinc-300 text-sm `}
+        >
           {modalOn && <Editions item={item} onClose={handleModalClose} />}
 
           {listAll && listAll.list.length > 0
@@ -237,12 +255,12 @@ const HistoryTimeline = () => {
             : listAll &&
               listAll.list.length === 0 && (
                 <div className="flex items-center flex-col">
-                  <img src={StartHistoric.src} alt="start" />
+                  <img src={StartHistoric.src} width={200} alt="start" />
                   <h2 className="text-center text-2xl font-semibold text-zinc-600">
                     Pronto para começar?
                   </h2>
                   <span
-                    className={`flex my-6 text-lg text-center items-center justify-center`}
+                    className={`flex my-6 text-lg text-center items-center justify-center max-w-[400px]`}
                   >
                     Clique em ADICIONAR no menu e cadastre o seu primeiro
                     abastecimento, despesa, manutenção ou receita.

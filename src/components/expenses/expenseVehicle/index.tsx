@@ -4,13 +4,19 @@ import { TrendingDown } from "lucide-react";
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import HeaderComposition from "@/components/header/headerComposition";
+import SearchInput from "@/components/timeline/search";
 
 interface Props {
   children?: ReactNode[];
   pagination?: ReactNode;
+  searchInput?: ReactNode;
 }
 
-export default function ExpenseVehicleLayout({ children, pagination }: Props) {
+export default function ExpenseVehicleLayout({
+  children,
+  pagination,
+  searchInput,
+}: Props) {
   const { push } = useRouter();
 
   const handleSubmit = () => {
@@ -27,7 +33,7 @@ export default function ExpenseVehicleLayout({ children, pagination }: Props) {
         handleSubmit={handleSubmit}
         borderColor="border-red-700"
       />
-
+      <div className="-ms-6 mb-4 max-w-[600px]">{searchInput}</div>
       <div>
         <table className="table-auto w-full">
           <thead>

@@ -17,7 +17,7 @@ export default function HelpContent({ handleClosePopover }: HelpContentProps) {
           </p>
           <div className="flex flex-col items-center">
             <a
-              href="mailto:fkar.contato@gmail.com"
+              href="mailto:contato@fkar.com.br"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
@@ -26,12 +26,12 @@ export default function HelpContent({ handleClosePopover }: HelpContentProps) {
             </a>
             <span className="font-light my-1">ou</span>
             <a
-              href="mailto:fkar.contato@gmail.com"
+              href="mailto:contato@fkar.com.br"
               target="_blank"
               rel="noopener noreferrer"
               className=" text-blue-600  px-4 rounded hover:opacity-75"
             >
-              fkar.contato@gmail.com
+              contato@fkar.com.br
             </a>
           </div>
         </div>

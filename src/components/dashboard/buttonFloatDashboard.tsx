@@ -13,7 +13,7 @@ export default function ButtonFloatDashboard() {
   return (
     <button
       onClick={handleOpenPopper}
-      className="md:hidden fixed bottom-4 right-10 z-50 flex items-center justify-center bg-green-700 hover:bg-opacity-60 h-16 w-16 *: rounded-full"
+      className="md:hidden fixed bottom-4 right-10 z-40 flex items-center justify-center bg-green-700 hover:bg-opacity-60 h-16 w-16 *: rounded-full"
     >
       <span className="text-white text-4xl text-center -mt-2">+</span>
       <PoppoverButtonFloat onPopper={onPopper} />

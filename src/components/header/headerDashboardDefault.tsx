@@ -69,7 +69,7 @@ export default function HeaderDashboardDefault() {
             <HelpContent handleClosePopover={handleClosePopover} />
           )}
         </div>
-        <AvatarLayout />
+        <AvatarLayout header />
       </section>
     </div>
   );

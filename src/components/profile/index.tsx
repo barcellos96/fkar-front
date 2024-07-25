@@ -64,7 +64,7 @@ export default function ProfileLayout() {
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-lg p-5">
-          {active === tabList[0].name && <Subscription />}
+          {active === tabList[0].name && <Subscription onDash />}
           {active === tabList[1].name && <MyAccount />}
           {active === tabList[2].name && <Address />}
           {active === tabList[3].name && <ChangePassword />}

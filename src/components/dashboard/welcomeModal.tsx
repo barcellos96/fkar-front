@@ -15,7 +15,6 @@ const WelcomeModal = () => {
     useContext(VehicleContext);
 
   const { GetVehicleType, vehicleType } = useContext(VehicleTypeContext);
-  console.log("vehicleType", vehicleType);
 
   useEffect(() => {
     if (vehicleType === null) {
@@ -58,7 +57,6 @@ const WelcomeModal = () => {
   });
 
   const onSubmit: SubmitHandler<RegisterProps> = async (value) => {
-    console.log("value", value);
     setLoading(true);
 
     const { km, ...rest } = value;

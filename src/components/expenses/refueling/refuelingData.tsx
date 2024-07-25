@@ -42,6 +42,7 @@ import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 import { Modal } from "@/components/modals";
 import RefuelingUpdate from "./refuelingUpdate";
 import RefuelingSelf from "./refuelingSelf";
+import SearchInput from "@/components/timeline/search";
 
 interface ExpenseVehicleProps {
   id?: string;
@@ -75,6 +76,9 @@ export default function RefuelingData() {
 
   const [selectedRefueling, setSelectedRefueling] =
     useState<ExpenseVehicleProps | null>(null);
+
+  const [query, setQuery] = useState<string>("");
+
   const [modal, setModal] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [modalEye, setModalEye] = useState(false);
@@ -86,7 +90,6 @@ export default function RefuelingData() {
     if (expenseType === null) {
       GetExpenseType();
     }
-
   }, [value]);
 
   useEffect(() => {
@@ -102,7 +105,8 @@ export default function RefuelingData() {
             item.id,
             savedVehicleId,
             currentPage,
-            limitPage
+            limitPage,
+            query
           ).finally(() => {
             setLoading(false); // Finaliza o estado de loading
           });
@@ -111,11 +115,10 @@ export default function RefuelingData() {
         }
       });
     }
-
-  }, [expenseType, selectedVehicleId, currentPage, limitPage, value]);
+  }, [expenseType, selectedVehicleId, currentPage, limitPage, value, query]);
 
   if (!expenseVehicle) {
-    return <TableSkeleton />; // Mostra o skeleton enquanto carregaPP
+    return <TableSkeleton />; // Mostra o skeleton enquanto carrega
   }
 
   if (expenseVehicle?.data.length === 0) {
@@ -182,6 +185,15 @@ export default function RefuelingData() {
   const colorSubmit = modalUpdate ? "bg-yellow-600" : "bg-red-700";
   const borderColor = modalUpdate ? "border-yellow-600" : "border-red-700";
 
+  const handleSearch = (newQuery: string) => {
+    setQuery(newQuery);
+  };
+
+  // Filter data after fetching
+  const filteredExpenseVehicleData = expenseVehicle?.data.filter(
+    (item) => item.expense_type?.name.toLowerCase() === "abastecimento"
+  );
+
   return (
     <>
       <RefulingLayout
@@ -232,6 +244,7 @@ export default function RefuelingData() {
             <section className="mt-3 slg:mt-0">{`Total abastecimentos: ${expenseVehicle.total}`}</section>
           </div>
         }
+        // searchInput={<SearchInput onSearch={handleSearch} />}
       >
         {loading && (
           <tr>
@@ -242,8 +255,8 @@ export default function RefuelingData() {
         )}
 
         {!loading &&
-          expenseVehicle?.data.length > 0 &&
-          expenseVehicle?.data.map((item, index) => (
+          filteredExpenseVehicleData.length > 0 &&
+          filteredExpenseVehicleData.map((item, index) => (
             <tr
               className="flex flex-col slg:table-row border-b px-2 py-4 slg:px-0 slg:py-0 gap-1 "
               key={index}

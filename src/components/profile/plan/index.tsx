@@ -91,7 +91,10 @@ function PlanCard({ title, price, features, enabled, nameButton }: CardProps) {
       {enabled ? (
         <button
           onClick={() => !nameButton && push("/cadastrar")}
-          className="block w-full text-center bg-green-700 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+          disabled={nameButton}
+          className={`${
+            nameButton && "cursor-not-allowed hover:bg-green-700"
+          } block w-full text-center bg-green-700 text-white py-2 rounded hover:bg-green-600 transition duration-300`}
         >
           {!nameButton ? "Testar Gratuitamente :)" : "Ativo"}
         </button>

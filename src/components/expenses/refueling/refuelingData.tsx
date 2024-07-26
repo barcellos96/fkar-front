@@ -194,6 +194,8 @@ export default function RefuelingData() {
     (item) => item.expense_type?.name.toLowerCase() === "abastecimento"
   );
 
+  //verificar quando está em pesquisa e quando nao está em pesquisa para que o layout seja diferente caso nao encontre resultados
+
   return (
     <>
       <RefulingLayout

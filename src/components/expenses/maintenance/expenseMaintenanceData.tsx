@@ -173,6 +173,9 @@ export default function ExpenseMaintenanceData() {
   const filteredExpenseVehicleData = expenseVehicle?.data.filter(
     (item) => item.expense_type?.name.toLowerCase() === "manutenção"
   );
+
+  //verificar quando está em pesquisa e quando nao está em pesquisa para que o layout seja diferente caso nao encontre resultados
+
   return (
     <>
       <RefulingLayout

@@ -112,7 +112,7 @@ export default function ExpenseMaintenanceData() {
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega
   }
 
-  if (expenseVehicle?.data.length === 0) {
+  if (query.length === 0 && expenseVehicle?.data.length === 0) {
     return (
       <div className="flex flex-col items-center bg-white rounded-lg mt-3 shadow-lg justify-center pb-5 ">
         <NotDataTable.Root>
@@ -174,8 +174,6 @@ export default function ExpenseMaintenanceData() {
     (item) => item.expense_type?.name.toLowerCase() === "manutenção"
   );
 
-  //verificar quando está em pesquisa e quando nao está em pesquisa para que o layout seja diferente caso nao encontre resultados
-
   return (
     <>
       <RefulingLayout
@@ -226,7 +224,7 @@ export default function ExpenseMaintenanceData() {
             <section className="mt-3 slg:mt-0">{`Total abastecimentos: ${expenseVehicle.total}`}</section>
           </div>
         }
-        // searchInput={<SearchInput onSearch={handleSearch} />}
+        searchInput={<SearchInput onSearch={handleSearch} />}
       >
         {loading && (
           <tr>

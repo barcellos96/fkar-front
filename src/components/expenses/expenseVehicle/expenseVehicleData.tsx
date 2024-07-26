@@ -96,7 +96,7 @@ export default function ExpenseVehicleData() {
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega
   }
 
-  if (expenseVehicle?.data.length === 0) {
+  if (query.length === 0 && expenseVehicle?.data.length === 0) {
     return (
       <div className="flex flex-col mt-3 rounded-lg items-center justify-center pb-5 ">
         <NotDataTable.Root>
@@ -159,8 +159,6 @@ export default function ExpenseVehicleData() {
       item.expense_type?.name.toLowerCase() !== "abastecimento"
   );
 
-  //verificar quando está em pesquisa e quando nao está em pesquisa para que o layout seja diferente caso nao encontre resultados
-
   return (
     <>
       <ExpenseVehicleLayout
@@ -211,7 +209,7 @@ export default function ExpenseVehicleData() {
             <section className="mt-3 slg:mt-0">{`Total abastecimentos: ${expenseVehicle.total}`}</section>
           </div>
         }
-        // searchInput={<SearchInput onSearch={handleSearch} />}
+        searchInput={<SearchInput onSearch={handleSearch} />}
       >
         {loading && (
           <tr>

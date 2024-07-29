@@ -59,7 +59,7 @@ export const AddressProvider = ({ children }: ICihldrenReact) => {
     };
 
     const response = await api
-      .get("/user/address", config)
+      .get("/address", config)
       .then((res) => {
         setAddress(res.data.response);
       })
@@ -79,9 +79,8 @@ export const AddressProvider = ({ children }: ICihldrenReact) => {
       headers: { Authorization: `bearer ${token}` },
     };
 
-
     const response = await api
-      .post("/user/address", data, config)
+      .post("/address", data, config)
       .then((res) => {
         setAddress(null);
         setValue(res.data);

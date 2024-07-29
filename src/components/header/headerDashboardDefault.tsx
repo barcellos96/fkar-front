@@ -5,13 +5,10 @@ import Sidebar from "@/components/sidebar";
 import Content from "./headerDashboardDefault/contentHeaderDashboard";
 import { useState } from "react";
 import AvatarLayout from "../avatar";
-import { useRouter } from "next/navigation";
 import HelpContent from "./help";
 import NotificationContent from "./notification";
 
 export default function HeaderDashboardDefault() {
-  const { push } = useRouter();
-
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState<string | null>(null);
 

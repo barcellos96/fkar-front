@@ -87,7 +87,7 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
     };
 
     const response = await api
-      .post("/user/vehicle", data, config)
+      .post("/vehicle", data, config)
       .then((res) => {
         setVehicle(null);
         setValue(res.data);
@@ -111,7 +111,7 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
     };
 
     const response = await api
-      .get(`/user/vehicle/${vehicleId ? vehicleId : ""}`, config)
+      .get(`/vehicle/${vehicleId ? vehicleId : ""}`, config)
       .then((res) => {
         setVehicle(res.data.response);
       })
@@ -132,7 +132,7 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
     };
 
     const response = await api
-      .delete(`/user/vehicle/${vehicleId}`, config)
+      .delete(`/vehicle/${vehicleId}`, config)
       .then((res) => {
         setVehicle(null);
         setValue(res.data);
@@ -154,7 +154,7 @@ export const VehicleProvider = ({ children }: ICihldrenReact) => {
       headers: { Authorization: `bearer ${token}` },
     };
     const response = await api
-      .patch(`/user/vehicle`, data, config)
+      .patch(`/vehicle`, data, config)
       .then((res) => {
         setVehicle(null);
         setValue(res.data);

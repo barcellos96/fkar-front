@@ -24,6 +24,17 @@ interface SimpleUser {
   phone: string;
 }
 
+interface ListUsersProps extends SimpleUser {
+  id: string;
+  isActive: boolean;
+  created_at: Date;
+  address: {} | null;
+  userLogin: {
+    id: string;
+    loginTime: Date;
+  }[];
+}
+
 interface AvatarProps {
   id: string;
   keyImg: string;
@@ -50,6 +61,8 @@ interface IUserData {
   Logout(): Promise<void>;
   UploadAvatar: (avatar: any, userId: string) => Promise<object>;
   value: string;
+  listUsers?: ListUsersProps[] | null;
+  ListUsers: (userId?: string) => Promise<void>;
 }
 
 interface ICihldrenReact {
@@ -141,6 +154,29 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
+  const [listUsers, setListUsers] = useState<ListUsersProps[] | null>(null);
+  const ListUsers = async (userId?: string) => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+    };
+
+    const endpoint = userId ? `/user/${userId}` : "/user";
+
+    const response = await api
+      .get(endpoint, config)
+      .then((res) => {
+        setListUsers(res.data.response);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        return err;
+      });
+
+    return response;
+  };
+
   const Logout = async () => {
     localStorage.clear();
     destroyCookie(undefined, "user:accessToken", { path: "/" });
@@ -168,6 +204,8 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
         UpdateUser,
         Logout,
         UploadAvatar,
+        listUsers,
+        ListUsers,
       }}
     >
       {children}

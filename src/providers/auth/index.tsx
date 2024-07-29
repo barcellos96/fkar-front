@@ -40,6 +40,7 @@ interface IAuthData {
     data: AuthenticationCodeProps
   ): Promise<ResponseAuthenticationProps>;
   promise?: ResponseAuthenticationProps | null;
+  LoginAdmin(data: LoginProps): Promise<object>;
 }
 
 interface ICihldrenReact {
@@ -63,6 +64,24 @@ export const AuthProvider = ({ children }: ICihldrenReact) => {
           path: "/",
         });
         push("/dashboard");
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+        return err;
+      });
+
+    return response;
+  };
+
+  const LoginAdmin = async (data: LoginProps) => {
+    const response = await api
+      .post("/login-admin", data)
+      .then((res) => {
+        setCookie({ res }, "user:accessToken", res.data.accessToken.token, {
+          maxAge: 60 * 60 * 24 * 2, //2 dias
+          path: "/",
+        });
+        push("/dashboard/admin");
       })
       .catch((err) => {
         toast.error(err.response.data.message);
@@ -126,6 +145,7 @@ export const AuthProvider = ({ children }: ICihldrenReact) => {
     <AuthContext.Provider
       value={{
         Login,
+        LoginAdmin,
         ChangePasswordUserLogged,
         ForgotPassword,
         AuthenticationCode,

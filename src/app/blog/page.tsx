@@ -2,8 +2,6 @@
 
 import HeaderBlog from "@/components/blog/header";
 import ListPosts from "@/components/blog/lsitPosts";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function Blog() {
   return (

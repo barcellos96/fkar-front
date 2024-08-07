@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 interface Tag {
@@ -32,12 +35,20 @@ const ArticleViewer: React.FC<ArticleProps> = ({
   tags,
   categories,
 }) => {
+  const { push } = useRouter();
+
+  const handleClick = () => {
+    const query = new URLSearchParams({ title: title, id: id }).toString();
+    push(`/blog/post?${query}`);
+  };
+
   return (
     <div className="flex flex-col border border-zinc-200 rounded-lg p-3">
       <img
         alt="thumbnail"
         src={thumbnail}
         className="rounded-md w-full h-48 object-cover transition-transform duration-300 delay-100 hover:scale-95 cursor-pointer"
+        onClick={handleClick}
       />
       <section className="flex flex-wrap ml-2 my-4 gap-2">
         {tags.map((tag) => (
@@ -50,7 +61,10 @@ const ArticleViewer: React.FC<ArticleProps> = ({
         ))}
       </section>
       <section className="flex flex-col ms-3">
-        <h2 className="font-bold text-lg mb-2 cursor-pointer hover:text-shadow">
+        <h2
+          onClick={handleClick}
+          className="font-bold text-lg mb-2 cursor-pointer hover:text-shadow"
+        >
           {title}
         </h2>
         <span className="font-light text-lg mb-2">{resume_content}</span>

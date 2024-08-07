@@ -11,6 +11,8 @@ export default function ListPosts() {
     Posts();
   }, [value]);
 
+  if (!posts) return <div>Loading...</div>;
+
   return (
     <div className="flex flex-col">
       <section className="mb-6">

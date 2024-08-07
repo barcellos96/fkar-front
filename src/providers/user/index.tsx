@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/service/api";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { destroyCookie, parseCookies } from "nookies";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { toast } from "sonner";
@@ -171,6 +171,8 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
       })
       .catch((err) => {
         console.log("err", err);
+        err.response.data.message === "Acesso negado ou sem permissão!" &&
+          push("/dashboard");
         return err;
       });
 

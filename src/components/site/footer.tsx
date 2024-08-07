@@ -17,13 +17,13 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-zinc-700 text-white pt-8 pb-20 slg:px-32 ">
-      <div className="container mx-auto flex flex-row justify-between  space-y-4">
-        <div className="flex flex-col items-start">
+    <footer className="bg-zinc-700 text-white pt-8 pb-20 px-10 slg:px-32 ">
+      <div className="container mx-auto flex flex-col slg:flex-row items-center slg:items-start justify-between gap-10 space-y-4">
+        <div className="flex flex-col items-center slg:items-start text-center slg:text-start">
           <img
             src={Logo.src}
             alt="Logo"
-            className="flex items-start -ml-10 h-24 -mb-2"
+            className="flex items-center slg:-ml-10 h-24 -mb-2"
           />
           <span>Todos direitos reservados | Fkar Gestão de Veiculos</span>
         </div>

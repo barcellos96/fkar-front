@@ -1,0 +1,5 @@
+.react-quill-wrapper .ql-container {
+  min-height: 200px; /* Define the max height for the text editor area */
+  max-height: 500px;
+  overflow-y: auto; /* Enable vertical scrolling */
+}

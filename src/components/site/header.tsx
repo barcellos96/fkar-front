@@ -3,6 +3,7 @@
 import { Menu } from "lucide-react";
 import LogoFkar from "../../assets/logo.png";
 import { MouseEvent, useState } from "react";
+import Link from "next/link";
 
 export default function HeaderSite() {
   const [menu, setMenu] = useState(false);
@@ -20,7 +21,7 @@ export default function HeaderSite() {
 
   return (
     <div>
-      <section className="flex flex-row items-center justify-between md:justify-around min-h-24 pr-5 shadow-sm md:mb-10">
+      <section className="flex flex-row items-center justify-between md:justify-evenly min-h-24 pr-5 shadow-lg z-50 bg-zinc-50">
         <img src={LogoFkar.src} alt="Logo Fkar" className="pl-0 p-4 h-28" />
 
         <Menu
@@ -58,6 +59,9 @@ export default function HeaderSite() {
           >
             Contato
           </a>
+          <Link href="/blog" className="hover:underline">
+            Blog
+          </Link>
           <a href="/login" className="hover:underline">
             <span className="text-white font-semibold bg-zinc-700 px-3 py-2 rounded-md">
               Fazer Login
@@ -67,7 +71,7 @@ export default function HeaderSite() {
       </section>
 
       {menu && (
-        <div className="bg-white shadow-lg">
+        <div className="bg-zinc-50 shadow-sm">
           <section className="flex flex-col gap-2 items-end -mt-5 px-7 pb-5">
             <a
               href="#serviços"
@@ -97,6 +101,9 @@ export default function HeaderSite() {
             >
               Contato
             </a>
+            <Link href="/blog" className="hover:underline">
+              Blog
+            </Link>
             <a href="/login" className="hover:underline mt-2">
               <span className="text-white font-semibold bg-zinc-700 px-3 py-2 rounded-md">
                 Fazer Login

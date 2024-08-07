@@ -28,6 +28,10 @@ const config: Config = {
       "5xl": "3.052rem",
     },
     extend: {
+      textShadow: {
+        default: "2px 2px 4px rgba(0, 0, 0, 0.5)",
+        // você pode adicionar mais opções de sombra de texto aqui
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
@@ -82,7 +86,18 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }: any) {
+      const newUtilities = {
+        ".text-shadow": {
+          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
+        },
+        // você pode adicionar mais classes utilitárias aqui
+      };
+
+      addUtilities(newUtilities, ["responsive", "hover"]);
+    },
+  ],
 };
 
 export default config;

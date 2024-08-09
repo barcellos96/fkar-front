@@ -48,7 +48,6 @@ const PostContent = (content: string) => {
 };
 
 export default function SinglePost({ ...post }: any) {
-  console.log("post", post);
   // Converter created_at para Date se ainda não for um
   const createdAtDate = new Date(post.created_at);
 

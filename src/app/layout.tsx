@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Fkar Plataforma",
-  description: "Gestão de veículos",
+  description: "Plataforma para Gestão de veículos pessoais ou da sua frota",
 };
 
 export default function RootLayout({

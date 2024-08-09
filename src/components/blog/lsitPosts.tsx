@@ -27,11 +27,9 @@ export default function ListPosts() {
             <ArticleViewer
               key={post.id}
               id={post.id}
-              author={post.author}
               thumbnail={post.thumbnail}
               categories={post.categories}
               resume_content={post.resume_content}
-              content={post.content}
               tags={post.tags}
               title={post.title}
             />

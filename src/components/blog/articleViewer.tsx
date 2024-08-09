@@ -17,10 +17,8 @@ interface Category {
 interface ArticleProps {
   id: string;
   title: string;
-  author: string;
   thumbnail: string;
   resume_content: string;
-  content: string;
   tags: Tag[];
   categories: Category[];
 }
@@ -28,10 +26,8 @@ interface ArticleProps {
 const ArticleViewer: React.FC<ArticleProps> = ({
   id,
   title,
-  author,
   thumbnail,
   resume_content,
-  content,
   tags,
   categories,
 }) => {

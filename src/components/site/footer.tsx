@@ -17,7 +17,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-zinc-700 text-white pt-8 pb-20 px-10 slg:px-32 ">
+    <footer className="bg-zinc-700 text-white pt-8 pb-20 px-10 slg:px-32 mt-10">
       <div className="container mx-auto flex flex-col slg:flex-row items-center slg:items-start justify-between gap-10 space-y-4">
         <div className="flex flex-col items-center slg:items-start text-center slg:text-start">
           <img
@@ -63,7 +63,7 @@ export default function Footer() {
 
           <div className="flex mt-5">
             <a
-              href="https://instagram.com/yourprofile"
+              href="https://instagram.com/fkar.oficial"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -34,14 +34,21 @@ export interface IArticleProps {
 
 interface IBlogData {
   CreatePost: (data: ICreateArticleProps) => Promise<object>;
-  Posts: () => Promise<void>;
+  Posts: (tagId?: string, categorieId?: string) => Promise<void>;
   posts: IArticleProps[];
   Post: (articleId: string) => Promise<void>;
   post: IArticleProps | null;
+  AllTags: (tagId?: string) => Promise<ICategoriesAndTagsProps[]>;
   tags: ICategoriesAndTagsProps[];
-  AllTags: (tagId?: string) => Promise<void>;
+  SingleTag: (tagId: string) => Promise<ICategoriesAndTagsProps>;
+  singleTag: ICategoriesAndTagsProps;
+  AllCategories: () => Promise<void>;
   categories: ICategoriesAndTagsProps[];
-  AllCategories: (tagId?: string) => Promise<void>;
+  SingleCategorie: (categorieId: string) => Promise<void>;
+  singleCategorie: ICategoriesAndTagsProps;
+  setCategorieId: React.Dispatch<React.SetStateAction<string>>;
+  categorieId: string;
+
   value: any;
 }
 
@@ -62,7 +69,6 @@ export const BlogProvider = ({ children }: ICihldrenReact) => {
     const response = await api
       .post("/blog/article", data, config)
       .then((res) => {
-        console.log(res.data);
         setValue(res.data);
       })
       .catch((err) => {
@@ -74,9 +80,13 @@ export const BlogProvider = ({ children }: ICihldrenReact) => {
   };
 
   const [posts, setPosts] = useState<IArticleProps[]>([]);
-  const Posts = async () => {
+  const Posts = async (tagId?: string, categorieId?: string) => {
+    const config = {
+      params: { tagId, categorieId },
+    };
+
     const response = await api
-      .get("/blog/article")
+      .get("/blog/article", config)
       .then((res) => {
         setPosts(res.data.response);
       })
@@ -104,11 +114,9 @@ export const BlogProvider = ({ children }: ICihldrenReact) => {
   };
 
   const [tags, setTags] = useState([] || "");
-  const AllTags = async (tagId?: string) => {
-    const endpoint = tagId ? `/blog/tag/${tagId}` : "/blog/tag";
-
+  const AllTags = async () => {
     const response = await api
-      .get(endpoint)
+      .get("/blog/tag")
       .then((res) => {
         setTags(res.data.response);
       })
@@ -120,16 +128,50 @@ export const BlogProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
-  const [categories, setCategories] = useState([] || "");
-  const AllCategories = async (categoryId?: string) => {
-    const endpoint = categoryId
-      ? `/blog/category/${categoryId}`
-      : "/blog/category";
-
+  const [singleTag, setSingleTag] = useState<ICategoriesAndTagsProps>({
+    id: "",
+    name: "",
+  });
+  const SingleTag = async (tagId: string) => {
     const response = await api
-      .get(endpoint)
+      .get(`/blog/tag/${tagId}`)
+      .then((res) => {
+        setSingleTag(res.data.response);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        return err;
+      });
+
+    return response;
+  };
+
+  const [categories, setCategories] = useState([]);
+  const AllCategories = async () => {
+    const response = await api
+      .get("/blog/category")
       .then((res) => {
         setCategories(res.data.response);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        return err;
+      });
+
+    return response;
+  };
+
+  const [singleCategorie, setSingleCategorie] =
+    useState<ICategoriesAndTagsProps>({
+      id: "",
+      name: "",
+    });
+  const [categorieId, setCategorieId] = useState<string>("");
+  const SingleCategorie = async (categoryId: string) => {
+    const response = await api
+      .get(`/blog/category/${categoryId}`)
+      .then((res) => {
+        setSingleCategorie(res.data.response);
       })
       .catch((err) => {
         console.log("err", err);
@@ -147,11 +189,17 @@ export const BlogProvider = ({ children }: ICihldrenReact) => {
         posts,
         Post,
         post,
-        tags,
         AllTags,
-        categories,
+        tags,
+        SingleTag,
+        singleTag,
         AllCategories,
+        categories,
+        SingleCategorie,
+        singleCategorie,
         value,
+        categorieId,
+        setCategorieId,
       }}
     >
       {children}

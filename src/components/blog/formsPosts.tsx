@@ -127,7 +127,6 @@ export default function FormsPosts() {
   });
 
   const onSubmit: SubmitHandler<RegisterProps> = async (value) => {
-    console.log("value", value);
     setLoading(true);
 
     try {

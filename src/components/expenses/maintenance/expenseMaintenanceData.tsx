@@ -85,10 +85,8 @@ export default function ExpenseMaintenanceData() {
     setLoading(true); // Inicia o estado de loading
 
     if (expenseType) {
-      console.log("expenseType", expenseType);
       expenseType?.map((item) => {
         if (item.name.toLowerCase() === "manutenção") {
-          console.log("item", item.id);
           const cookies = parseCookies();
           const savedVehicleId = cookies["vehicle:selectedVehicleId"];
 

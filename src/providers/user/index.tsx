@@ -167,7 +167,6 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
       .get(endpoint, config)
       .then((res) => {
         setListUsers(res.data.response);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log("err", err);

@@ -1,13 +1,13 @@
 "use client";
 
 import { ChevronDown, Menu } from "lucide-react";
-import LogoFkar from "../../assets/logo.png";
+import LogoFkar from "../../assets/logo_blog-rmbg.png";
 import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { BlogContext } from "@/providers/blog";
 
 export default function HeaderBlog() {
-  const { AllCategories, categories } = useContext(BlogContext);
+  const { AllCategories, categories, setCategorieId } = useContext(BlogContext);
 
   const [menu, setMenu] = useState(false);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -29,7 +29,7 @@ export default function HeaderBlog() {
   return (
     <div>
       <section className="flex flex-row items-center justify-between md:justify-around min-h-24 pr-5 shadow-sm md:mb-10 bg-zinc-50">
-        <img src={LogoFkar.src} alt="Logo Fkar" className="pl-0 p-4 h-28" />
+        <img src={LogoFkar.src} alt="Logo Fkar" className="pl-0 p-4 h-20" />
 
         <Menu
           onClick={() => setMenu((prev) => !prev)}
@@ -59,6 +59,7 @@ export default function HeaderBlog() {
                       key={item.id}
                       href="#"
                       className="hover:opacity-65 py-1"
+                      onClick={() => setCategorieId(item.id)}
                     >
                       {item.name}
                     </Link>

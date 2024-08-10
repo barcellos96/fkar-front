@@ -116,7 +116,6 @@ export default function RefuelingData() {
       });
     }
   }, [expenseType, selectedVehicleId, currentPage, limitPage, value, query]);
-  console.log("query", query);
 
   if (!expenseVehicle) {
     return <TableSkeleton />; // Mostra o skeleton enquanto carrega

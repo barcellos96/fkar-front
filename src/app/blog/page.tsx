@@ -1,6 +1,6 @@
 import FooterBlog from "@/components/blog/footer";
 import HeaderBlog from "@/components/blog/header";
-import ListPosts from "@/components/blog/lsitPosts";
+import ListPosts from "@/components/blog/listPosts";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

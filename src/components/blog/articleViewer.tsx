@@ -21,6 +21,7 @@ interface ArticleProps {
   resume_content: string;
   tags: Tag[];
   categories: Category[];
+  onTagClick: (tagId: string) => void; // Adiciona a função de callback
 }
 
 const ArticleViewer: React.FC<ArticleProps> = ({
@@ -30,6 +31,7 @@ const ArticleViewer: React.FC<ArticleProps> = ({
   resume_content,
   tags,
   categories,
+  onTagClick, // Recebe a função de callback
 }) => {
   const { push } = useRouter();
 
@@ -51,6 +53,7 @@ const ArticleViewer: React.FC<ArticleProps> = ({
           <span
             className="px-2 bg-green-50 text-green-600 text-sm font-normal py-1 rounded-sm cursor-pointer hover:bg-green-100 hover:text-green-900"
             key={tag.id}
+            onClick={() => onTagClick(tag.id)} // Chama a função ao clicar na tag
           >
             {tag.name}
           </span>

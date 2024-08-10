@@ -55,7 +55,7 @@ export default function SinglePost({ ...post }: any) {
   const isValidDate = !isNaN(createdAtDate.getTime());
 
   return (
-    <div className="py-6 px-4 max-w-[1000px]">
+    <div className="py-6 px-4 slg:min-w-[590px] md:min-w-[800px] lg:min-w-[1000px] max-w-[1000px]">
       <section className="flex mb-2 gap-2">
         {post.tags &&
           post.tags.map((tag: { id: string; name: string }) => (

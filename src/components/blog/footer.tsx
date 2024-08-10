@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import Logo from "../../assets/logo.png";
+import Logo from "../../assets/logo_blog-rmbg.png";
 import { Instagram } from "lucide-react";
 import { useContext } from "react";
 import { BlogContext } from "@/providers/blog";
 
 export default function FooterBlog() {
-  const { categories } = useContext(BlogContext);
+  const { categories, setCategorieId, singleCategorie, Post } =
+    useContext(BlogContext);
 
   return (
     <footer className="bg-zinc-100 text-zinc-600 pt-8 pb-10 px-10 md:px-32 mt-10">
@@ -55,7 +56,12 @@ export default function FooterBlog() {
               <span className="font-semibold text-xl">Categorias</span>
               <section className="flex flex-col gap-2">
                 {categories.map((item) => (
-                  <Link key={item.id} href="#" className="hover:opacity-65">
+                  <Link
+                    key={item.id}
+                    href="#"
+                    className="hover:opacity-65"
+                    onClick={() => setCategorieId(item.id)}
+                  >
                     {item.name}
                   </Link>
                 ))}
@@ -100,7 +106,12 @@ export default function FooterBlog() {
             <span className="font-semibold text-xl">Categorias</span>
             <section className="flex flex-col gap-2">
               {categories.map((item) => (
-                <Link key={item.id} href="#" className="hover:opacity-65">
+                <Link
+                  key={item.id}
+                  href="#"
+                  className="hover:opacity-65"
+                  onClick={() => setCategorieId(item.id)}
+                >
                   {item.name}
                 </Link>
               ))}
@@ -129,9 +140,9 @@ export default function FooterBlog() {
           <img
             src={Logo.src}
             alt="Logo"
-            className="flex items-center slg:-ml-10 h-20 -mb-2"
+            className="flex items-center slg:-ml-2 h-10 -mb-2"
           />
-          <section className="flex flex-col lgg:flex-row gap-2">
+          <section className="flex flex-col lgg:flex-row gap-2 text-base font-light mt-2">
             <span>Todos direitos reservados </span>
             <span className="hidden lgg:flex">||</span>
             <span>© Fkar Gestão de Veiculos - 2024</span>

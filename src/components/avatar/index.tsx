@@ -7,6 +7,7 @@ import "cropperjs/dist/cropper.css";
 
 import user_avatar from "../../assets/user-avatar.png";
 import PoppoverHeaderAvatar from "./poppover";
+import { toast } from "sonner";
 
 // Definindo o tipo correto para a referência do Cropper
 type ReactCropperElement = HTMLImageElement & {
@@ -61,7 +62,11 @@ export default function AvatarLayout({
     if (blob.type.split("/")[0] !== "image") {
       setError(true);
     } else {
-      await UploadAvatar(blob, user?.id ?? "");
+      await UploadAvatar(blob, user?.id ?? "").finally(() => {
+        toast.success("Imagem atualizada com sucesso!", {
+          position: "top-right",
+        });
+      });
       setImgCrop(false);
     }
   };

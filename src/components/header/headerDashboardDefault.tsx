@@ -27,7 +27,10 @@ export default function HeaderDashboardDefault() {
       style={{ maxHeight: "10vh" }}
     >
       <section className="flex items-center">
-        <div className="md:hidden cursor-pointer hover:bg-zinc-100 hover:opacity-70 p-2 rounded-lg transition duration-300 ease-linear">
+        <div
+          id="menu-mobile"
+          className="md:hidden cursor-pointer hover:bg-zinc-100 hover:opacity-70 p-2 rounded-lg transition duration-300 ease-linear"
+        >
           <Menu onClick={handleOpenMenu} />
         </div>
 
@@ -66,7 +69,9 @@ export default function HeaderDashboardDefault() {
             <HelpContent handleClosePopover={handleClosePopover} />
           )}
         </div>
-        <AvatarLayout header />
+        <section id="profile">
+          <AvatarLayout header />
+        </section>
       </section>
     </div>
   );

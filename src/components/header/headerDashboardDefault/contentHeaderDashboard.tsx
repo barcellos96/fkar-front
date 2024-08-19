@@ -1,26 +1,18 @@
 "use client";
 
-import { formatKm } from "@/hooks/km";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
-import { CarFront, Map } from "lucide-react";
+import { CarFront } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import HeaderContentSkeleton from "./skeleton";
 import { parseCookies, setCookie } from "nookies";
 import { useRouter } from "next/navigation";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { UserContext } from "@/providers/user";
-import { Modal } from "@/components/modals";
-import ModalTitle from "@/components/modals/title";
 
 export default function Content() {
   const { push } = useRouter();
-  const {
-    GetVehicle,
-    vehicle,
-    setModalCreateVehicle,
-    value,
-    setSelectedVehicleId,
-  } = useContext(VehicleContext);
+  const { GetVehicle, vehicle, value, setSelectedVehicleId } =
+    useContext(VehicleContext);
   const { ListAll } = useContext(ExpenseVehicleContext);
   const { Logout } = useContext(UserContext);
 
@@ -29,11 +21,9 @@ export default function Content() {
   const vehicleIdCookies = cookies["vehicle:selectedVehicleId"];
 
   const [vehicleId, setVehicleId] = useState<string>(vehicleIdCookies);
-  const [plate, setPlate] = useState<string | null | undefined>("");
-  const [km, setKm] = useState<number | null | undefined>(0);
+  const [_plate, setPlate] = useState<string | null | undefined>("");
+  const [_km, setKm] = useState<number | null | undefined>(0);
   const [isMenuOpen, setMenuOpen] = useState(false); // Estado para controlar se o menu está aberto
-  const [isModalOpen, setModalOpen] = useState(false);
-
   useEffect(() => {
     if (vehicleId && vehicle?.length !== 0) {
       ListAll({ vehicleId: vehicleId });
@@ -42,22 +32,13 @@ export default function Content() {
 
   useEffect(() => {
     if (userToken) {
-      if (vehicle === null) {
-        GetVehicle();
+      if (vehicle?.length !== 0) {
+        if (vehicle === null) {
+          GetVehicle();
+        }
       }
     }
   }, [value, GetVehicle, userToken]);
-
-  const handleCloseModal = () => setModalOpen(false);
-  const handleOpenModal = () => setModalOpen(true);
-
-  useEffect(() => {
-    if (vehicle && vehicle.length === 0) {
-      handleOpenModal();
-    } else {
-      handleCloseModal();
-    }
-  }, [vehicle, value]);
 
   useEffect(() => {
     if (!userToken) {
@@ -116,7 +97,6 @@ export default function Content() {
   }, [vehicle, vehicleId]);
 
   const handleOpenMenu = () => setMenuOpen(true);
-
   const handleCloseMenu = () => setMenuOpen(false);
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -176,27 +156,6 @@ export default function Content() {
             </select>
           </section>
         </div>
-      )}
-
-      {isModalOpen && (
-        <Modal.Root>
-          <ModalTitle title="Cadastrar Veículo" />
-          <div className="px-4">
-            <p className="pb-3">
-              Você ainda não possui nenhum veículo cadastrado. Por favor,
-              cadastre seu primeiro veículo para continuar.
-            </p>
-            <button
-              className="bg-green-700 mt-4 px-4 py-2 text-white rounded my-3"
-              onClick={() => {
-                push("/dashboard/meus-veiculos");
-                setModalCreateVehicle(true);
-              }}
-            >
-              Cadastrar Veículo
-            </button>
-          </div>
-        </Modal.Root>
       )}
     </>
   );

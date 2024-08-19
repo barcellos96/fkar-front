@@ -5,6 +5,7 @@ import WelcomeModal from "@/components/dashboard/welcomeModal";
 import LayoutDashboard from "@/components/layout/layoutDashboard";
 import HistoryTimeline from "@/components/timeline/historyTimeline";
 import ReminderTimeline from "@/components/timeline/reminderTimeline";
+import Tutorial from "@/components/tutorial/tutorialWeb";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -15,15 +16,15 @@ export const metadata: Metadata = {
 export default function Dashboard() {
   return (
     <LayoutDashboard>
+      <Tutorial />
+
       <div className="grid lg:grid-cols-dashUpLg gap-6 overflow-hidden -ml-2">
         <div className="lg:hidden mt-7 ms-2 -mb-8">
           <UpdatePlanCard />
           <ReminderTimeline />
           <FinanceSummary />
         </div>
-        <div>
-          <HistoryTimeline />
-        </div>
+        <HistoryTimeline />
         <div>
           <div className="hidden lg:block ">
             <UpdatePlanCard />

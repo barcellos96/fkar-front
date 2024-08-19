@@ -2,6 +2,8 @@ import Sidebar from "@/components/sidebar";
 
 import { ReactNode } from "react";
 import HeaderDashboardDefault from "../header/headerDashboardDefault";
+import TutorialMobile from "../tutorial/tutorialMobile";
+import Tutorial from "../tutorial/tutorialWeb";
 
 interface LayoutDashboardProps {
   children: ReactNode;
@@ -16,10 +18,12 @@ export default function LayoutDashboard({ children }: LayoutDashboardProps) {
       </div>
 
       {/* Main Content */}
-      <div className="">
+      <div>
         <HeaderDashboardDefault />
         {children}
       </div>
+
+      <TutorialMobile />
     </div>
   );
 }

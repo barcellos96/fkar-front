@@ -14,7 +14,10 @@ export default function ProfileSideBar({
   email,
 }: ProfileSideBarProps) {
   return (
-    <div className="grid items-center gap-2 grid-cols-profileSideBar">
+    <div
+      id="profile-side"
+      className="grid items-center gap-2 grid-cols-profileSideBar my-4"
+    >
       <AvatarLayout />
       <div className="flex flex-1 flex-col truncate">
         <span className="text-base font-semibold">

@@ -81,9 +81,13 @@ const WelcomeModal = () => {
     const modalShownTimestamp = localStorage.getItem("welcomeModal");
     const now = new Date().getTime();
 
-    if (
-      !modalShownTimestamp ||
-      now - JSON.parse(modalShownTimestamp) > 24 * 60 * 60 * 1000
+    // Check if the vehicle data is available and if it is not empty
+    if (vehicle?.length !== 0) {
+      setIsVisible(false);
+    } else if (
+      vehicle?.length !== 0 &&
+      (!modalShownTimestamp ||
+        now - JSON.parse(modalShownTimestamp) > 24 * 60 * 60 * 1000)
     ) {
       setIsVisible(true);
     }

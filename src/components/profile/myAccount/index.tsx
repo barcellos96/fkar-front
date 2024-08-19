@@ -9,6 +9,7 @@ import { z } from "zod";
 import MyAccountSkeleton from "./skeleton";
 import HeaderComposition from "@/components/header/headerComposition";
 import AvatarLayout from "@/components/avatar";
+import { toast } from "sonner";
 
 export default function MyAccount() {
   const { UpdateUser, user } = useContext(UserContext);
@@ -46,7 +47,11 @@ export default function MyAccount() {
   const onSubmit: SubmitHandler<RegisterProps> = async (value) => {
     setLoading(true);
     try {
-      await UpdateUser(value);
+      await UpdateUser(value).finally(() => {
+        toast.success("Conta atualizada com sucesso!", {
+          position: "top-right",
+        });
+      });
       setLoading(false);
     } catch (error) {
       setLoading(false);

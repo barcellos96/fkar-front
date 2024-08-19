@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/service/api";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { destroyCookie, parseCookies } from "nookies";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ interface UpdateUser {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  tour?: string;
 }
 
 interface SimpleUser {
@@ -51,6 +52,7 @@ interface UserProps extends SimpleUser {
   updated_at: string;
   isActive: boolean;
   avatar: AvatarProps;
+  tour: string;
 }
 
 interface IUserData {
@@ -105,7 +107,6 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
     const response = await api
       .post(`/upload-avatar/${userId}`, formDataProfile)
       .then((res) => {
-        toast.success("Imagem atualizada com sucesso!");
         setValue(res.data);
       })
       .catch((err) => {
@@ -142,9 +143,6 @@ export const UserProvider = ({ children }: ICihldrenReact) => {
     const response = await api
       .patch("/user", data, config)
       .then((res) => {
-        toast.success("Conta atualizada com sucesso!", {
-          position: "top-right",
-        });
         UserLogged();
       })
       .catch((err) => {

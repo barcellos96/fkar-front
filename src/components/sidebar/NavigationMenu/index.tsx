@@ -1,14 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import {
-  navigationMain,
-  navigationPoppoverSideBar,
-  navigationSecond,
-} from "./navigation";
+import { navigationMain, navigationPoppoverSideBar } from "./navigation";
 import { usePathname } from "next/navigation";
 import { PlusCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Tutorial from "@/components/tutorial/tutorialWeb";
 
 interface NavigationItem {
   name: string;
@@ -21,6 +18,13 @@ type NavigationList = NavigationItem[];
 export function MainNavigation() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    // Supondo que você só deseja iniciar o tutorial quando o usuário estiver logado
+    setShowTutorial(true);
+  }, []);
 
   const handleCloseMenu = () => setMenuOpen(false);
 
@@ -52,6 +56,7 @@ export function MainNavigation() {
           />
         )}
         <button
+          id="btn-add"
           className={`${
             menuOpen ? "text-green-900" : "text-gray-900"
           } inline-flex w-full rounded-md px-4 py-3 bg-green-100 text-base  font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500`}
@@ -91,27 +96,4 @@ export function MainNavigation() {
       {renderLevels(navigationMain)}
     </>
   );
-}
-
-export function SecondNavigation() {
-  const pathname = usePathname();
-
-  const renderLevels = (data: NavigationList) => {
-    return data.map((item, index) => {
-      return (
-        <Link
-          key={index}
-          href={item.path ?? "#"}
-          className={`${
-            item.path === pathname && "border-l border-green-700 bg-green-50"
-          } flex text-base font-medium text-zinc-800 rounded px-3 py-3 hover:bg-zinc-100 transition duration-300 ease-linear`}
-        >
-          {<item.icon size={18} className="mr-2" />}
-          {item.name}
-        </Link>
-      );
-    });
-  };
-
-  return <>{renderLevels(navigationSecond)}</>;
 }

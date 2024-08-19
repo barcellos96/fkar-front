@@ -36,7 +36,7 @@ export default function ModalRoot({
 
   return (
     <div
-      className={`z-50 fixed top-0 left-0 w-full h-full flex ${justify} ${items} bg-black bg-opacity-10`}
+      className={`z-50 fixed top-0 left-0 w-full h-full flex ${justify} ${items} bg-black bg-opacity-10 px-72`}
       onClick={handleClickOutside}
     >
       <div

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Droplet, Option } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { z } from "zod";
@@ -11,9 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css"; // Import Quill CSS
 import "./quill.css";
-import { Modal } from "../modals";
 import { BlogContext } from "@/providers/blog";
-import { Quill } from "react-quill";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const Select = dynamic(() => import("react-select"), { ssr: false });

@@ -12,7 +12,7 @@ interface Props {
 
 export default function Editions({ item, onClose }: Props) {
   return (
-    <div className="z-50 absolute bg-white ">
+    <div className="z-50 absolute">
       {onClose &&
         item.type === "expense" &&
         item.expense_type.name.toLowerCase() === "abastecimento" && (

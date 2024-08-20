@@ -71,8 +71,6 @@ export default function IncomingUpdate({
     hour12: false,
   });
 
-  
-
   const defaultValues = {
     date: formattedDate,
     time: formattedTime,
@@ -191,7 +189,6 @@ export default function IncomingUpdate({
             className="h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
             {...register("incomingTypeId")}
             defaultValue={item?.incoming_type?.id ?? ""}
-
           >
             {incomingType?.map((item, index) => (
               <option key={index} value={item.id}>
@@ -366,7 +363,6 @@ export default function IncomingUpdate({
           onSubmitAction={() => handleSubmit(onSubmit)}
           onCancelAction={handleClose}
           loading={loading}
-          bgColorSubmit="bg-yellow-700"
           nameButtonSubmit="Atualizar"
         />
       </form>

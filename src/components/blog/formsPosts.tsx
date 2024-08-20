@@ -41,7 +41,6 @@ const handleImageUpload = async (file: File): Promise<string> => {
     }
 
     const data: { url: string } = await response.json();
-    console.log("data", data);
     return data.url;
   } catch (error) {
     console.error("Error uploading image:", error);

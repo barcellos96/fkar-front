@@ -3,17 +3,20 @@
 import { BadgeHelp, Bell, Menu } from "lucide-react";
 import Sidebar from "@/components/sidebar";
 import Content from "./headerDashboardDefault/contentHeaderDashboard";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AvatarLayout from "../avatar";
 import HelpContent from "./help";
 import NotificationContent from "./notification";
+import { ComponentsContext } from "@/providers/components";
 
 export default function HeaderDashboardDefault() {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const { setSidebar, sidebar } = useContext(ComponentsContext);
+
   const [popoverOpen, setPopoverOpen] = useState<string | null>(null);
 
-  const handleOpenMenu = () => setMenuOpen(true);
-  const handleCloseMenu = () => setMenuOpen(false);
+  const handleMenu = () => {
+    setSidebar((prev) => !prev);
+  };
 
   const handlePopoverToggle = (popover: string) => {
     setPopoverOpen((prevPopover) => (prevPopover === popover ? null : popover));
@@ -31,17 +34,17 @@ export default function HeaderDashboardDefault() {
           id="menu-mobile"
           className="md:hidden cursor-pointer hover:bg-zinc-100 hover:opacity-70 p-2 rounded-lg transition duration-300 ease-linear"
         >
-          <Menu onClick={handleOpenMenu} />
+          <Menu onClick={handleMenu} />
         </div>
 
         {/*quando menu open*/}
-        {isMenuOpen && (
+        {sidebar && (
           <div className="fixed inset-0 z-50 bg-black bg-opacity-50">
-            <Sidebar onClose={handleCloseMenu} />
+            <Sidebar onClose={handleMenu} />
 
             <div
               className=" h-full bg-black bg-opacity-50 "
-              onClick={handleCloseMenu}
+              onClick={handleMenu}
             />
           </div>
         )}

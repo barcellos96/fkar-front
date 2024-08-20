@@ -12,26 +12,31 @@ const navigationPoppoverButtonFloat = [
     name: "Abastecimentos",
     icon: Fuel,
     path: "/dashboard/abastecimento/criar",
+    color: "bg-orange-300",
   },
   {
     name: "Despesas",
     icon: Wallet,
     path: "/dashboard/despesas/criar",
+    color: "bg-red-700",
   },
   {
     name: "Manutenções",
     icon: Wrench,
     path: "/dashboard/manutencoes/criar",
+    color: "bg-yellow-400",
   },
   {
     name: "Receitas",
     icon: Wallet,
     path: "/dashboard/receitas/criar",
+    color: "bg-green-400",
   },
   {
     name: "Lembretes",
     icon: AlarmClock,
     path: "/dashboard/lembretes",
+    color: "bg-blue-700",
   },
 ];
 
@@ -55,15 +60,19 @@ export default function PoppoverButtonFloat({ onPopper }: Props) {
             key={index}
             className={`${
               item.path === pathname && "border-l border-green-700 bg-green-50"
-            }  text-base font-medium text-zinc-500 rounded  px-3 py-3 border-l border-green-700 hover:bg-green-100 transition duration-300 ease-linear`}
+            }  text-base font-medium text-zinc-500 rounded  px-2 py-1 hover:bg-green-100 transition duration-300 ease-linear`}
           >
-            <a href={item.path} className="flex">
+            <a href={item.path} className="flex items-center  gap-2">
               {
-                <item.icon
-                  size={18}
-                  className="mr-2 text-zinc-700 hover:text-green-700"
-                />
-              }{" "}
+                <section
+                  className={`flex items-center justify-center ${item.color} px-2 py-2 rounded-full`}
+                >
+                  <item.icon
+                    size={18}
+                    className="text-white hover:text-green-700"
+                  />
+                </section>
+              }
               {item.name}
             </a>
           </section>

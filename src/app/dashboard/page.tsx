@@ -1,7 +1,7 @@
 import FinanceSummary from "@/components/cards/financeSummary";
 import UpdatePlanCard from "@/components/cards/updatePlanCard";
 import ButtonFloatDashboard from "@/components/dashboard/buttonFloatDashboard";
-import WelcomeModal from "@/components/dashboard/welcomeModal";
+import UpdateKmModal from "@/components/dashboard/updateKmModal";
 import LayoutDashboard from "@/components/layout/layoutDashboard";
 import HistoryTimeline from "@/components/timeline/historyTimeline";
 import ReminderTimeline from "@/components/timeline/reminderTimeline";
@@ -33,7 +33,7 @@ export default function Dashboard() {
           </div>
         </div>
         <ButtonFloatDashboard />
-        <WelcomeModal />
+        <UpdateKmModal />
       </div>
     </LayoutDashboard>
   );

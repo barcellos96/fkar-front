@@ -35,7 +35,7 @@ export function MainNavigation() {
           key={index}
           href={item.path ?? "#"}
           className={`${
-            item.path === pathname && "border-l border-green-700 bg-green-50"
+            item.path === pathname && "border-l border-green-700 bg-zinc-100"
           } flex text-base font-medium text-zinc-800 rounded px-3 py-3 hover:bg-zinc-100 transition duration-300 ease-linear`}
         >
           {<item.icon size={18} className="mr-2" />}

@@ -348,7 +348,7 @@ export default function ExpenseMaintenanceUpdate({
       <Modal.Title
         icon={Wrench}
         sizeIcon={22}
-        borderColor="border-red-700"
+        borderColor="border-yellow-400"
         title="Atualizar Manutenção"
         onClose={handleClose}
       />
@@ -357,7 +357,7 @@ export default function ExpenseMaintenanceUpdate({
       <form
         action="form"
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col max-w-[500px] "
+        className="flex flex-col"
       >
         {/* tipo de serviço */}
         <div className="flex flex-col mb-3">
@@ -724,7 +724,7 @@ export default function ExpenseMaintenanceUpdate({
           onSubmitAction={() => handleSubmit(onSubmit)}
           onCancelAction={handleClose}
           loading={loading}
-          bgColorSubmit="bg-yellow-700"
+          bgColorSubmit="bg-yellow-400"
           nameButtonSubmit="Atualizar"
         />
       </form>

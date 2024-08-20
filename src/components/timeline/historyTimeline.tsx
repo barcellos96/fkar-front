@@ -17,7 +17,6 @@ import {
   Banknote,
   CalendarDays,
   Wallet,
-  Check,
   CheckCheck,
 } from "lucide-react";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
@@ -34,6 +33,7 @@ import { AddressContext } from "@/providers/address";
 import { useRouter } from "next/navigation";
 import { UserContext } from "@/providers/user";
 import { Modal } from "../modals";
+import SkeletonLoader from "./skeletonTimeline";
 
 const HistoryTimeline = () => {
   const { user } = useContext(UserContext);
@@ -168,7 +168,11 @@ const HistoryTimeline = () => {
   };
 
   const minHeight =
-    listAll && listAll.list && listAll.list.length > 0 ? "73vh" : "84.9vh";
+    listAll && listAll.list && listAll.list.length !== 0 ? "73.6vh" : "84.9vh";
+
+  if (!vehicle) {
+    return <SkeletonLoader />;
+  }
 
   return (
     <div className="ms-2 mt-5 mb-4 max-h-screen rounded-xl shadow-lg pt-5 bg-white">
@@ -194,7 +198,7 @@ const HistoryTimeline = () => {
       {/* <div className="h-px bg-zinc-300 ml-10 mr-10" /> */}
       <div
         className=" px-10 py-3 rounded-xl mt-2 overflow-auto custom-scrollbar "
-        style={{ minHeight: minHeight, maxHeight: "84.9vh" }}
+        style={{ minHeight: minHeight, maxHeight: minHeight }}
       >
         <ol
           className={`relative ${

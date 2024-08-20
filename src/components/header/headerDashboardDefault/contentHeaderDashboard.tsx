@@ -24,6 +24,7 @@ export default function Content() {
   const [_plate, setPlate] = useState<string | null | undefined>("");
   const [_km, setKm] = useState<number | null | undefined>(0);
   const [isMenuOpen, setMenuOpen] = useState(false); // Estado para controlar se o menu está aberto
+
   useEffect(() => {
     if (vehicleId && vehicle?.length !== 0) {
       ListAll({ vehicleId: vehicleId });

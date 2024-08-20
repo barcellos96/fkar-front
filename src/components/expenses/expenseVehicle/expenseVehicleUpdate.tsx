@@ -468,7 +468,7 @@ export default function ExpenseVehicleUpdate({
           onSubmitAction={() => handleSubmit(onSubmit)}
           onCancelAction={handleClose}
           loading={loading}
-          bgColorSubmit="bg-yellow-700"
+          bgColorSubmit="bg-red-700"
           nameButtonSubmit="Atualizar"
         />
       </form>

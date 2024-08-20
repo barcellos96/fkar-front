@@ -1,12 +1,14 @@
 "use client";
 
+import { ComponentsContext } from "@/providers/components";
 import { UserContext } from "@/providers/user";
 import { StepForward } from "lucide-react";
 import { useState, useEffect, useContext } from "react";
-import Joyride, { CallBackProps, STATUS, Step } from "react-joyride";
+import Joyride, { ACTIONS, CallBackProps, STATUS, Step } from "react-joyride";
 
 const TutorialMobile: React.FC = () => {
   const { user, UpdateUser } = useContext(UserContext);
+  const { sidebar, setSidebar } = useContext(ComponentsContext);
 
   const [steps, setSteps] = useState<Step[]>([]);
   const [isClient, setIsClient] = useState(false);
@@ -54,7 +56,11 @@ const TutorialMobile: React.FC = () => {
   };
 
   const handleTourCallback = async (data: CallBackProps) => {
-    const { status, action } = data;
+    const { status, index, step } = data;
+    console.log("index", index);
+    console.log("step", step.target);
+
+    if (step.target === "#profile") console.log("estou vendo profile");
 
     if (status === STATUS.SKIPPED) {
       // O tour foi pulado pelo usuário
@@ -71,7 +77,9 @@ const TutorialMobile: React.FC = () => {
 
   const handleRestartTour = () => {
     setStartTour(true); // Reiniciar o tour
+    setSidebar(false);
     setShowRestartButton(false); // Ocultar o botão de reiniciar
+    handleTourCallback;
   };
 
   return (
@@ -148,7 +156,9 @@ const TutorialMobile: React.FC = () => {
 
       {showRestartButton && (
         <button
-          className="fixed bottom-4 right-4 bg-blue-600 text-white px-2 py-2 hover:px-3 hover:py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 z-50"
+          className={`${
+            !sidebar && "hidden"
+          } fixed bottom-4 right-4 bg-blue-600 text-white px-2 py-2 hover:px-3 hover:py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 z-50`}
           onClick={handleRestartTour}
         >
           <section className="flex items-center gap-2 group">

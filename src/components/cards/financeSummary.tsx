@@ -93,7 +93,11 @@ export default function FinanceSummary() {
   const total = service + incoming + expense + fuel;
 
   return (
-    <div className="mt-5 pb-3 rounded-xl shadow-lg relative bg-white">
+    <div
+      className={`${
+        !filteredListAll && "hidden"
+      } mt-5 pb-3 rounded-xl shadow-lg relative bg-white`}
+    >
       <h3 className="flex justify-between px-5 py-2 mb-4 font-semibold bg-green-200 rounded-t-lg">
         <span className="text-sm slg:text-lg">
           ÚLTIMO MÊS {`(${formattedStartDate} - ${formattedEndDate})`}
@@ -114,7 +118,7 @@ export default function FinanceSummary() {
             height={40}
             width={40}
           />
-          <h5 className="text-sm font-light mt-1">SERVIÇOS</h5>
+          <h5 className="text-sm font-light mt-1">MANUTENÇÕES</h5>
           <span className="text-sm slg:text-base font-semibold mt-1">
             {formatCurrency(service)}
           </span>

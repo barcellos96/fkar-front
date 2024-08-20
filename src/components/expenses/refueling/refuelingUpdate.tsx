@@ -227,7 +227,7 @@ export default function RefuelingUpdate({
         className="flex flex-col max-w-[500px] "
       >
         {/* descrição */}
-        <div className="flex flex-col  mb-5">
+        <div className="flex flex-col mb-5">
           <label
             htmlFor="description"
             className="text-base font-semibold mb-2 ml-1 "
@@ -442,13 +442,13 @@ export default function RefuelingUpdate({
         </div>
 
         <span
-          className="ms-2 font-light text-base underline text-blue-400 cursor-pointer hover:opacity-50"
+          className="ms-2 mb-4 font-light text-base underline text-blue-400 cursor-pointer hover:opacity-50"
           onClick={handleSectionPlus}
         >
           Adicionar mais detalhes
         </span>
         {sectionPlus ? (
-          <section className="flex flex-col mt-4">
+          <section className="flex flex-col mt-4 ">
             {/* local do abastecimento */}
             <div className="flex flex-col max-w-[300px] slg:max-w-[450px] mb-5">
               <label
@@ -523,21 +523,14 @@ export default function RefuelingUpdate({
           <></>
         )}
 
-        <section className="flex gap-2">
-          <button
-            type="submit"
-            className="px-3 py-2 w-40 mt-5 rounded-lg text-white bg-yellow-600 hover:bg-opacity-80"
-          >
-            {loading ? <Loading /> : "Atualizar"}
-          </button>
-          <button
-            type="button"
-            className="px-3 py-2 w-40 mt-5 rounded-lg text-zinc-400 hover:border hover:border-yellow-600"
-            onClick={handleClose}
-          >
-            Cancelar
-          </button>
-        </section>
+        <Modal.Actions
+          type="submit"
+          onSubmitAction={() => handleSubmit(onSubmit)}
+          onCancelAction={handleClose}
+          loading={loading}
+          bgColorSubmit="bg-yellow-700"
+          nameButtonSubmit="Atualizar"
+        />
       </form>
       {/* fim do formulario */}
     </Modal.Root>

@@ -17,8 +17,8 @@ export default function ModalRoot({
   onClose,
   justify = "justify-center",
   items = "items-center",
-  width = "w-[320px]",
-  maxheigth = "max-h-[540px]",
+  width = "min-w-[320px]",
+  maxheigth = "max-h-[600px]",
   rounded = "rounded-lg",
   px = "px-4",
   py = "py-5",
@@ -36,11 +36,11 @@ export default function ModalRoot({
 
   return (
     <div
-      className={`z-50 fixed top-0 left-0 w-full h-full flex ${justify} ${items} bg-black bg-opacity-10 px-72`}
+      className={`z-50 fixed top-0 left-0 w-full h-full flex ${justify} ${items} bg-black bg-opacity-40 xlg:px-72`}
       onClick={handleClickOutside}
     >
       <div
-        className={`flex flex-col gap-6 bg-zinc-50 ${rounded} ${px} ${py} ${width} ${maxheigth} overflow-aut  overflow-auto lg:w-1/3 modal-content custom-scrollbar`}
+        className={`flex flex-col gap-6 bg-zinc-50 ${rounded} ${px} ${py} ${width} mx-2 ${maxheigth} overflow-auto modal-content custom-scrollbar`}
       >
         {children}
       </div>

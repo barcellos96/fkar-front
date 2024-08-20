@@ -9,9 +9,10 @@ import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import Loading from "../loading";
+import { Modal } from "../modals";
 
-const WelcomeModal = () => {
-  const { vehicle, UpdateVehicle, selectedVehicleId } =
+const UpdateKmModal = () => {
+  const { vehicle, UpdateVehicle, selectedVehicleId, GetVehicle } =
     useContext(VehicleContext);
 
   const { GetVehicleType, vehicleType } = useContext(VehicleTypeContext);
@@ -74,24 +75,27 @@ const WelcomeModal = () => {
 
   const onClose = () => {
     setIsVisible(false);
-    localStorage.setItem("welcomeModal", JSON.stringify(new Date().getTime()));
+    localStorage.setItem("@ukm-modal", JSON.stringify(new Date().getTime()));
   };
 
   useEffect(() => {
-    const modalShownTimestamp = localStorage.getItem("welcomeModal");
+    const modalShownTimestamp = localStorage.getItem("@ukm-modal");
     const now = new Date().getTime();
 
-    // Check if the vehicle data is available and if it is not empty
-    if (vehicle?.length !== 0) {
+    // Verifica se o `vehicle` está definido antes de acessar `length`
+    if (vehicle && vehicle.length === 0) {
       setIsVisible(false);
     } else if (
-      vehicle?.length !== 0 &&
+      vehicle &&
+      vehicle.length !== 0 &&
       (!modalShownTimestamp ||
         now - JSON.parse(modalShownTimestamp) > 24 * 60 * 60 * 1000)
     ) {
       setIsVisible(true);
+    } else {
+      setIsVisible(false);
     }
-  }, []);
+  }, [vehicle]);
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -108,53 +112,57 @@ const WelcomeModal = () => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-bold mb-1">Bem-vindo!</h2>
-        <p className="font-extralight">Atualizar Quilometragem do Veículo?</p>
+    <Modal.Root onClose={onClose} width="max-w-[400px]">
+      <Modal.Title title="Bem-vindo!" borderColor="border-none -ms-2" />
+      <Modal.Span
+        fontWeight="text-lg"
+        span="Mantenha o controle preciso da quilometragem do seu veículo. Atualizar
+          regularmente ajuda a garantir um registro de manutenção adequado e
+          facilita o planejamento de serviços futuros."
+      />
 
-        <span>
-          Última quilometragem:{" "}
-          <span>{formatKm(Number(findVehicleLogged?.km))}</span>
+      <span className="block">
+        Última quilometragem registrada:{" "}
+        <span className="font-semibold">
+          {formatKm(Number(findVehicleLogged?.km))}
         </span>
+      </span>
 
-        <form action="form" onSubmit={handleSubmit(onSubmit)}>
-          <section className="flex gap-2 items-center mt-6">
-            <Map />
-            <input
-              type="number"
-              step="1"
-              placeholder="Quilometragem atual"
-              className="border border-zinc-100 py-2 px-2 rounded-md"
-              {...register("km")}
-              onInput={(e) => {
-                const target = e.target as HTMLInputElement;
-                target.value = target.value.replace(/[,\.]/g, "");
-              }}
-            />
-          </section>
-          <section className="flex gap-6">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`${
-                loading && "cursor-wait"
-              } mt-4 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-opacity-70`}
-            >
-              {loading ? <Loading /> : "Atualizar"}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="mt-4 px-4  text-zinc-400 rounded-lg hover:border hover:border-zinc-400 hover:shadow-md"
-            >
-              Não Atualizar
-            </button>
-          </section>
-        </form>
-      </div>
-    </div>
+      <form action="form" onSubmit={handleSubmit(onSubmit)}>
+        <section className="flex gap-2 items-center mb-4 border border-zinc-300 rounded-md px-2">
+          <Map />
+          <input
+            type="number"
+            placeholder="Insira a quilometragem atual"
+            className="w-full px-1 py-3 focus:outline-none"
+            {...register("km")}
+            onInput={(e) => {
+              const target = e.target as HTMLInputElement;
+              target.value = target.value.replace(/[,\.]/g, "");
+            }}
+          />
+        </section>
+        <section className="flex gap-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className={`${
+              loading && "cursor-wait"
+            } px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-opacity-80 transition duration-200 ease-in-out`}
+          >
+            {loading ? <Loading /> : "Atualizar"}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-zinc-500 rounded-lg hover:text-zinc-400 transition duration-200 ease-in-out"
+          >
+            Não Atualizar
+          </button>
+        </section>
+      </form>
+    </Modal.Root>
   );
 };
 
-export default WelcomeModal;
+export default UpdateKmModal;

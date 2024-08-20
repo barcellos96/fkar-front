@@ -16,7 +16,7 @@ export default function ProfileSideBar({
   return (
     <div
       id="profile-side"
-      className="grid items-center gap-2 grid-cols-profileSideBar my-4"
+      className="grid items-center gap-2 grid-cols-profileSideBar my-1"
     >
       <AvatarLayout />
       <div className="flex flex-1 flex-col truncate">

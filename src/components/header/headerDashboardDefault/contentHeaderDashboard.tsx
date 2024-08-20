@@ -123,7 +123,10 @@ export default function Content() {
             />
           )}
 
-          <section className="flex text-base cursor-pointer border-b border-zinc-300 items-center px-1 py-1 rounded-lg outline-none">
+          <section
+            id="content-select-car"
+            className="flex text-base cursor-pointer border-b border-zinc-300 items-center px-1 py-1 rounded-lg outline-none"
+          >
             <CarFront size={22} />
             <select
               id="select-option"

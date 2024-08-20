@@ -72,7 +72,7 @@ export default function HeaderDashboardDefault() {
             <HelpContent handleClosePopover={handleClosePopover} />
           )}
         </div>
-        <section id="profile">
+        <section id="profile-header">
           <AvatarLayout header />
         </section>
       </section>

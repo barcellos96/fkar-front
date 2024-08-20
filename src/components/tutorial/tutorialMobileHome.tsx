@@ -1,12 +1,14 @@
 "use client";
 
+import { ComponentsContext } from "@/providers/components";
 import { UserContext } from "@/providers/user";
 import { StepForward } from "lucide-react";
 import { useState, useEffect, useContext } from "react";
 import Joyride, { CallBackProps, STATUS, Step } from "react-joyride";
 
-const Tutorial: React.FC = () => {
+const TutorialMobileHome: React.FC = () => {
   const { user, UpdateUser } = useContext(UserContext);
+  const { sidebar, setSidebar } = useContext(ComponentsContext);
 
   const [steps, setSteps] = useState<Step[]>([]);
   const [isClient, setIsClient] = useState(false);
@@ -25,18 +27,31 @@ const Tutorial: React.FC = () => {
     if (isClient) {
       setSteps([
         {
-          target: "#nav-side",
-          content: "Esta é a navegação principal do sistema.",
+          target: "#profile-header",
+          content:
+            "Este é o seu perfil. Aqui, você pode acessar as configurações do seu usuário, visualizar informações detalhadas da sua conta, e fazer logout com facilidade. Manter seu perfil atualizado garante uma experiência mais personalizada.",
           disableBeacon: true, // Não exibir o beacon
         },
         {
-          target: "#btn-add",
-          content: "Clique aqui para adicionar novos itens.",
+          target: "#content-select-car",
+          content:
+            "Nesta seção, você pode visualizar todos os carros cadastrados na sua conta. Use essa área para selecionar um veículo específico, verificar seu histórico de registros e atualizá-lo conforme necessário. Garantir que suas informações estão sempre precisas é essencial para manter o controle dos seus veículos.",
+          disableBeacon: true, // Não exibir o beacon
         },
         {
-          target: "#profile-side",
-          content: "Aqui você pode ver o seu perfil.",
+          target: "#menu-mobile",
+          content:
+            "Aqui você acessa a barra de navegação principal do sistema. Através dela, você acessa todas as funcionalidades do sistema de maneira rápida e intuitiva. Explore os diferentes menus para descobrir tudo o que você pode fazer.",
+          disableBeacon: true, // Não exibir o beacon
         },
+        {
+          target: "#btn-float-add",
+          content:
+            "Sempre que precisar adicionar novos itens ao sistema, como abastecimentos, lembretes, registros em geral ou qualquer outra informação, clique neste botão. Ele facilita a entrada de novos dados e mantém sua conta sempre atualizada com as informações mais recentes.",
+          disableBeacon: true,
+        },
+
+        // Adicione mais steps aqui, se necessário
       ]);
     }
   }, [isClient]);
@@ -48,14 +63,12 @@ const Tutorial: React.FC = () => {
 
   const handleSeeLater = async () => {
     setIsModalOpen(false); // Fechar o modal
-    console.log("SeeLater");
     setShowRestartButton(true); // Exibir o botão de reiniciar
     await UpdateUser({ tour: "seeLater" });
   };
 
   const handleTourCallback = async (data: CallBackProps) => {
-    const { status, action } = data;
-    console.log("status", status);
+    const { status } = data;
 
     if (status === STATUS.SKIPPED) {
       // O tour foi pulado pelo usuário
@@ -72,13 +85,15 @@ const Tutorial: React.FC = () => {
 
   const handleRestartTour = () => {
     setStartTour(true); // Reiniciar o tour
+    setSidebar(false);
     setShowRestartButton(false); // Ocultar o botão de reiniciar
+    handleTourCallback;
   };
 
   return (
-    <div className="hidden md:flex md:absolute ">
+    <div className="absolute md:hidden">
       {user?.tour === "starting" && isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50 ">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg mx-4">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               Bem-vindo ao Tutorial!
@@ -116,7 +131,7 @@ const Tutorial: React.FC = () => {
           continuous={true}
           showProgress={true}
           showSkipButton={true}
-          spotlightPadding={20}
+          spotlightPadding={2}
           hideCloseButton
           disableOverlayClose
           disableScrolling
@@ -143,13 +158,15 @@ const Tutorial: React.FC = () => {
               // Certifique-se de que o beacon não está oculto
             },
           }}
-          callback={handleTourCallback} // Adicione o callback
+          callback={handleTourCallback}
         />
       )}
 
       {showRestartButton && (
         <button
-          className="fixed bottom-4 right-4 bg-blue-600 text-white px-2 py-2 hover:px-3 hover:py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 z-50"
+          className={`${
+            !sidebar && "hidden"
+          } fixed bottom-4 right-4 bg-blue-600 text-white px-2 py-2 hover:px-3 hover:py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 z-50`}
           onClick={handleRestartTour}
         >
           <section className="flex items-center gap-2 group">
@@ -162,4 +179,4 @@ const Tutorial: React.FC = () => {
   );
 };
 
-export default Tutorial;
+export default TutorialMobileHome;

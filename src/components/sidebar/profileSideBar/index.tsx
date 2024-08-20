@@ -18,7 +18,9 @@ export default function ProfileSideBar({
       id="profile-side"
       className="grid items-center gap-2 grid-cols-profileSideBar my-1"
     >
-      <AvatarLayout />
+      <section id="avatar-side">
+        <AvatarLayout />
+      </section>
       <div className="flex flex-1 flex-col truncate">
         <span className="text-base font-semibold">
           {firstName + " " + lastName}
@@ -26,7 +28,9 @@ export default function ProfileSideBar({
         <span className="truncate text-sm font-light">{email}</span>
       </div>
 
-      <LogoutButton />
+      <section id="logout-side">
+        <LogoutButton />
+      </section>
     </div>
   );
 }

@@ -4,8 +4,7 @@ import Link from "next/link";
 import { navigationMain, navigationPoppoverSideBar } from "./navigation";
 import { usePathname } from "next/navigation";
 import { PlusCircle } from "lucide-react";
-import { useEffect, useState } from "react";
-import Tutorial from "@/components/tutorial/tutorialWeb";
+import { useState } from "react";
 
 interface NavigationItem {
   name: string;
@@ -18,13 +17,6 @@ type NavigationList = NavigationItem[];
 export function MainNavigation() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const [showTutorial, setShowTutorial] = useState(false);
-
-  useEffect(() => {
-    // Supondo que você só deseja iniciar o tutorial quando o usuário estiver logado
-    setShowTutorial(true);
-  }, []);
 
   const handleCloseMenu = () => setMenuOpen(false);
 
@@ -55,6 +47,7 @@ export function MainNavigation() {
             onClick={handleCloseMenu} // Fechar o menu quando o overlay é clicado
           />
         )}
+
         <button
           id="btn-add"
           className={`${

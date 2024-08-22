@@ -10,9 +10,10 @@ import { useRouter } from "next/navigation";
 import { MouseEvent, useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { addHours, format } from "date-fns";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Locale } from "date-fns";
+import LastRegisterKm from "@/components/vehicle/lastRegisterKm";
 
 export default function ExpenseVehicleCreate() {
   const { back, push } = useRouter();
@@ -117,10 +118,7 @@ export default function ExpenseVehicleCreate() {
     const dateTimeString = `${value.date}T${value.time}`;
     const dateTime = new Date(dateTimeString);
 
-    // Adjust for the time zone difference (Brasília is UTC-3)
-    const adjustedDateTime = addHours(dateTime, 3); // Adjusting the time to UTC
-
-    const dateFormated = format(adjustedDateTime, "yyyy-MM-dd HH:mm:ss", {
+    const dateFormated = format(dateTime, "yyyy-MM-dd HH:mm:ss", {
       locale: ptBR as Locale,
     });
     const { time, ...rest } = value; // Desestruturando para remover a propriedade 'time'
@@ -289,6 +287,9 @@ export default function ExpenseVehicleCreate() {
             <label htmlFor="km" className="text-base font-semibold mb-2 ml-1 ">
               Hodometro atual:*
             </label>
+            <span className="ms-1 -mt-2 mb-3 text-sm">
+              Ultimo registro: <LastRegisterKm />
+            </span>
             <input
               type="text"
               id="km"

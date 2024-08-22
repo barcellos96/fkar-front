@@ -4,7 +4,8 @@ import Link from "next/link";
 import { navigationMain, navigationPoppoverSideBar } from "./navigation";
 import { usePathname } from "next/navigation";
 import { PlusCircle } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { ComponentsContext } from "@/providers/components";
 
 interface NavigationItem {
   name: string;
@@ -17,6 +18,7 @@ type NavigationList = NavigationItem[];
 export function MainNavigation() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { setSidebar } = useContext(ComponentsContext);
 
   const handleCloseMenu = () => setMenuOpen(false);
 
@@ -26,6 +28,7 @@ export function MainNavigation() {
         <Link
           key={index}
           href={item.path ?? "#"}
+          onClick={() => setSidebar(false)}
           className={`${
             item.path === pathname && "border-l border-green-700 bg-zinc-100"
           } flex text-base font-medium text-zinc-800 rounded px-3 py-3 hover:bg-zinc-100 transition duration-300 ease-linear`}
@@ -64,6 +67,7 @@ export function MainNavigation() {
               {data.map((item, index) => (
                 <Link
                   key={index}
+                  onClick={() => setSidebar(false)}
                   href={item.path ?? "#"}
                   className={`${
                     item.path === pathname &&

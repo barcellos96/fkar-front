@@ -32,15 +32,13 @@ export default function ModalRoot({
     }
   }
 
-  //  className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-10 "
-
   return (
     <div
-      className={`z-50 fixed top-0 left-0 w-full h-full flex ${justify} ${items} bg-black bg-opacity-40 xlg:px-72`}
+      className={`z-50 fixed top-0 left-0 w-full h-full flex ${justify} ${items} bg-black bg-opacity-40 `}
       onClick={handleClickOutside}
     >
       <div
-        className={`flex flex-col gap-6 bg-zinc-50 ${rounded} ${px} ${py} ${width} mx-2 ${maxheigth} overflow-auto modal-content custom-scrollbar`}
+        className={`flex flex-col gap-6 bg-zinc-50 ${rounded} ${px} ${py} ${width} ${maxheigth} overflow-auto modal-content custom-scrollbar`}
       >
         {children}
       </div>

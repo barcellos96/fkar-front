@@ -96,7 +96,7 @@ const TutorialMobileHome: React.FC = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg mx-4">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
-              Bem-vindo ao Tutorial!
+              Bem-vindo a Fkar!
             </h2>
             <p className="text-gray-600 mb-6">
               Estamos empolgados para guiá-lo através de um tour interativo que

@@ -77,7 +77,6 @@ const TutorialWebHome: React.FC = () => {
 
   const handleTourCallback = async (data: CallBackProps) => {
     const { status, action } = data;
-    console.log("status", status);
 
     if (status === STATUS.SKIPPED) {
       // O tour foi pulado pelo usuário
@@ -103,7 +102,7 @@ const TutorialWebHome: React.FC = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50 ">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg mx-4">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
-              Bem-vindo ao Tutorial!
+              Bem-vindo a Fkar!
             </h2>
             <p className="text-gray-600 mb-6">
               Estamos empolgados para guiá-lo através de um tour interativo que
@@ -171,7 +170,7 @@ const TutorialWebHome: React.FC = () => {
 
       {showRestartButton && (
         <button
-          className="fixed bottom-4 right-4 bg-blue-600 text-white px-2 py-2 hover:px-3 hover:py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 z-50"
+          className="fixed bottom-4 right-4 bg-blue-600 text-white px-2 py-2 hover:px-3 hover:py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 z-auto"
           onClick={handleRestartTour}
         >
           <section className="flex items-center gap-2 group">

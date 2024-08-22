@@ -7,25 +7,25 @@ import { VehicleContext } from "@/providers/vehicle/vehicle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ChevronLeft,
-  LucideTrash,
   LucideTrash2,
   Plus,
   PlusIcon,
   Search,
-  Trash,
   Wrench,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { MouseEvent, useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { addHours, format } from "date-fns";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Locale } from "date-fns";
 import { ExpenseServiceContext } from "@/providers/expense/expenseService";
 import { Modal } from "@/components/modals";
 import "../../scrollbar/scrollbar.css";
 import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
+import { VehicleTypeContext } from "@/providers/vehicle/vehicleType";
+import LastRegisterKm from "@/components/vehicle/lastRegisterKm";
 
 interface SelectedService {
   id: string;
@@ -33,25 +33,35 @@ interface SelectedService {
   name: string;
 }
 
+interface ModalData {
+  name: string;
+  vehicleTypeIds: string[]; // Assumindo que os IDs são strings, ajuste para 'number[]' se forem números.
+}
+
 export default function ExpenseMaintenanceCreate() {
   const { back, push } = useRouter();
+  const { selectedVehicleId, vehicle } = useContext(VehicleContext);
+  const { GetVehicleType, vehicleType } = useContext(VehicleTypeContext);
+  const { GetExpenseType, expenseType } = useContext(ExpenseTypeContext);
+  const { CreateExpenseVehicle } = useContext(ExpenseVehicleContext);
+  const { GetExpenseService, expenseService, CreateExpenseService } =
+    useContext(ExpenseServiceContext);
 
   const [loading, setLoading] = useState(false);
   const [sectionPlus, setSectionPlus] = useState(false);
   const [modalSerivces, setModalServices] = useState(false);
+  const [modalCreateServices, setModalCreateServices] = useState(false);
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>(
     []
   );
-  const [invalidInputs, setInvalidInputs] = useState<string[]>([]);
+  const [searchServices, setSearchServices] = useState("");
 
-  const { selectedVehicleId, vehicle } = useContext(VehicleContext);
-  const { GetExpenseType, expenseType } = useContext(ExpenseTypeContext);
-  const { CreateExpenseVehicle, setTabRouteConfig } = useContext(
-    ExpenseVehicleContext
-  );
-  const { GetExpenseService, expenseService } = useContext(
-    ExpenseServiceContext
-  );
+  const [modalData, setModalData] = useState<ModalData>({
+    name: "",
+    vehicleTypeIds: [],
+  });
+
+  const [invalidInputs, setInvalidInputs] = useState<string[]>([]);
 
   const filterVehicleSelectedType = vehicle?.find(
     (v) => v.id === selectedVehicleId
@@ -59,9 +69,9 @@ export default function ExpenseMaintenanceCreate() {
 
   useEffect(() => {
     if (expenseType === null || expenseService === null) {
-      Promise.all([GetExpenseType(), GetExpenseService()]);
+      Promise.all([GetExpenseType(), GetExpenseService(), GetVehicleType()]);
     }
-  }, []);
+  }, [modalData, expenseService]);
 
   const expenseTypeMaintenanceId = expenseType?.find(
     (et) => et.name.toLowerCase() === "manutenção"
@@ -71,9 +81,12 @@ export default function ExpenseMaintenanceCreate() {
     service.vehicle_types.some(
       (vt) =>
         vt.type.toLowerCase() ===
-          filterVehicleSelectedType?.vehicle_type.type.toLowerCase() && service
+          filterVehicleSelectedType?.vehicle_type.type.toLowerCase() &&
+        service.name.toLowerCase().includes(searchServices.toLowerCase())
     )
   );
+
+  console.log("filteredServices", filteredServices);
 
   const date = new Date();
   const time = new Date();
@@ -118,7 +131,7 @@ export default function ExpenseMaintenanceCreate() {
     time: z.string().min(1, "hora obrigatória"),
     expense_service_data: z
       .array(z.object({ id: z.string(), value: z.string() }))
-      .min(1),
+      .min(1, "Deve ter pelo menos 1 item selecionado"),
     description: z.string().min(1, "descrição do gasto obrigatório"),
     location: z.string(),
     km: z.string().min(1, "quilometragem atual obrigatória"),
@@ -165,10 +178,9 @@ export default function ExpenseMaintenanceCreate() {
     const dateTimeString = `${value.date}T${value.time}`;
     const dateTime = new Date(dateTimeString);
 
-    // Adjust for the time zone difference (Brasília is UTC-3)
-    const adjustedDateTime = addHours(dateTime, 3); // Adjusting the time to UTC
+    // Ajuste para o fuso horário de Brasília (UTC-3)
 
-    const dateFormated = format(adjustedDateTime, "yyyy-MM-dd HH:mm:ss", {
+    const dateFormated = format(dateTime, "yyyy-MM-dd HH:mm:ss", {
       locale: ptBR as Locale,
     });
     const { time, ...rest } = value; // Desestruturando para remover a propriedade 'time'
@@ -176,7 +188,7 @@ export default function ExpenseMaintenanceCreate() {
     const formattedValue = { ...rest, date: dateFormated };
 
     // Incluir method_payment apenas se methodPaymentValue não for vazio
-    if (formattedValue.method_payment == "") {
+    if (formattedValue.method_payment === "") {
       formattedValue.method_payment = null;
     }
 
@@ -286,9 +298,50 @@ export default function ExpenseMaintenanceCreate() {
     setValue("amount", formattedTotalValue);
   }, [formattedTotalValue, totalValue, selectedServices]);
 
-  const handleRouteConfig = () => {
-    setTabRouteConfig("Tipo de Serviço");
-    push("/dashboard/config");
+  const handleModalCreateServices = () => {
+    setModalCreateServices((prev) => !prev);
+  };
+
+  const handleCheckboxChangeCreateService = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value, checked } = event.target;
+
+    setModalData((prevData) => {
+      if (checked) {
+        return {
+          ...prevData,
+          vehicleTypeIds: [...prevData.vehicleTypeIds, value],
+        };
+      } else {
+        return {
+          ...prevData,
+          vehicleTypeIds: prevData.vehicleTypeIds.filter((id) => id !== value),
+        };
+      }
+    });
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setModalData((prevData) => ({
+      ...prevData,
+      name: value,
+    }));
+  };
+
+  const submitCreateService = async () => {
+    try {
+      await CreateExpenseService({
+        name: modalData.name,
+        vehicleTypeIds: modalData.vehicleTypeIds,
+      });
+      setModalCreateServices(false);
+      // Pode adicionar um feedback de sucesso aqui, se necessário
+    } catch (error) {
+      console.error("Erro ao criar serviço", error);
+      // Pode adicionar um feedback de erro aqui, se necessário
+    }
   };
 
   return (
@@ -331,10 +384,10 @@ export default function ExpenseMaintenanceCreate() {
                 </label>
                 <button
                   type="button"
-                  className=" h-12 border rounded-lg py-2 px-3 leading-tight bg-zinc-50 hover:bg-zinc-100 focus:outline-none"
+                  className=" h-12 border rounded-lg py-2 px-3 leading-tight bg-zinc-50 hover:bg-zinc-100 focus:outline-none text-base"
                   onClick={handleOpenModal}
                 >
-                  Selecione seus serviços
+                  SELECIONE SERVIÇOS EXECUTADOS
                 </button>
                 {errors.expense_service_data && (
                   <span className="text-sm ml-2 mt-1.5 text-red-300">
@@ -394,21 +447,80 @@ export default function ExpenseMaintenanceCreate() {
 
             {modalSerivces && (
               <div className="fixed inset-0 z-50 top-0 left-0 h-full w-full flex flex-col items-center justify-center bg-black bg-opacity-10">
-                <Modal.Root onClose={handleCloseModal}>
+                <Modal.Root
+                  onClose={handleCloseModal}
+                  width="slg:min-w-[500px]"
+                >
                   <Modal.Title onClose={handleCloseModal} title="Serviços" />
 
                   <div className="flex items-center gap-2 -mb-5">
                     <Modal.Input
                       icon={Search}
-                      placeholder="pesquisar serviço..."
+                      placeholder="pesquisar serviço"
+                      onChange={(e) => setSearchServices(e.target.value)}
                     />
 
                     <section
-                      onClick={handleRouteConfig}
+                      onClick={handleModalCreateServices}
                       className="flex w-8 h-8 justify-center items-center bg-green-700 rounded-md cursor-pointer mb-2 "
                     >
                       <Plus width={24} height={24} className="text-white" />
                     </section>
+
+                    {modalCreateServices && (
+                      <Modal.Root onClose={handleModalCreateServices}>
+                        <Modal.Title
+                          title="Criar Serviço"
+                          onClose={handleModalCreateServices}
+                        />
+
+                        <div>
+                          {
+                            <div>
+                              <span className="flex font-semibold">
+                                A qual tipo de veiculo pertence?*
+                              </span>
+                              <span className="flex mb-2 font-extralight text-sm">
+                                *selecione ao menos 1 (ou cadastre mais em Tipo
+                                de Veiculos)
+                              </span>
+                            </div>
+                          }
+
+                          {vehicleType?.map((item, index) => (
+                            <section className="flex gap-1" key={index}>
+                              <input
+                                type="checkbox"
+                                value={item.id}
+                                onChange={handleCheckboxChangeCreateService}
+                              />
+                              <label>{item.type}</label>
+                            </section>
+                          ))}
+                        </div>
+
+                        <Modal.Input
+                          icon={Wrench}
+                          type="text"
+                          id="expense_service"
+                          onChange={handleInputChange}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              setLoading(true);
+                              submitCreateService();
+                            }
+                          }}
+                        />
+
+                        <Modal.Actions
+                          typeButton="button"
+                          onSubmitAction={submitCreateService}
+                          nameButtonSubmit="Adicionar"
+                          onCancelAction={handleModalCreateServices}
+                        />
+                      </Modal.Root>
+                    )}
                   </div>
 
                   {filteredServices?.length === 0 ? (
@@ -582,6 +694,9 @@ export default function ExpenseMaintenanceCreate() {
             <label htmlFor="km" className="text-base font-semibold mb-2 ml-1 ">
               Hodometro atual:*
             </label>
+            <span className="ms-1 -mt-2 mb-2 text-sm">
+              Ultimo registro: <LastRegisterKm />
+            </span>
             <input
               type="text"
               id="km"

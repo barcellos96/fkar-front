@@ -11,9 +11,10 @@ import { MouseEvent, useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import Loading from "../../loading";
-import { addHours, format } from "date-fns";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Locale } from "date-fns";
+import LastRegisterKm from "@/components/vehicle/lastRegisterKm";
 
 export default function ExpenseRefuelingCreate() {
   const { back, push } = useRouter();
@@ -131,10 +132,7 @@ export default function ExpenseRefuelingCreate() {
     const dateTimeString = `${value.date}T${value.time}`;
     const dateTime = new Date(dateTimeString);
 
-    // Adjust for the time zone difference (Brasília is UTC-3)
-    const adjustedDateTime = addHours(dateTime, 3); // Adjusting the time to UTC
-
-    const dateFormated = format(adjustedDateTime, "yyyy-MM-dd HH:mm:ss", {
+    const dateFormated = format(dateTime, "yyyy-MM-dd HH:mm:ss", {
       locale: ptBR as Locale,
     });
 
@@ -275,29 +273,6 @@ export default function ExpenseRefuelingCreate() {
             </div>
           </div>
 
-          {/* km */}
-          <div className="flex flex-col mb-5">
-            <label htmlFor="km" className="text-base font-semibold mb-2 ml-1 ">
-              Hodometro no abastecimento:*
-            </label>
-            <input
-              type="text"
-              id="km"
-              className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
-              placeholder="Hodometro (km)"
-              {...register("km")}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                setValue("km", formatNumber(inputValue));
-              }}
-            />
-            {errors.km && (
-              <span className="text-sm ml-2 mt-1.5 text-red-300">
-                {errors.km.message}
-              </span>
-            )}{" "}
-          </div>
-
           {/* tipo de combustível */}
           <div className="flex flex-col mb-5">
             <label
@@ -323,6 +298,32 @@ export default function ExpenseRefuelingCreate() {
                 {errors.fuel_type.message}
               </span>
             )}
+          </div>
+
+          {/* km */}
+          <div className="flex flex-col mb-5">
+            <label htmlFor="km" className="text-base font-semibold mb-2 ml-1 ">
+              Hodometro no abastecimento:*
+            </label>
+            <span className="ms-1 -mt-2 mb-2 text-sm">
+              Ultimo registro: <LastRegisterKm />
+            </span>
+            <input
+              type="text"
+              id="km"
+              className=" h-12 border rounded-lg py-2 px-3 leading-tight focus:outline-none"
+              placeholder="Hodometro (km)"
+              {...register("km")}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                setValue("km", formatNumber(inputValue));
+              }}
+            />
+            {errors.km && (
+              <span className="text-sm ml-2 mt-1.5 text-red-300">
+                {errors.km.message}
+              </span>
+            )}{" "}
           </div>
 
           {/* preço e total */}

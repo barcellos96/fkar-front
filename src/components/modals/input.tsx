@@ -11,7 +11,7 @@ export default function ModalInput({
   ...rest
 }: ModalInputProps) {
   return (
-    <div className="flex flex-col gap-1 mb-2">
+    <div className="flex flex-col gap-1 mb-2  w-full">
       <div className="flex flex-row border items-center px-2 py-2 rounded-lg">
         {Icon && <Icon width={20} height={20} />}
         <input

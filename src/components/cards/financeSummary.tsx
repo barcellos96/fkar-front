@@ -8,8 +8,10 @@ import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { parseCookies } from "nookies";
 import formatCurrency from "@/utils/formatCurrency";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
+import { useRouter } from "next/navigation";
 
 export default function FinanceSummary() {
+  const { push } = useRouter();
   const { FilteredListAll, filteredListAll } = useContext(
     ExpenseVehicleContext
   );
@@ -107,7 +109,11 @@ export default function FinanceSummary() {
         </span>
       </h3>
       <div className="flex flex-row items-center justify-around">
-        <div className="flex flex-col items-center justify-center">
+        {/* manutenção */}
+        <div
+          className="flex flex-col items-center justify-center"
+          onClick={() => push("/dashboard/manutencoes")}
+        >
           <Wrench
             style={{
               background: "#fcd34d80",
@@ -126,7 +132,11 @@ export default function FinanceSummary() {
             <DoughnutChart value={service} color="#fcd34d" total={total} />
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center">
+        {/* despesas */}
+        <div
+          className="flex flex-col items-center justify-center"
+          onClick={() => push("/dashboard/despesas")}
+        >
           <TrendingDown
             style={{
               background: "#FF555580",
@@ -145,7 +155,11 @@ export default function FinanceSummary() {
             <DoughnutChart value={expense} color="#FF5555" total={total} />
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center">
+        {/* receitas */}
+        <div
+          className="flex flex-col items-center justify-center"
+          onClick={() => push("/dashboard/receitas")}
+        >
           <TrendingUp
             style={{
               background: "#6CDDA480",
@@ -164,7 +178,11 @@ export default function FinanceSummary() {
             <DoughnutChart value={incoming} color="#6CDDA4" total={total} />
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center">
+        {/* abastecimentos */}
+        <div
+          className="flex flex-col items-center justify-center"
+          onClick={() => push("/dashboard/abastecimento")}
+        >
           <Fuel
             style={{
               background: "#fdba7480",

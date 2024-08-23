@@ -252,7 +252,7 @@ const HistoryTimeline = () => {
         )}
 
       {/* <div className="h-px bg-zinc-300 ml-10 mr-10" /> */}
-      {/* <div
+      <div
         className=" px-10 py-3 rounded-xl mt-2 overflow-auto custom-scrollbar "
         style={{ minHeight: minHeight, maxHeight: minHeight }}
       >
@@ -457,7 +457,7 @@ const HistoryTimeline = () => {
             <></>
           )}
         </ol>
-      </div> */}
+      </div>
 
       {modalWarningVehicle && (
         <Modal.Root>

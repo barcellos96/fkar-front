@@ -86,8 +86,6 @@ export default function ExpenseMaintenanceCreate() {
     )
   );
 
-  console.log("filteredServices", filteredServices);
-
   const date = new Date();
   const time = new Date();
 

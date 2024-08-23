@@ -43,6 +43,7 @@ import { Modal } from "@/components/modals";
 import RefuelingUpdate from "./refuelingUpdate";
 import RefuelingSelf from "./refuelingSelf";
 import SearchInput from "@/components/timeline/search";
+import formattedDate from "@/utils/formatedDate";
 
 interface ExpenseVehicleProps {
   id?: string;
@@ -291,7 +292,7 @@ export default function RefuelingData() {
               <td className="slg:py-3 ">
                 <span className="flex gap-2 slg:table-cell">
                   <CalendarDays width={17} height={17} className="slg:hidden" />
-                  {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
+                  {formattedDate(new Date(item.date))}
                 </span>
               </td>
               <td className="slg:py-3">

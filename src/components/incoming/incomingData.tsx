@@ -26,6 +26,7 @@ import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 import IncomingSelf from "./incomingSelf";
 import IncomingDelete from "./incomingDelete";
 import IncomingUpdate from "./incomingUpdate";
+import formattedDate from "@/utils/formatedDate";
 
 interface GetIncomingProps {
   id: string;
@@ -47,8 +48,13 @@ export default function IncomingData() {
   const handleSubmit = () => {
     push("/dashboard/receitas/criar");
   };
-  const { GetIncomingType, incomingType, GetIncoming, incomingData, valueIncoming } =
-    useContext(IncomingContext);
+  const {
+    GetIncomingType,
+    incomingType,
+    GetIncoming,
+    incomingData,
+    valueIncoming,
+  } = useContext(IncomingContext);
   const { selectedVehicleId } = useContext(VehicleContext);
 
   const [modalDelete, setModalDelete] = useState(false);
@@ -154,7 +160,7 @@ export default function IncomingData() {
                 </section>
                 <span className="flex gap-2 slg:table-cell">
                   <CalendarDays width={17} height={17} className="slg:hidden" />
-                  {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
+                  {formattedDate(new Date(item.date))}
                 </span>
               </td>
               <td className="slg:py-3">

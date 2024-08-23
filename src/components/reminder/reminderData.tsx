@@ -17,6 +17,7 @@ import {
 import TableSkeleton from "../tablesNotData/skeleton";
 import { differenceInDays, format } from "date-fns";
 import { Modal } from "../modals";
+import formattedDate from "@/utils/formatedDate";
 
 interface ReminderProps {
   id: string;
@@ -200,11 +201,7 @@ export default function ReminderData() {
                 </span>
                 {!item.date_reminder
                   ? null
-                  : formatDateWithAddedHours(
-                      new Date(item.date_reminder),
-                      3, // Adiciona 3 horas
-                      "dd/MM/yyyy HH:mm"
-                    )}
+                  : formattedDate(new Date(item.date_reminder))}
                 <br />
                 <section className="flex gap-1">
                   <CornerDownRight height={10} width={10} />

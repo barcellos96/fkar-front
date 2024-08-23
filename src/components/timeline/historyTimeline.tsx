@@ -35,6 +35,7 @@ import { useRouter } from "next/navigation";
 import { UserContext } from "@/providers/user";
 import { Modal } from "../modals";
 import SkeletonLoader from "./skeletonTimeline";
+import formattedDate from "@/utils/formatedDate";
 
 const HistoryTimeline = () => {
   const { user } = useContext(UserContext);
@@ -89,6 +90,8 @@ const HistoryTimeline = () => {
           page: "1",
           limit: limit.toString(),
           query,
+          start_date: start_date,
+          end_date: end_date,
         });
 
         setLimit(limit + 10);
@@ -98,7 +101,15 @@ const HistoryTimeline = () => {
     } finally {
       setLoading(false);
     }
-  }, [limit, savedVehicleId, value, valueIncoming, query]);
+  }, [
+    limit,
+    savedVehicleId,
+    value,
+    valueIncoming,
+    query,
+    start_date,
+    end_date,
+  ]);
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect();
@@ -213,12 +224,11 @@ const HistoryTimeline = () => {
                   <input
                     type="date"
                     onChange={(e) => {
-                      const date = new Date(e.target.value);
-                      const formattedDate = date.toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      });
+                      const [year, month, day] = e.target.value.split("-");
+                      const formattedDate = `${day.padStart(
+                        2,
+                        "0"
+                      )}/${month.padStart(2, "0")}/${year}`;
                       console.log(formattedDate);
                       setStartDate(formattedDate);
                     }}
@@ -226,12 +236,11 @@ const HistoryTimeline = () => {
                   <input
                     type="date"
                     onChange={(e) => {
-                      const date = new Date(e.target.value);
-                      const formattedDate = date.toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      });
+                      const [year, month, day] = e.target.value.split("-");
+                      const formattedDate = `${day.padStart(
+                        2,
+                        "0"
+                      )}/${month.padStart(2, "0")}/${year}`;
                       console.log(formattedDate);
                       setEndDate(formattedDate);
                     }}
@@ -293,7 +302,7 @@ const HistoryTimeline = () => {
 
                 <span className="flex mt-4 items-center mb-2 text-base font-normal leading-none text-gray-400 ">
                   <CalendarDays size={14} className="mr-1 " />
-                  {format(parseISO(item.date), "dd/MM/yyyy - HH:mm")}
+                  {formattedDate(new Date(item.date))}
                 </span>
 
                 {item.km && (

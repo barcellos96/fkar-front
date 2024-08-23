@@ -15,7 +15,6 @@ export default function FinanceSummary() {
   const { FilteredListAll, filteredListAll } = useContext(
     ExpenseVehicleContext
   );
-  console.log("filteredListAll", filteredListAll);
   const { vehicle } = useContext(VehicleContext);
 
   const filteredByIncoming = filteredListAll?.list?.filter(

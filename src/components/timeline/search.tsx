@@ -51,8 +51,8 @@ export default function SearchInput({ onSearch }: SearchInputProps) {
   };
 
   return (
-    <div className="flex items-center w-full pl-4 pe-4">
-      <span className="flex items-center gap-2 border border-zinc-200 rounded-lg py-3 px-2 w-full">
+    <div className="flex items-center w-full max-w-[320px] pl-4 pe-4 ">
+      <span className="flex items-center gap-2 bg-zinc-100 border border-zinc-200 rounded-lg py-3 px-2 w-full">
         <Search size={18} />
         <input
           alt="Pesquisar histórico"

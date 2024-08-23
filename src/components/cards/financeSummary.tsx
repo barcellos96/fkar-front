@@ -15,9 +15,10 @@ export default function FinanceSummary() {
   const { FilteredListAll, filteredListAll } = useContext(
     ExpenseVehicleContext
   );
+  console.log("filteredListAll", filteredListAll);
   const { vehicle } = useContext(VehicleContext);
 
-  const filteredByIncoming = filteredListAll?.filteredData.filter(
+  const filteredByIncoming = filteredListAll?.list?.filter(
     (item) => item.incoming_type
   );
 
@@ -26,7 +27,7 @@ export default function FinanceSummary() {
       return sum + parseFloat(item.amount_received);
     }, 0) || 0;
 
-  const filteredByRefueling = filteredListAll?.filteredData.filter(
+  const filteredByRefueling = filteredListAll?.list?.filter(
     (item) => item.expense_type?.name.toLowerCase() === "abastecimento"
   );
   const totalRefuelingAmount =
@@ -34,7 +35,7 @@ export default function FinanceSummary() {
       return sum + parseFloat(item.amount);
     }, 0) || 0;
 
-  const filteredByMaintenance = filteredListAll?.filteredData.filter(
+  const filteredByMaintenance = filteredListAll?.list?.filter(
     (item) => item.expense_type?.name.toLowerCase() === "manutenção"
   );
   const totalMaintenanceAmount =
@@ -42,7 +43,7 @@ export default function FinanceSummary() {
       return sum + parseFloat(item.amount);
     }, 0) || 0;
 
-  const filteredByExpense = filteredListAll?.filteredData.filter(
+  const filteredByExpense = filteredListAll?.list?.filter(
     (item) =>
       item.expense_type?.name.toLowerCase() !== "manutenção" &&
       item.expense_type?.name.toLowerCase() !== "abastecimento" &&
@@ -69,6 +70,11 @@ export default function FinanceSummary() {
     return `${day}/${month}`;
   };
 
+  const formatDateQuery = (dateStr: string) => {
+    const [year, month, day] = dateStr.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
   const { start_date, end_date } = getCurrentMonthDates();
 
   const formattedStartDate = formatDate(start_date);
@@ -77,12 +83,15 @@ export default function FinanceSummary() {
   const cookies = parseCookies();
   const savedVehicleId = cookies["vehicle:selectedVehicleId"];
 
+  const queryStartDate = formatDateQuery(start_date);
+  const queryEndDate = formatDateQuery(end_date);
+
   useEffect(() => {
     if (savedVehicleId && vehicle?.length !== 0) {
       FilteredListAll({
         vehicleId: savedVehicleId,
-        start_date: start_date,
-        end_date: end_date,
+        start_date: queryStartDate,
+        end_date: queryEndDate,
       });
     }
   }, [savedVehicleId]);

@@ -18,6 +18,7 @@ import {
   CalendarDays,
   Wallet,
   CheckCheck,
+  Filter,
 } from "lucide-react";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { parseCookies } from "nookies";
@@ -47,6 +48,9 @@ const HistoryTimeline = () => {
   const observer = useRef<IntersectionObserver | null>(null);
   const [limit, setLimit] = useState(10);
   const [query, setQuery] = useState<string>("");
+  const [datesFilter, setDatesFilter] = useState(false);
+  const [start_date, setStartDate] = useState<string>("");
+  const [end_date, setEndDate] = useState<string>("");
 
   const [loading, setLoading] = useState(false);
   const [modalOn, setModalOn] = useState(false);
@@ -63,9 +67,11 @@ const HistoryTimeline = () => {
         page: "1",
         limit: limit.toString(),
         query,
+        start_date: start_date,
+        end_date: end_date,
       });
     }
-  }, [savedVehicleId, value, valueIncoming, query]);
+  }, [savedVehicleId, value, valueIncoming, query, start_date, end_date]);
 
   useEffect(() => {
     GetAddress();
@@ -120,6 +126,8 @@ const HistoryTimeline = () => {
     value,
     valueIncoming,
     query,
+    start_date,
+    end_date,
   ]);
 
   const getExpenseIcon = (type: string) => {
@@ -182,7 +190,7 @@ const HistoryTimeline = () => {
         listAll.list.length !== 0 && (
           <div className="flex flex-col gap-2">
             <section className="flex flex-col ml-5">
-              <h2 className="font-semibold mb-1">HISTÓRICO</h2>
+              <h2 className="font-semibold mb-1">ULTIMOS REGISTROS</h2>
               <span className=" text-base font-extralight ">
                 Hodometro atual:{" "}
                 <span className="font-normal">
@@ -191,7 +199,46 @@ const HistoryTimeline = () => {
               </span>
             </section>
 
-            <SearchInput onSearch={handleSearch} />
+            <section className="flex justify-between me-4">
+              <SearchInput onSearch={handleSearch} />
+
+              <button
+                onClick={() => setDatesFilter(true)}
+                className="flex gap-2 px-6 font-light border border-zinc-200 rounded-full items-center justify-center hover:bg-zinc-50"
+              >
+                Periodo <Filter size={16} strokeWidth={1.5} />
+              </button>
+              {datesFilter && (
+                <>
+                  <input
+                    type="date"
+                    onChange={(e) => {
+                      const date = new Date(e.target.value);
+                      const formattedDate = date.toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      });
+                      console.log(formattedDate);
+                      setStartDate(formattedDate);
+                    }}
+                  />
+                  <input
+                    type="date"
+                    onChange={(e) => {
+                      const date = new Date(e.target.value);
+                      const formattedDate = date.toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      });
+                      console.log(formattedDate);
+                      setEndDate(formattedDate);
+                    }}
+                  />
+                </>
+              )}
+            </section>
           </div>
         )}
 

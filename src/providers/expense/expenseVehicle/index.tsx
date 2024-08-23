@@ -125,7 +125,7 @@ interface IncomingType {
 }
 
 interface FilteredListAllResponseProps {
-  filteredData: ListItemProps[];
+  list: ListItemProps[];
   total: number;
 }
 
@@ -158,17 +158,16 @@ export interface DeleteExpenseVehicle {
   };
 }
 
-interface ListAllProps {
-  vehicleId: string;
-  page?: string;
-  limit?: string;
-  query?: string;
-}
-
 interface FiltredListAllProps {
   vehicleId: string;
   start_date?: string;
   end_date?: string;
+}
+
+interface ListAllProps extends FiltredListAllProps {
+  page?: string;
+  limit?: string;
+  query?: string;
 }
 
 interface IExpenseData {
@@ -199,6 +198,8 @@ interface IExpenseData {
     page,
     limit,
     query,
+    start_date,
+    end_date,
   }: ListAllProps) => Promise<ListAllExpenseProps>;
 
   listAll?: ListAllExpenseProps | null;
@@ -336,11 +337,13 @@ export const ExpenseVehicleProvider = ({ children }: ICihldrenReact) => {
     page,
     limit,
     query,
+    start_date,
+    end_date,
   }: ListAllProps): Promise<ListAllExpenseProps> => {
     const { "user:accessToken": token } = parseCookies();
     const config = {
       headers: { Authorization: `bearer ${token}` },
-      params: { page, limit, query }, // Adicione os parâmetros de consulta aqui
+      params: { page, limit, query, start_date, end_date }, // Adicione os parâmetros de consulta aqui
     };
     const response = await api
       .get(`/expense-incoming/list_all/${vehicleId}`, config)

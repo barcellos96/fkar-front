@@ -213,8 +213,8 @@ const HistoryTimeline = () => {
             <section className="flex justify-between me-4">
               <SearchInput onSearch={handleSearch} />
 
-              <button
-                onClick={() => setDatesFilter(true)}
+              {/* <button
+                onClick={() => setDatesFilter((prev) => !prev)}
                 className="flex gap-2 px-6 font-light border border-zinc-200 rounded-full items-center justify-center hover:bg-zinc-50"
               >
                 Periodo <Filter size={16} strokeWidth={1.5} />
@@ -246,7 +246,7 @@ const HistoryTimeline = () => {
                     }}
                   />
                 </>
-              )}
+              )} */}
             </section>
           </div>
         )}

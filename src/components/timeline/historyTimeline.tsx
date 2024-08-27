@@ -213,45 +213,16 @@ const HistoryTimeline = () => {
             <section className="flex justify-between me-4">
               <SearchInput onSearch={handleSearch} />
 
-              {/* <button
+              <button
                 onClick={() => setDatesFilter((prev) => !prev)}
-                className="flex gap-2 px-6 font-light border border-zinc-200 rounded-full items-center justify-center hover:bg-zinc-50"
+                className="relative flex gap-2 px-6 font-light border border-zinc-200 rounded-full items-center justify-center hover:bg-zinc-50"
               >
                 Periodo <Filter size={16} strokeWidth={1.5} />
               </button>
-              {datesFilter && (
-                <>
-                  <input
-                    type="date"
-                    onChange={(e) => {
-                      const [year, month, day] = e.target.value.split("-");
-                      const formattedDate = `${day.padStart(
-                        2,
-                        "0"
-                      )}/${month.padStart(2, "0")}/${year}`;
-                      console.log(formattedDate);
-                      setStartDate(formattedDate);
-                    }}
-                  />
-                  <input
-                    type="date"
-                    onChange={(e) => {
-                      const [year, month, day] = e.target.value.split("-");
-                      const formattedDate = `${day.padStart(
-                        2,
-                        "0"
-                      )}/${month.padStart(2, "0")}/${year}`;
-                      console.log(formattedDate);
-                      setEndDate(formattedDate);
-                    }}
-                  />
-                </>
-              )} */}
             </section>
           </div>
         )}
 
-      {/* <div className="h-px bg-zinc-300 ml-10 mr-10" /> */}
       <div
         className=" px-10 py-3 rounded-xl mt-2 overflow-auto custom-scrollbar "
         style={{ minHeight: minHeight, maxHeight: minHeight }}
@@ -262,6 +233,35 @@ const HistoryTimeline = () => {
           } border-s border-zinc-300 text-sm `}
         >
           {modalOn && <Editions item={item} onClose={handleModalClose} />}
+
+          {datesFilter && (
+            <div className="flex justify-end  py-5 px-6 z-50">
+              <input
+                type="date"
+                onChange={(e) => {
+                  const [year, month, day] = e.target.value.split("-");
+                  const formattedDate = `${day.padStart(
+                    2,
+                    "0"
+                  )}/${month.padStart(2, "0")}/${year}`;
+                  console.log(formattedDate);
+                  setStartDate(formattedDate);
+                }}
+              />
+              <input
+                type="date"
+                onChange={(e) => {
+                  const [year, month, day] = e.target.value.split("-");
+                  const formattedDate = `${day.padStart(
+                    2,
+                    "0"
+                  )}/${month.padStart(2, "0")}/${year}`;
+                  console.log(formattedDate);
+                  setEndDate(formattedDate);
+                }}
+              />
+            </div>
+          )}
 
           {listAll &&
           listAll.list.length !== null &&

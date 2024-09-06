@@ -1,4 +1,6 @@
 import FinanceSummary from "@/components/cards/financeSummary";
+import TotalRegisterMonth from "@/components/cards/totalRegisters";
+import TotalRevenueMonth from "@/components/cards/totalRevenue";
 import UpdatePlanCard from "@/components/cards/updatePlanCard";
 import ButtonFloatDashboard from "@/components/dashboard/buttonFloatDashboard";
 import UpdateKmModal from "@/components/dashboard/updateKmModal";
@@ -27,6 +29,10 @@ export default function Dashboard() {
             <UpdatePlanCard />
             <ReminderTimeline />
             <FinanceSummary />
+            <section className="grid grid-cols-2 gap-2">
+              <TotalRegisterMonth />
+              <TotalRevenueMonth />
+            </section>
           </div>
         </div>
         <ButtonFloatDashboard />

@@ -28,9 +28,13 @@ function debounce<T extends (...args: any[]) => void>(
 
 interface SearchInputProps {
   onSearch: (query: string) => void;
+  maxWidth?: string;
 }
 
-export default function SearchInput({ onSearch }: SearchInputProps) {
+export default function SearchInput({
+  onSearch,
+  maxWidth = "max-w-[320px]",
+}: SearchInputProps) {
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
@@ -44,19 +48,19 @@ export default function SearchInput({ onSearch }: SearchInputProps) {
     return () => {
       handler.cancel();
     };
-  }, [inputValue, onSearch]);
+  }, [inputValue]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
   return (
-    <div className="flex items-center w-full max-w-[320px] pl-4 pe-4 ">
-      <span className="flex items-center gap-2 bg-zinc-100 border border-zinc-200 rounded-lg py-3 px-2 w-full">
+    <div className={`flex items-center w-full ${maxWidth} pl-4 pe-4`}>
+      <span className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-lg py-3 px-2 w-full">
         <Search size={18} />
         <input
           alt="Pesquisar histórico"
-          placeholder="Pesquisar..."
+          placeholder="| pesquisar"
           className="bg-transparent outline-none w-full"
           value={inputValue}
           onChange={handleChange}

@@ -96,7 +96,7 @@ export interface ExpenseVehicle {
 
 ///////////////////////////
 
-interface ListItemProps {
+export interface ListItemProps {
   id: string;
   date: string;
   km: number;
@@ -202,7 +202,15 @@ interface IExpenseData {
     end_date,
   }: ListAllProps) => Promise<ListAllExpenseProps>;
 
+  DataListAll: ({
+    vehicleId,
+    page,
+    limit,
+  }: ListAllProps) => Promise<ListAllExpenseProps>;
+
   listAll?: ListAllExpenseProps | null;
+
+  dataListAll?: ListAllExpenseProps | null;
 
   FilteredListAll: ({
     vehicleId,
@@ -358,6 +366,33 @@ export const ExpenseVehicleProvider = ({ children }: ICihldrenReact) => {
     return response;
   };
 
+  const [dataListAll, setDataListAll] = useState<ListAllExpenseProps | null>(
+    null
+  );
+
+  const DataListAll = async ({
+    vehicleId,
+    page,
+    limit,
+  }: ListAllProps): Promise<ListAllExpenseProps> => {
+    const { "user:accessToken": token } = parseCookies();
+    const config = {
+      headers: { Authorization: `bearer ${token}` },
+      params: { page, limit }, // Adicione os parâmetros de consulta aqui
+    };
+    const response = await api
+      .get(`/expense-incoming/list_all/${vehicleId}`, config)
+      .then((res) => {
+        setDataListAll(res.data.response);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message, { position: "top-right" });
+        return err;
+      });
+
+    return response;
+  };
+
   const [filteredListAll, setFiltredListAll] =
     useState<FilteredListAllResponseProps | null>(null);
 
@@ -397,6 +432,8 @@ export const ExpenseVehicleProvider = ({ children }: ICihldrenReact) => {
         value,
         ListAll,
         listAll,
+        DataListAll,
+        dataListAll,
         FilteredListAll,
         filteredListAll,
       }}

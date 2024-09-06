@@ -7,55 +7,32 @@ import React, {
   useRef,
   useState,
 } from "react";
-
 import "../scrollbar/scrollbar.css"; // Importa o arquivo CSS personalizado
-import {
-  Droplet,
-  Map,
-  Fuel,
-  Wrench,
-  Banknote,
-  CalendarDays,
-  Wallet,
-  CheckCheck,
-  Filter,
-} from "lucide-react";
 import { ExpenseVehicleContext } from "@/providers/expense/expenseVehicle";
 import { parseCookies } from "nookies";
-import { format, parseISO } from "date-fns";
-import { formatKm } from "@/hooks/km";
-import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 import { VehicleContext } from "@/providers/vehicle/vehicle";
-import StartHistoric from "../../assets/start-historic.png";
 import Editions from "./editions";
 import { IncomingContext } from "@/providers/incoming";
-import SearchInput from "./search";
 import { AddressContext } from "@/providers/address";
-import { useRouter } from "next/navigation";
-import { UserContext } from "@/providers/user";
-import { Modal } from "../modals";
 import SkeletonLoader from "./skeletonTimeline";
-import formattedDate from "@/utils/formatedDate";
+import { useFilters } from "@/providers/components/filter";
+import StartStep from "../stepToStep/start";
+import HeaderTimeline from "./headerTimeline";
+import Card from "./cardItems";
+import { CalendarDays } from "lucide-react";
+import formatNumberWithSpaces from "@/utils/formatCurrencyWhiteSpaces";
 
 const HistoryTimeline = () => {
-  const { user } = useContext(UserContext);
+  const { query, start_date, end_date, submitDates } = useFilters();
   const { ListAll, listAll, value } = useContext(ExpenseVehicleContext);
   const { valueIncoming } = useContext(IncomingContext);
-  const { vehicle, setModalCreateVehicle } = useContext(VehicleContext);
-  const { GetAddress, address } = useContext(AddressContext);
-
-  const { push } = useRouter();
+  const { vehicle } = useContext(VehicleContext);
+  const { GetAddress } = useContext(AddressContext);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const [limit, setLimit] = useState(10);
-  const [query, setQuery] = useState<string>("");
-  const [datesFilter, setDatesFilter] = useState(false);
-  const [start_date, setStartDate] = useState<string>("");
-  const [end_date, setEndDate] = useState<string>("");
-
   const [loading, setLoading] = useState(false);
   const [modalOn, setModalOn] = useState(false);
-  const [modalWarningVehicle, setModalWarningVehicle] = useState(false);
   const [item, setItem] = useState();
 
   const cookies = parseCookies();
@@ -67,12 +44,12 @@ const HistoryTimeline = () => {
         vehicleId: savedVehicleId,
         page: "1",
         limit: limit.toString(),
-        query,
+        query: query,
         start_date: start_date,
         end_date: end_date,
       });
     }
-  }, [savedVehicleId, value, valueIncoming, query, start_date, end_date]);
+  }, [savedVehicleId, value, valueIncoming, query, submitDates]);
 
   useEffect(() => {
     GetAddress();
@@ -101,15 +78,7 @@ const HistoryTimeline = () => {
     } finally {
       setLoading(false);
     }
-  }, [
-    limit,
-    savedVehicleId,
-    value,
-    valueIncoming,
-    query,
-    start_date,
-    end_date,
-  ]);
+  }, [limit, savedVehicleId, value, valueIncoming, submitDates]);
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect();
@@ -136,36 +105,8 @@ const HistoryTimeline = () => {
     savedVehicleId,
     value,
     valueIncoming,
-    query,
-    start_date,
-    end_date,
+    submitDates,
   ]);
-
-  const getExpenseIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "manutenção":
-        return <Wrench size={18} color="white" />;
-      case "abastecimento":
-        return <Fuel size={18} color="white" />;
-      case "incoming":
-        return <Wallet size={18} color="white" />;
-      default:
-        return <Wallet size={18} color="white" />;
-    }
-  };
-
-  const getExpenseBgColor = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "manutenção":
-        return "bg-amber-300";
-      case "abastecimento":
-        return "bg-orange-300";
-      case "incoming":
-        return "bg-green-300";
-      default:
-        return "bg-red-300";
-    }
-  };
 
   const handleModalOn = (item: any) => {
     setModalOn(true);
@@ -177,273 +118,144 @@ const HistoryTimeline = () => {
     setItem(undefined);
   };
 
-  const handleModalWarningVehicleOn = () => setModalWarningVehicle(true);
-  const handleModalWarningVehicleClose = () => setModalWarningVehicle(false);
-
   const findVehicleChoice = vehicle?.find((item) => savedVehicleId === item.id);
 
-  const handleSearch = (newQuery: string) => {
-    setQuery(newQuery);
-  };
-
   const minHeight =
-    listAll && listAll.list && listAll.list.length !== 0 ? "73.6vh" : "84.9vh";
+    listAll && listAll.list && listAll.list.length !== 0 ? "69.8vh" : "84.9vh";
 
   if (!vehicle) {
     return <SkeletonLoader />;
   }
 
+  function formatDate(date: Date) {
+    const months = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
+
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+
+    return `${day} de ${month}`;
+  }
+
+  let previousDate = "";
+
+  // Função para converter string de valor no formato correto
+  const formatValue = (str: string) => {
+    return parseFloat(str.replace(/\s/g, "").replace(",", "."));
+  };
+
+  // Função para formatar a data no formato "YYYY-MM-DD"
+  function formatedDate(dateString: string): string {
+    return new Date(dateString).toISOString().split("T")[0]; // Remove horas e mantém só a data
+  }
+
+  const summedByDate: any = listAll?.list.reduce(
+    (acc: { [key: string]: number }, item) => {
+      const formattedDate = formatedDate(item.date); // Supondo que a data já esteja no formato correto
+
+      // Certifique-se de que 'value' é um número
+      const value =
+        Number(formatValue(item.amount ?? item.amount_received)) || 0;
+
+      // Inicializa a data no acumulador com 0, se ainda não existir
+      if (!acc[formattedDate]) {
+        acc[formattedDate] = 0;
+      }
+
+      // Verifica o tipo e realiza a soma/subtração corretamente
+      if (item.type === "incoming") {
+        acc[formattedDate] += value;
+      } else if (item.type === "expense") {
+        acc[formattedDate] -= value;
+      }
+
+      return acc;
+    },
+    {}
+  );
+
   return (
     <div className="ms-2 mt-5 mb-4 max-h-screen rounded-xl shadow-lg pt-5 bg-white">
-      {listAll &&
-        listAll !== null &&
-        listAll.list.length !== null &&
-        listAll.list.length !== 0 && (
-          <div className="flex flex-col gap-2">
-            <section className="flex flex-col ml-5">
-              <h2 className="font-semibold mb-1">ULTIMOS REGISTROS</h2>
-              <span className=" text-base font-extralight ">
-                Hodometro atual:{" "}
-                <span className="font-normal">
-                  {formatKm(Number(findVehicleChoice?.km))}
-                </span>
-              </span>
-            </section>
-
-            <section className="flex justify-between me-4">
-              <SearchInput onSearch={handleSearch} />
-
-              <button
-                onClick={() => setDatesFilter((prev) => !prev)}
-                className="relative flex gap-2 px-6 font-light border border-zinc-200 rounded-full items-center justify-center hover:bg-zinc-50"
-              >
-                Periodo <Filter size={16} strokeWidth={1.5} />
-              </button>
-            </section>
-          </div>
-        )}
+      {listAll && listAll !== null && listAll.list.length !== 0 ? (
+        <HeaderTimeline km={Number(findVehicleChoice?.km)} />
+      ) : query.length > 0 ? (
+        <HeaderTimeline km={Number(findVehicleChoice?.km)} />
+      ) : (
+        ""
+      )}
 
       <div
-        className=" px-10 py-3 rounded-xl mt-2 overflow-auto custom-scrollbar "
+        className=" px-5 py-3 rounded-xl overflow-auto custom-scrollbar "
         style={{ minHeight: minHeight, maxHeight: minHeight }}
       >
-        <ol
-          className={`relative ${
-            (listAll === null || listAll?.list.length === 0) && "border-none"
-          } border-s border-zinc-300 text-sm `}
-        >
+        <ol className={`relative  text-sm `}>
           {modalOn && <Editions item={item} onClose={handleModalClose} />}
 
-          {datesFilter && (
-            <div className="flex justify-end  py-5 px-6 z-50">
-              <input
-                type="date"
-                onChange={(e) => {
-                  const [year, month, day] = e.target.value.split("-");
-                  const formattedDate = `${day.padStart(
-                    2,
-                    "0"
-                  )}/${month.padStart(2, "0")}/${year}`;
-                  console.log(formattedDate);
-                  setStartDate(formattedDate);
-                }}
-              />
-              <input
-                type="date"
-                onChange={(e) => {
-                  const [year, month, day] = e.target.value.split("-");
-                  const formattedDate = `${day.padStart(
-                    2,
-                    "0"
-                  )}/${month.padStart(2, "0")}/${year}`;
-                  console.log(formattedDate);
-                  setEndDate(formattedDate);
-                }}
-              />
-            </div>
-          )}
+          {listAll && listAll.list.length !== 0 ? (
+            listAll.list.map((item, index) => {
+              // Format the current item's date
+              const currentDate = formatDate(new Date(item.date));
 
-          {listAll &&
-          listAll.list.length !== null &&
-          listAll.list.length !== 0 ? (
-            listAll.list.map((item, index) => (
-              <li
-                key={index}
-                className={`mb-7 ms-8 ${
-                  index === listAll.list.length - 1 ? "last-item" : ""
-                } cursor-pointer`}
-                onClick={() => handleModalOn(item)}
-              >
-                {
-                  <span
-                    className={`absolute flex items-center justify-center w-8 h-8 ${getExpenseBgColor(
-                      item.type === "incoming"
-                        ? item.type
-                        : item.expense_type.name
-                    )} rounded-full -start-3 ring-8 ring-white`}
-                  >
-                    {getExpenseIcon(
-                      item.type === "incoming"
-                        ? item.type
-                        : item.expense_type.name
-                    )}
-                  </span>
-                }
+              // Check if the current date is different from the previous date
+              const showDate = currentDate !== previousDate;
 
-                {item.type === "expense" ? (
-                  <div className="flex flex-wrap items-center mb-1 text-lg font-semibold text-gray-900">
-                    <h3 className="flex  flex-wrap">{item.description}</h3>
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap  items-center justify-between mb-1 text-lg font-semibold text-gray-900">
-                    <h3 className="flex flex-wrap">{item.title}</h3>
-                  </div>
-                )}
+              // Update the previous date
+              previousDate = currentDate;
+              const currentDateComparation = formatedDate(item.date);
 
-                <span className="flex mt-4 items-center mb-2 text-base font-normal leading-none text-gray-400 ">
-                  <CalendarDays size={14} className="mr-1 " />
-                  {formattedDate(new Date(item.date))}
-                </span>
+              return (
+                <div className="flex flex-col" key={index}>
+                  {/* Conditionally render the date */}
+                  {showDate && (
+                    <div className="flex flex-row justify-between no-wrap border-b border-zinc-200 py-1 mb-4">
+                      <section className="flex flex-row gap-1 items-center">
+                        <CalendarDays size={14} strokeWidth={1} />
+                        <span className="mt-0.5">{currentDate}</span>
+                      </section>
 
-                {item.km && (
-                  <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-                    <Map size={16} className="mr-1" />
-                    KM: {formatKm(item.km)}
-                  </span>
-                )}
-
-                {item.fuel_type && (
-                  <span className="flex mb-2 text-base font-normal leading-none text-gray-400 ">
-                    <Droplet size={16} className="mr-1" />
-                    {item.fuel_type}
-                  </span>
-                )}
-
-                <span
-                  className={`flex mb-2 text-lg items-center font-normal leading-none ${
-                    item.type === "incoming" ? "text-green-600" : "text-red-400"
-                  }`}
-                >
-                  <Banknote
-                    size={16}
-                    className={`mr-1 ${
-                      item.type === "incoming"
-                        ? "text-green-600"
-                        : "text-red-400"
-                    }`}
+                      <section>
+                        {/* Pegando o saldo do dia correspondente a currentDate em summedByDate */}
+                        <p>
+                          Saldo do dia{" "}
+                          <strong>
+                            R${" "}
+                            {summedByDate[currentDateComparation] !== undefined
+                              ? formatNumberWithSpaces(
+                                  summedByDate[currentDateComparation]
+                                )
+                              : 0}
+                          </strong>
+                        </p>
+                      </section>
+                    </div>
+                  )}
+                  <Card
+                    item={item}
+                    onClick={handleModalOn}
+                    index={index}
+                    isLastItem={index === listAll.list.length - 1}
                   />
-                  R${" "}
-                  {formatNumberWithSpaces(item.amount || item.amount_received)}
-                </span>
-              </li>
-            ))
+                </div>
+              );
+            })
+          ) : listAll && query.length !== 0 && listAll.list.length === 0 ? (
+            <>
+              <p>Nenhum conteúdo encontrado na pesquisa.</p>
+            </>
           ) : (
-            <div className="flex items-center flex-col">
-              <section className="flex flex-col md:flex md:flex-row gap-2 items-center md:items-end w-full">
-                <img
-                  src={StartHistoric.src}
-                  width={80}
-                  alt="imagem cadastros"
-                />
-                <h2 className="text-center text-3xl font-semibold text-zinc-600">
-                  Pronto para começar?
-                </h2>
-              </section>
-              <ol className="flex  flex-col mt-6 w-full gap-2">
-                <li
-                  className={`rounded-md border border-green-300 px-3 py-4 hover:bg-green-300  hover:text-white font-semibold ${
-                    user?.tour !== "starting"
-                      ? "bg-green-300 text-white cursor-not-allowed"
-                      : "cursor-pointer"
-                  }`}
-                >
-                  <button
-                    disabled={user?.tour !== "starting"}
-                    className={`flex justify-between w-full ${
-                      user?.tour !== "starting" &&
-                      "font-semibold cursor-not-allowed"
-                    }`}
-                  >
-                    Fazer Tour Inicial
-                    <span>
-                      {user?.tour !== "starting" ? <CheckCheck /> : "1 / 4"}
-                    </span>
-                  </button>
-                </li>
-                <li
-                  onClick={() => {
-                    if (vehicle?.length === 0) {
-                      push("/dashboard/meus-veiculos");
-                      setModalCreateVehicle(true);
-                    }
-                  }}
-                  className={`rounded-md border border-green-400 px-3 py-4 hover:bg-green-400  hover:text-white font-semibold ${
-                    vehicle !== null && vehicle?.length !== 0
-                      ? "bg-green-400 text-white cursor-not-allowed "
-                      : "cursor-pointer"
-                  }`}
-                >
-                  <button
-                    disabled={vehicle !== null && vehicle?.length !== 0}
-                    className={`flex justify-between w-full ${
-                      vehicle !== null &&
-                      vehicle?.length !== 0 &&
-                      "cursor-not-allowed f"
-                    }`}
-                  >
-                    Adicionar Veículo{" "}
-                    <span>
-                      {vehicle !== null && vehicle?.length !== 0 ? (
-                        <CheckCheck />
-                      ) : (
-                        "2 / 4"
-                      )}
-                    </span>
-                  </button>
-                </li>
-                <li
-                  onClick={() => address === null && push("/dashboard/perfil")}
-                  className={`rounded-md border border-green-500 px-3 py-4 hover:bg-green-500 cursor-pointer hover:text-white font-semibold ${
-                    address !== null
-                      ? "bg-green-500 text-white cursor-not-allowed "
-                      : "cursor-pointer"
-                  }`}
-                >
-                  <button
-                    disabled={address !== null}
-                    className="flex justify-between w-full "
-                  >
-                    Adicionar Meu endereço{" "}
-                    <span>{address !== null ? <CheckCheck /> : "3 / 4"}</span>
-                  </button>
-                </li>
-                <li
-                  onClick={() => {
-                    if (vehicle?.length !== 0) {
-                      listAll?.list.length === 0 &&
-                        push("/dashboard/abastecimento/criar");
-                    } else {
-                      handleModalWarningVehicleOn();
-                    }
-                  }}
-                  className={`rounded-md border border-green-400 px-3 py-4 hover:bg-green-600 cursor-pointer hover:text-white font-semibold`}
-                >
-                  <button
-                    disabled={listAll !== null && listAll?.list.length !== 0}
-                    className="flex justify-between w-full cursor-pointer"
-                  >
-                    Adicionar Primeiro Abastecimento
-                    <span>
-                      {listAll !== null && listAll?.list.length !== 0 ? (
-                        <CheckCheck />
-                      ) : (
-                        "4 / 4"
-                      )}
-                    </span>
-                  </button>
-                </li>
-              </ol>
-            </div>
+            <StartStep />
           )}
 
           {loading && <p>Loading...</p>}
@@ -458,21 +270,6 @@ const HistoryTimeline = () => {
           )}
         </ol>
       </div>
-
-      {modalWarningVehicle && (
-        <Modal.Root>
-          <Modal.Title title="Nenhum Veículo Adicionado" />
-          <Modal.Span span="Para começar a utilizar todos os recursos do sistema, você precisa adicionar um veículo. Sem um veículo registrado, não será possível acompanhar seus abastecimentos, manutenções ou outros dados importantes relacionados ao seu veículo. Adicione um veículo agora para garantir que você tenha todas as informações organizadas e acessíveis." />
-          <Modal.Actions
-            onSubmitAction={() => {
-              push("/dashboard/meus-veiculos");
-              setModalCreateVehicle(true);
-            }}
-            nameButtonSubmit="Adicionar Veículo"
-            onCancelAction={handleModalWarningVehicleClose}
-          />
-        </Modal.Root>
-      )}
     </div>
   );
 };

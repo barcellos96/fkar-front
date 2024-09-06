@@ -12,6 +12,7 @@ import { ExpenseVehicleProvider } from "./expense/expenseVehicle";
 import { ExpenseServiceProvider } from "./expense/expenseService";
 import { BlogProvider } from "./blog";
 import { ComponentsProvider } from "./components";
+import { FiltersProvider } from "./components/filter";
 
 interface IChildrenReact {
   children: ReactNode;
@@ -31,7 +32,9 @@ export function Providers({ children }: IChildrenReact) {
                       <ExpenseVehicleProvider>
                         <AddressProvider>
                           <ComponentsProvider>
-                            <ReminderProvider>{children}</ReminderProvider>
+                            <ReminderProvider>
+                              <FiltersProvider>{children}</FiltersProvider>
+                            </ReminderProvider>
                           </ComponentsProvider>
                         </AddressProvider>
                       </ExpenseVehicleProvider>

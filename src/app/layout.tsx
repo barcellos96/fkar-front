@@ -27,12 +27,10 @@ export default function RootLayout({
           crossOrigin="anonymous"
         ></script>
         {/* scripts google ads */}
-
         <meta
           name="google-adsense-account"
           content="ca-pub-7813835594301178"
         ></meta>
-
         <meta name="application-name" content="FKAR Gestão de Veículos" />
         <meta name="theme-color" content="#15803d" />
         <meta
@@ -40,14 +38,13 @@ export default function RootLayout({
           content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
         />
         <meta name="apple-mobile-web-app-title" content="FKAR" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
         <meta name="msapplication-TileColor" content="#15803d" />
         <meta name="msapplication-tap-highlight" content="no" />
-
         <link rel="manifest" href="/manifest.json" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/favicon.ico" />

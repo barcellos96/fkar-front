@@ -125,12 +125,12 @@ export default function Content() {
 
           <section
             id="content-select-car"
-            className="flex text-base cursor-pointer border-b border-zinc-300 items-center px-1 py-1 rounded-lg outline-none"
+            className="flex text-sm cursor-pointer border border-zinc-300 items-center px-2 py-0.5 rounded-lg outline-none"
           >
-            <CarFront size={22} />
+            <CarFront size={14} strokeWidth={1.4} />
             <select
               id="select-option"
-              className="outline-none cursor-pointer p-1 bg-transparent max-w-32 sm:max-w-max"
+              className="slg:text-base cursor-pointer p-1 outline-none bg-transparent max-w-32 sm:max-w-max"
               onChange={handleSelectChange}
               value={vehicleId}
               onClick={
